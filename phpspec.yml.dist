@@ -1,0 +1,5 @@
+suites:
+    values:
+        namespace: GW\Value
+        psr4_prefix: GW\Value
+
