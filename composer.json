@@ -1,0 +1,22 @@
+{
+    "name": "gw/value",
+    "description": "PHP primitive types value objects.",
+    "type": "library",
+    "require": {
+        "php": "^7.1"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "^3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "GW\\Value\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "spec\\GW\\Value\\": "spec/"
+        }
+    },
+    "minimum-stability": "dev"
+}
