@@ -14,13 +14,13 @@ interface ArrayValue extends \IteratorAggregate, \Countable, \ArrayAccess
 
     public function each(callable $f): ArrayValue;
 
-    public function unique(callable $comparator = null): ArrayValue;
+    public function unique(?callable $comparator = null): ArrayValue;
 
     public function reverse(): ArrayValue;
 
-    public function intersect(ArrayValue $other, callable $comparator = null): ArrayValue;
+    public function intersect(ArrayValue $other, ?callable $comparator = null): ArrayValue;
 
-    public function diff(ArrayValue $other, callable $comparator = null): ArrayValue;
+    public function diff(ArrayValue $other, ?callable $comparator = null): ArrayValue;
 
     public function sum(ArrayValue $other): ArrayValue;
 

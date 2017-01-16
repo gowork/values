@@ -28,11 +28,11 @@ interface StringValue
 
     public function upperWords(): StringValue;
 
-    public function padRight(int $length, string $string = " "): StringValue;
+    public function padRight(int $length, string $string = ' '): StringValue;
 
-    public function padLeft(int $length, string $string = " "): StringValue;
+    public function padLeft(int $length, string $string = ' '): StringValue;
 
-    public function padBoth(int $length, string $string = " "): StringValue;
+    public function padBoth(int $length, string $string = ' '): StringValue;
 
     public function replace(string $search, string $replace): StringValue;
 
@@ -58,7 +58,7 @@ interface StringValue
 
     public function contains(string $substring): bool;
 
-    public function value(): string;
+    public function toString(): string;
 
     public function __toString(): string;
 }
