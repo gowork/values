@@ -14,6 +14,11 @@ final class Arrays
         return new PlainArray($array);
     }
 
+    public static function createFromValues(...$array): ArrayValue
+    {
+        return new PlainArray(...$array);
+    }
+
     public static function assoc(array $array): AssocArray
     {
         return new PlainArray($array);
