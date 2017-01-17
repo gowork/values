@@ -2,7 +2,7 @@
 
 namespace GW\Value;
 
-interface Stream
+interface Stream extends Mappable, Filterable
 {
     public function map(callable $transformer): Stream;
 

@@ -2,100 +2,46 @@
 
 namespace GW\Value;
 
-interface ArrayValue extends \IteratorAggregate, \Countable, \ArrayAccess
+interface ArrayValue extends \IteratorAggregate, \ArrayAccess, Collection, Stack
 {
-    public function map(
-        callable/*(mixed $value): mixed*/
-        $transformer
-    ): ArrayValue;
-
-    public function filter(
-        callable/*(mixed $value): bool*/
-        $transformer
-    ): ArrayValue;
-
-    public function slice(int $offset, int $length): ArrayValue;
-
-    public function sort(
-        callable/*(mixed $valueA, mixed $valueB): int*/
-        $comparator
-    ): ArrayValue;
-
-    public function each(
-        callable/*(mixed $value): void*/
-        $f
-    ): ArrayValue;
-
-    public function unique(
-        ?callable/*(mixed $valueA, mixed $valueB): int*/
-        $comparator = null
-    ): ArrayValue;
-
-    public function reverse(): ArrayValue;
-
-    public function intersect(
-        ArrayValue $other,
-        ?callable/*(mixed $valueA, mixed $valueB): int*/
-        $comparator = null
-    ): ArrayValue;
-
-    public function diff(
-        ArrayValue $other,
-        ?callable/*(mixed $valueA, mixed $valueB): int*/
-        $comparator = null
-    ): ArrayValue;
-
-    public function join(ArrayValue $other): ArrayValue;
-
-    public function shuffle(): ArrayValue;
-
-    // adders and removers
     /**
-     * @param mixed $v
+     * @return ArrayValue
      */
-    public function unshift($v): ArrayValue;
+    public function join(ArrayValue $other);
 
     /**
-     * @param mixed $v
+     * @return ArrayValue
      */
-    public function shift(&$v = null): ArrayValue;
+    public function slice(int $offset, int $length);
 
     /**
-     * @param mixed $v
+     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
+     * @return ArrayValue
      */
-    public function push($v): ArrayValue;
+    public function diff(ArrayValue $other, ?callable $comparator = null);
 
     /**
-     * @param mixed $v
+     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
+     * @return ArrayValue
      */
-    public function pop(&$v = null): ArrayValue;
-
-    // finalizers
+    public function intersect(ArrayValue $other, ?callable $comparator = null);
 
     /**
+     * @param callable $transformer function(mixed $reduced, mixed $value): mixed
      * @param mixed $start
      * @return mixed
      */
-    public function reduce(
-        callable/*(mixed $value, mixed $reduced): mixed*/
-        $transformer,
-        $start
-    );
+    public function reduce(callable $transformer, $start);
 
     /**
-     * @return mixed[]
+     * @param callable $transformer function(mixed $value): mixed
+     * @return ArrayValue
      */
-    public function toArray(): array;
-
-    public function sum(): int;
-
-    /**
-     * @return mixed
-     */
-    public function first();
+    public function map(callable $transformer);
 
     /**
-     * @return mixed
+     * @param callable $transformer function(mixed $value): bool { ... }
+     * @return ArrayValue
      */
-    public function last();
+    public function filter(callable $transformer);
 }

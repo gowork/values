@@ -21,6 +21,6 @@ final class Arrays
 
     public static function assoc(array $array): AssocArray
     {
-        return new PlainArray($array);
+        return new AssocArray($array);
     }
 }
