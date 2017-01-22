@@ -2,112 +2,90 @@
 
 namespace GW\Value;
 
-interface StringValue extends CharsValue
+interface CharsValue
 {
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function stripTags();
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function trim(string $characterMask = " \t\n\r\0\x0B");
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function trimRight(string $characterMask = " \t\n\r\0\x0B");
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function trimLeft(string $characterMask = " \t\n\r\0\x0B");
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function lower();
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function upper();
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function lowerFirst();
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function upperFirst();
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function upperWords();
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function padRight(int $length, string $string = ' ');
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function padLeft(int $length, string $string = ' ');
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function padBoth(int $length, string $string = ' ');
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function replace(string $search, string $replace);
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function translate(array $pairs);
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function replacePattern(string $pattern, string $replacement);
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function replacePatternCallback(string $pattern, callable $callback);
 
     /**
-     * @return StringValue
+     * @return CharsValue
      */
     public function truncate(int $length, string $postfix = '...');
-
-    public function length(): int;
-
-    public function position(string $needle): ?int;
-
-    public function lastPosition(string $needle): ?int;
-
-    public function matchAllPatterns(string $pattern): ArrayValue;
-
-    public function matchPatterns(string $pattern): ArrayValue;
-
-    public function isMatching(string $pattern): bool;
-
-    public function splitByPattern(string $pattern): ArrayValue;
-
-    public function explode(string $delimiter): ArrayValue;
-
-    public function contains(string $substring): bool;
-
-    public function toString(): string;
-
-    public function __toString(): string;
 }
