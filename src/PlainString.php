@@ -17,87 +17,95 @@ final class PlainString implements StringValue
         return $this->value;
     }
 
-    public function lastPosition(string $needle): ?int
+    public function substring(int $start, ?int $length = null): PlainString
     {
-        return ($pos = strrpos($this->value, $needle)) !== false ? $pos : null;
+        return new self(mb_substr($this->value, $start, $length));
     }
 
-    public function stripTags(): StringValue
+    /**
+     * @return StringValue
+     */
+    public function postfix(StringValue $other): PlainString
+    {
+        return new self($this->value . $other->toString());
+    }
+
+    public function stripTags(): PlainString
     {
         return new self(strip_tags($this->value));
     }
 
-    public function trim(string $characterMask = " \t\n\r\0\x0B"): StringValue
+    public function trim(string $characterMask = self::TRIM_MASK): PlainString
     {
         return new self(trim($this->value, $characterMask));
     }
 
-    public function trimRight(string $characterMask = " \t\n\r\0\x0B"): StringValue
+    public function trimRight(string $characterMask = self::TRIM_MASK): PlainString
     {
         return new self(rtrim($this->value, $characterMask));
     }
 
-    public function trimLeft(string $characterMask = " \t\n\r\0\x0B"): StringValue
+    public function trimLeft(string $characterMask = self::TRIM_MASK): PlainString
     {
         return new self(ltrim($this->value, $characterMask));
     }
 
-    public function lower(): StringValue
+    public function lower(): PlainString
     {
         return new self(mb_strtolower($this->value));
     }
 
-    public function upper(): StringValue
+    public function upper(): PlainString
     {
         return new self(mb_strtoupper($this->value));
     }
 
-    public function lowerFirst(): StringValue
+    public function lowerFirst(): PlainString
     {
-        return new self(lcfirst($this->value));
+        return $this->substring(0, 1)->lower()->postfix($this->substring(1));
     }
 
-    public function upperFirst(): StringValue
+    public function upperFirst(): PlainString
     {
-        return new self(ucfirst($this->value));
+        return $this->substring(0, 1)->upper()->postfix($this->substring(1));
     }
 
     public function upperWords(): StringValue
     {
-        return new self(ucwords($this->value));
+        return $this
+            ->explode(' ')
+            ->map(function (StringValue $word): StringValue {
+                return $word->upperFirst();
+            })
+            ->implode(' ');
     }
 
-    public function padRight(int $length, string $string = ' '): StringValue
+    public function padRight(int $length, string $string = ' '): PlainString
     {
         return new self(str_pad($this->value, $length, $string, STR_PAD_RIGHT));
     }
 
-    public function padLeft(int $length, string $string = ' '): StringValue
+    public function padLeft(int $length, string $string = ' '): PlainString
     {
         return new self(str_pad($this->value, $length, $string, STR_PAD_LEFT));
     }
 
-    public function padBoth(int $length, string $string = ' '): StringValue
+    public function padBoth(int $length, string $string = ' '): PlainString
     {
         return new self(str_pad($this->value, $length, $string, STR_PAD_BOTH));
     }
 
-    public function replace(string $search, string $replace): StringValue
+    public function replace(string $search, string $replace): PlainString
     {
         return new self(str_replace($search, $replace, $this->value));
     }
 
-    public function translate(array $pairs): StringValue
-    {
-        return new self(strtr($this->value, $pairs));
-    }
-
-    public function replacePattern(string $pattern, string $replacement): StringValue
+    public function replacePattern(string $pattern, string $replacement): PlainString
     {
         return new self(preg_replace($pattern, $replacement, $this->value));
     }
 
-    public function replacePatternCallback(string $pattern, callable $callback): StringValue
+    public function replacePatternCallback(string $pattern, callable $callback): PlainString
     {
         return new self(preg_replace_callback($pattern, $callback, $this->value));
     }
@@ -126,12 +134,12 @@ final class PlainString implements StringValue
         return Arrays::create(preg_split($pattern, $this->value));
     }
 
-    public function explode(string $delimiter): ArrayValue
+    public function explode(string $delimiter): StringsValue
     {
-        return Arrays::create(explode($delimiter, $this->value));
+        return Arrays::strings(explode($delimiter, $this->value));
     }
 
-    public function truncate(int $length, string $postfix = '...'): StringValue
+    public function truncate(int $length, string $postfix = '...'): PlainString
     {
         if ($this->length() <= $length) {
             return $this;
@@ -152,7 +160,12 @@ final class PlainString implements StringValue
 
     public function position(string $needle): ?int
     {
-        return ($pos = strpos($this->value, $needle)) !== false ? $pos : null;
+        return ($pos = mb_strpos($this->value, $needle)) !== false ? $pos : null;
+    }
+
+    public function positionLast(string $needle): ?int
+    {
+        return ($pos = mb_strrpos($this->value, $needle)) !== false ? $pos : null;
     }
 
     public function toString(): string

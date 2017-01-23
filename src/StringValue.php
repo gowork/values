@@ -2,8 +2,10 @@
 
 namespace GW\Value;
 
-interface StringValue extends CharsValue
+interface StringValue
 {
+    public const TRIM_MASK = " \t\n\r\0\x0B";
+
     /**
      * @return StringValue
      */
@@ -12,17 +14,17 @@ interface StringValue extends CharsValue
     /**
      * @return StringValue
      */
-    public function trim(string $characterMask = " \t\n\r\0\x0B");
+    public function trim(string $characterMask = self::TRIM_MASK);
 
     /**
      * @return StringValue
      */
-    public function trimRight(string $characterMask = " \t\n\r\0\x0B");
+    public function trimRight(string $characterMask = self::TRIM_MASK);
 
     /**
      * @return StringValue
      */
-    public function trimLeft(string $characterMask = " \t\n\r\0\x0B");
+    public function trimLeft(string $characterMask = self::TRIM_MASK);
 
     /**
      * @return StringValue
@@ -72,11 +74,6 @@ interface StringValue extends CharsValue
     /**
      * @return StringValue
      */
-    public function translate(array $pairs);
-
-    /**
-     * @return StringValue
-     */
     public function replacePattern(string $pattern, string $replacement);
 
     /**
@@ -89,11 +86,21 @@ interface StringValue extends CharsValue
      */
     public function truncate(int $length, string $postfix = '...');
 
+    /**
+     * @return StringValue
+     */
+    public function substring(int $start, ?int $length = null);
+
+    /**
+     * @return StringValue
+     */
+    public function postfix(StringValue $other);
+
     public function length(): int;
 
     public function position(string $needle): ?int;
 
-    public function lastPosition(string $needle): ?int;
+    public function positionLast(string $needle): ?int;
 
     public function matchAllPatterns(string $pattern): ArrayValue;
 
@@ -103,7 +110,7 @@ interface StringValue extends CharsValue
 
     public function splitByPattern(string $pattern): ArrayValue;
 
-    public function explode(string $delimiter): ArrayValue;
+    public function explode(string $delimiter): StringsValue;
 
     public function contains(string $substring): bool;
 

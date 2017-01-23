@@ -23,4 +23,9 @@ final class Arrays
     {
         return new AssocArray($array);
     }
+
+    public static function strings(array $strings): StringsValue
+    {
+        return new StringsArray(self::create($strings));
+    }
 }

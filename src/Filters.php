@@ -2,7 +2,7 @@
 
 namespace GW\Value;
 
-class Filters
+final class Filters
 {
     private const TYPE_FILTER_CALLABLE = [
         'int' => 'is_int',
@@ -83,6 +83,13 @@ class Filters
     {
         return function ($value) use ($other): bool {
             return $value !== $other;
+        };
+    }
+
+    public static function callMethod(string $method, ...$args): \Closure
+    {
+        return function ($item) use ($method, $args): bool {
+            return $item->$method(...$args);
         };
     }
 }

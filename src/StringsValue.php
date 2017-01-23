@@ -2,10 +2,6 @@
 
 namespace GW\Value;
 
-interface StringsValue extends CharsValue, ArrayValue
+interface StringsValue extends ArrayValue, StringValue
 {
-    /**
-     * @return StringValue
-     */
-    public function implode(string $glue);
 }

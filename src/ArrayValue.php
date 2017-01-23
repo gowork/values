@@ -44,4 +44,12 @@ interface ArrayValue extends \IteratorAggregate, \ArrayAccess, Collection, Stack
      * @return ArrayValue
      */
     public function filter(callable $transformer);
+
+    /**
+     * @param callable $callback function(mixed $value): void
+     * @return ArrayValue
+     */
+    public function each(callable $callback);
+
+    public function implode(string $glue): StringValue;
 }
