@@ -263,4 +263,9 @@ final class PlainArray implements ArrayValue
     {
         return Strings::create(implode($glue, $this->toArray()));
     }
+
+    public function notEmpty(): PlainArray
+    {
+        return $this->filter(Filters::notEmpty());
+    }
 }

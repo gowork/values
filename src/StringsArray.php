@@ -314,6 +314,11 @@ final class StringsArray implements StringsValue
         return $this->toString();
     }
 
+    public function notEmpty(): StringsArray
+    {
+        return $this->filter(Filters::notEmpty());
+    }
+
     private function mapStringValues(ArrayValue $strings): ArrayValue
     {
         return $strings

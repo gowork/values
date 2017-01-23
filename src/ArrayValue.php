@@ -52,4 +52,9 @@ interface ArrayValue extends \IteratorAggregate, \ArrayAccess, Collection, Stack
     public function each(callable $callback);
 
     public function implode(string $glue): StringValue;
+
+    /**
+     * @return ArrayValue
+     */
+    public function notEmpty();
 }
