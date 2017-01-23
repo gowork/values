@@ -261,15 +261,6 @@ final class PlainArray implements ArrayValue
 
     public function implode(string $glue): StringValue
     {
-        $reduced = $this->reduce(
-            function (?string $reduced, $value) use ($glue): string {
-                $value = (string)$value;
-
-                return $reduced === null ? $value : $reduced . $glue . $value;
-            },
-            null
-        );
-
-        return Strings::create($reduced);
+        return Strings::create(implode($glue, $this->toArray()));
     }
 }
