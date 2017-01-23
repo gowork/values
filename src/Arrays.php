@@ -9,7 +9,7 @@ final class Arrays
         // prohibits creation objects of this class
     }
 
-    public static function create(array $array): ArrayValue
+    public static function create(array $array = []): ArrayValue
     {
         return new PlainArray($array);
     }
@@ -19,12 +19,12 @@ final class Arrays
         return new PlainArray(...$array);
     }
 
-    public static function assoc(array $array): AssocArray
+    public static function assoc(array $array = []): AssocArray
     {
         return new AssocArray($array);
     }
 
-    public static function strings(array $strings): StringsValue
+    public static function strings(array $strings = []): StringsValue
     {
         return new StringsArray(self::create($strings));
     }
