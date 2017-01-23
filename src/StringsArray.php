@@ -12,6 +12,11 @@ final class StringsArray implements StringsValue
         $this->strings = $this->mapStringValues($strings);
     }
 
+    public static function fromArray(array $strings): self
+    {
+        return new self(Arrays::create($strings));
+    }
+
     public function join(ArrayValue $other): StringsArray
     {
         return new self($this->strings->join($this->mapStringValues($other)));
@@ -49,37 +54,24 @@ final class StringsArray implements StringsValue
 
     public function implode(string $glue): StringValue
     {
-        $reduced = $this->reduce(
-            function (?string $reduced, $value) use ($glue): string {
-                $value = (string)$value;
-
-                return $reduced === null ? $value : $reduced . $glue . $value;
-            },
-            null
-        );
-
-        return Strings::create($reduced);
+        return $this->strings->implode($glue);
     }
 
-    /**
-     * @return mixed
-     */
-    public function first()
+    public function first(): ?StringValue
     {
         return $this->strings->first();
     }
 
-    /**
-     * @return mixed
-     */
-    public function last()
+    public function last(): ?StringValue
     {
         return $this->strings->last();
     }
 
-    public function each(callable $callback)
+    public function each(callable $callback): StringsArray
     {
         $this->strings->each($callback);
+
+        return $this;
     }
 
     /**
