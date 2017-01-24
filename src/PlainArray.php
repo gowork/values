@@ -258,4 +258,19 @@ final class PlainArray implements ArrayValue
         // TODO more proper exception
         throw new \BadMethodCallException('ArrayValue is immutable');
     }
+
+    public function implode(string $glue): StringValue
+    {
+        return Strings::create(implode($glue, $this->toArray()));
+    }
+
+    public function notEmpty(): PlainArray
+    {
+        return $this->filter(Filters::notEmpty());
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->items === [];
+    }
 }

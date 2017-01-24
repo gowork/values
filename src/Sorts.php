@@ -2,7 +2,7 @@
 
 namespace GW\Value;
 
-class Sorts
+final class Sorts
 {
     public static function asc(): callable
     {
