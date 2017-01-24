@@ -2,7 +2,7 @@
 
 namespace GW\Value;
 
-interface StringValue
+interface StringValue extends Value
 {
     public const TRIM_MASK = " \t\n\r\0\x0B";
 

@@ -3,6 +3,7 @@
 namespace spec\GW\Value;
 
 use GW\Value\Arrays;
+use GW\Value\Sorts;
 use GW\Value\Strings;
 use GW\Value\StringsArray;
 use GW\Value\StringValue;
@@ -175,6 +176,36 @@ final class StringsArraySpec extends ObjectBehavior
 
         $this->toArray()
             ->shouldBeLike([Strings::create('first'), Strings::create('second'), Strings::create('third')]);
+    }
+
+    function it_filters_empty_strings()
+    {
+        $this->beConstructedWithStrings('first', '', ' ', 'second', '0', 'false');
+
+        $this->count()->shouldReturn(6);
+
+        $notEmpty = $this->filterEmpty();
+
+        $notEmpty->shouldNotBe($this);
+        $notEmpty->shouldBeLike(StringsArray::fromArray(['first', ' ', 'second', '0', 'false']));
+    }
+
+    function it_sorts_ascending()
+    {
+        $this->beConstructedWithStrings('beta', 'alpha', 'zeta', 'omega');
+
+        $sorted = $this->sort(Sorts::asc());
+        $sorted->shouldNotBeLike($this);
+        $sorted->shouldBeLike(StringsArray::fromArray(['alpha', 'beta', 'omega', 'zeta']));
+    }
+
+    function it_sorts_descending()
+    {
+        $this->beConstructedWithStrings('beta', 'alpha', 'zeta', 'omega');
+
+        $sorted = $this->sort(Sorts::desc());
+        $sorted->shouldNotBeLike($this);
+        $sorted->shouldBeLike(StringsArray::fromArray(['zeta', 'omega', 'beta', 'alpha']));
     }
 
     function it_trims_all_contained_strings()

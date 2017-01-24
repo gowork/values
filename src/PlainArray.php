@@ -268,4 +268,9 @@ final class PlainArray implements ArrayValue
     {
         return $this->filter(Filters::notEmpty());
     }
+
+    public function isEmpty(): bool
+    {
+        return $this->items === [];
+    }
 }

@@ -334,4 +334,9 @@ final class StringsArray implements StringsValue
     {
         return $this->implode(' ');
     }
+
+    public function isEmpty(): bool
+    {
+        return $this->strings->isEmpty() || $this->toStringValue()->isEmpty();
+    }
 }

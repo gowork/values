@@ -2,7 +2,7 @@
 
 namespace GW\Value;
 
-final class AssocArray implements \IteratorAggregate, Collection
+final class AssocArray implements Value, Collection, \IteratorAggregate
 {
     /** @var array */
     private $items;
@@ -216,5 +216,10 @@ final class AssocArray implements \IteratorAggregate, Collection
     public function count(): int
     {
         return count($this->items);
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->items === [];
     }
 }

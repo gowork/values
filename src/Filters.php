@@ -68,7 +68,7 @@ final class Filters
     public static function notEmpty(): \Closure
     {
         return function ($value): bool {
-            return !empty($value);
+            return !(($value instanceof Value && $value->isEmpty()) || empty($value));
         };
     }
 

@@ -177,4 +177,9 @@ final class PlainString implements StringValue
     {
         return $this->value;
     }
+
+    public function isEmpty(): bool
+    {
+        return $this->value === '';
+    }
 }
