@@ -303,13 +303,16 @@ final class PlainArraySpec extends ObjectBehavior
         // so here`s a little workaround.
         $items = ['item 1', 'item 2', 'item 3'];
         $this->beConstructedWith($items);
-        $twin = new PlainArray($items);
+        $clone = new PlainArray($items);
 
-        $this->shift()->shouldBeLike($twin->shift($item));
+        $reduced= $this->shift();
+        $reduced->shouldBeLike($clone->shift($item));
 
         if ($item !== 'item 1') {
             throw new FailureException('Shifted value should be assigned to provided variable');
         }
+
+        $reduced->count()->shouldReturn(2);
     }
 
     function it_pushes_value_to_the_end()
@@ -336,11 +339,15 @@ final class PlainArraySpec extends ObjectBehavior
         $this->beConstructedWith($items);
         $twin = new PlainArray($items);
 
-        $this->pop()->shouldBeLike($twin->pop($item));
+        $popped = $this->pop();
+        $popped->shouldBeLike($twin->pop($item));
 
         if ($item !== 'item 3') {
-            throw new FailureException('Shifted value should be assigned to provided variable');
+            throw new FailureException('Popped value should be assigned to provided variable');
         }
+
+        $this->count()->shouldReturn(3);
+        $popped->count()->shouldReturn(2);
     }
 
     function it_reduces_array_of_numbers()
