@@ -22,9 +22,6 @@ final class PlainString implements StringValue
         return new self(mb_substr($this->value, $start, $length));
     }
 
-    /**
-     * @return StringValue
-     */
     public function postfix(StringValue $other): PlainString
     {
         return new self($this->value . $other->toString());
@@ -110,11 +107,11 @@ final class PlainString implements StringValue
         return new self(preg_replace_callback($pattern, $callback, $this->value));
     }
 
-    public function matchPatterns(string $pattern): ArrayValue
+    public function matchPatterns(string $pattern): StringsValue
     {
         preg_match($pattern, $this->value, $matches);
 
-        return Arrays::create($matches);
+        return Arrays::strings($matches);
     }
 
     public function isMatching(string $pattern): bool
@@ -122,16 +119,16 @@ final class PlainString implements StringValue
         return $this->matchAllPatterns($pattern)->count() > 0;
     }
 
-    public function matchAllPatterns(string $pattern): ArrayValue
+    public function matchAllPatterns(string $pattern): StringsValue
     {
         preg_match_all($pattern, $this->value, $matches, PREG_SET_ORDER);
 
-        return Arrays::create($matches);
+        return Arrays::strings($matches);
     }
 
-    public function splitByPattern(string $pattern): ArrayValue
+    public function splitByPattern(string $pattern): StringsValue
     {
-        return Arrays::create(preg_split($pattern, $this->value));
+        return Arrays::strings(preg_split($pattern, $this->value));
     }
 
     public function explode(string $delimiter): StringsValue

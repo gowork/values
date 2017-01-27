@@ -102,15 +102,27 @@ interface StringValue extends Value
 
     public function positionLast(string $needle): ?int;
 
-    public function matchAllPatterns(string $pattern): ArrayValue;
+    /**
+     * @return StringsValue
+     */
+    public function matchAllPatterns(string $pattern);
 
-    public function matchPatterns(string $pattern): ArrayValue;
+    /**
+     * @return StringsValue
+     */
+    public function matchPatterns(string $pattern);
 
     public function isMatching(string $pattern): bool;
 
-    public function splitByPattern(string $pattern): ArrayValue;
+    /**
+     * @return StringsValue
+     */
+    public function splitByPattern(string $pattern);
 
-    public function explode(string $delimiter): StringsValue;
+    /**
+     * @return StringsValue
+     */
+    public function explode(string $delimiter);
 
     public function contains(string $substring): bool;
 

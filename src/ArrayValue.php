@@ -4,6 +4,114 @@ namespace GW\Value;
 
 interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \ArrayAccess
 {
+    // Collection
+
+    /**
+     * @param callable $callback function(mixed $value): void
+     * @return ArrayValue
+     */
+    public function each(callable $callback);
+
+    /**
+     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
+     * @return ArrayValue
+     */
+    public function unique(?callable $comparator = null);
+
+    /**
+     * @return mixed[]
+     */
+    public function toArray(): array;
+
+    /**
+     * @param callable $transformer function(mixed $value): bool { ... }
+     * @return ArrayValue
+     */
+    public function filter(callable $transformer);
+
+    /**
+     * @return ArrayValue
+     */
+    public function filterEmpty();
+
+    /**
+     * @param callable $transformer function(mixed $value): mixed { ... }
+     * @return ArrayValue
+     */
+    public function map(callable $transformer);
+
+    /**
+     * @param callable $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
+     * @return ArrayValue
+     */
+    public function sort(callable $comparator);
+
+    /**
+     * @return ArrayValue
+     */
+    public function shuffle();
+
+    /**
+     * @return ArrayValue
+     */
+    public function reverse();
+
+    // Stack
+
+    /**
+     * @param mixed $value
+     * @return ArrayValue
+     */
+    public function unshift($value);
+
+    /**
+     * @param mixed $value
+     * @return ArrayValue
+     */
+    public function shift(&$value = null);
+
+    /**
+     * @param mixed $value
+     * @return ArrayValue
+     */
+    public function push($value);
+
+    /**
+     * @param mixed $value
+     * @return ArrayValue
+     */
+    public function pop(&$value = null);
+
+    // ArrayAccess
+
+    /**
+     * @param int $offset
+     */
+    public function offsetExists($offset): bool;
+
+    /**
+     * @param int $offset
+     * @return mixed
+     */
+    public function offsetGet($offset);
+
+    /**
+     * @param int $offset
+     * @param mixed $value
+     * @return void
+     * @throws \BadMethodCallException For immutable types.
+     */
+    public function offsetSet($offset, $value);
+
+    /**
+     * @param int $offset
+     * @return void
+     * @throws \BadMethodCallException For immutable types.
+     */
+    public function offsetUnset($offset);
+
+    // ArrayValue own
+
     /**
      * @return ArrayValue
      */
@@ -32,24 +140,6 @@ interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \Arra
      * @return mixed
      */
     public function reduce(callable $transformer, $start);
-
-    /**
-     * @param callable $transformer function(mixed $value): mixed
-     * @return ArrayValue
-     */
-    public function map(callable $transformer);
-
-    /**
-     * @param callable $transformer function(mixed $value): bool { ... }
-     * @return ArrayValue
-     */
-    public function filter(callable $transformer);
-
-    /**
-     * @param callable $callback function(mixed $value): void
-     * @return ArrayValue
-     */
-    public function each(callable $callback);
 
     public function implode(string $glue): StringValue;
 
