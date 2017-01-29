@@ -1,0 +1,9 @@
+#### Examples
+
+```php
+{{source}}
+```
+
+```
+{{output}}
+```

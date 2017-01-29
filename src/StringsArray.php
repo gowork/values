@@ -251,6 +251,11 @@ final class StringsArray implements StringsValue
         return $this->withMapByMethod(__FUNCTION__, $other);
     }
 
+    public function prefix(StringValue $other): StringsArray
+    {
+        return $this->withMapByMethod(__FUNCTION__, $other);
+    }
+
     public function length(): int
     {
         return $this->toStringValue()->length();

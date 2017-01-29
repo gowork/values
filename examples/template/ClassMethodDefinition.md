@@ -1,0 +1,5 @@
+```php
+<?php
+{{doc}}
+{{declaration}}
+```
