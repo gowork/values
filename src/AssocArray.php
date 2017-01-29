@@ -2,7 +2,7 @@
 
 namespace GW\Value;
 
-final class AssocArray implements Value, Collection, \IteratorAggregate
+final class AssocArray implements AssocValue
 {
     /** @var array */
     private $items;
@@ -30,11 +30,11 @@ final class AssocArray implements Value, Collection, \IteratorAggregate
     }
 
     /**
-     * @return ArrayValue|string[]
+     * @return StringsValue
      */
-    public function keys(): ArrayValue
+    public function keys(): StringsValue
     {
-        return Arrays::create($this->keys);
+        return Arrays::strings($this->keys);
     }
 
     /**
@@ -110,7 +110,7 @@ final class AssocArray implements Value, Collection, \IteratorAggregate
 
         $result = [];
 
-        foreach ($this->items as $valueA) {
+        foreach ($this->items as $keyA => $valueA) {
             foreach ($result as $valueB) {
                 if ($comparator($valueA, $valueB) === 0) {
                     // item already in result
@@ -118,7 +118,7 @@ final class AssocArray implements Value, Collection, \IteratorAggregate
                 }
             }
 
-            $result[] = $valueA;
+            $result[$keyA] = $valueA;
         }
 
         return new self($result);
@@ -132,12 +132,10 @@ final class AssocArray implements Value, Collection, \IteratorAggregate
         return $this->merge(new self([$key => $value]));
     }
 
-    public function merge(AssocArray $other): AssocArray
+    public function merge(AssocValue $other): AssocArray
     {
-        return new self(array_merge($this->items, $other->items));
+        return new self(array_merge($this->items, $other->toAssocArray()));
     }
-
-    // finalizers
 
     public function without(string $key): AssocArray
     {
@@ -152,17 +150,18 @@ final class AssocArray implements Value, Collection, \IteratorAggregate
      */
     public function withoutElement($value): AssocArray
     {
-        return $this->filter(Filters::noteEqual($value));
+        return $this->filter(Filters::notEqual($value));
     }
 
-    /**
-     * @param callable $transformer function(mixed $value, mixed $reduced, string $key): mixed
-     * @param mixed $start
-     * @return mixed
-     */
     public function reduce(callable $transformer, $start)
     {
-        return array_reduce($this->items, $transformer, $start);
+        $reduced = $start;
+
+        foreach ($this->items as $key => $value) {
+            $reduced = $transformer($reduced, $value, $key);
+        }
+
+        return $reduced;
     }
 
     /**
@@ -208,6 +207,11 @@ final class AssocArray implements Value, Collection, \IteratorAggregate
         return $this->values()->toArray();
     }
 
+    public function toAssocArray(): array
+    {
+        return $this->items;
+    }
+
     public function getIterator(): \Iterator
     {
         return new \ArrayIterator($this->items);
@@ -221,5 +225,27 @@ final class AssocArray implements Value, Collection, \IteratorAggregate
     public function isEmpty(): bool
     {
         return $this->items === [];
+    }
+
+    public function offsetExists($offset): bool
+    {
+        // TODO require int offset
+        return isset($this->items[$offset]);
+    }
+
+    public function offsetGet($offset)
+    {
+        // TODO require string offset
+        return $this->items[$offset];
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        throw new \BadMethodCallException('ArrayValue is immutable');
+    }
+
+    public function offsetUnset($offset)
+    {
+        throw new \BadMethodCallException('ArrayValue is immutable');
     }
 }

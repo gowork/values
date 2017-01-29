@@ -63,5 +63,4 @@ interface Collection extends Filterable, Mappable, Sortable, Countable, Reversib
      * @return Collection
      */
     public function reverse();
-
 }

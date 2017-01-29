@@ -79,7 +79,7 @@ final class Filters
         };
     }
 
-    public static function noteEqual($other): \Closure
+    public static function notEqual($other): \Closure
     {
         return function ($value) use ($other): bool {
             return $value !== $other;
