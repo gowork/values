@@ -19,7 +19,7 @@ final class Arrays
         return new PlainArray(...$array);
     }
 
-    public static function assoc(array $array = []): AssocArray
+    public static function assoc(array $array = []): AssocValue
     {
         return new AssocArray($array);
     }

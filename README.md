@@ -31,7 +31,7 @@ foreach ($arr as $v) {
 } // abc
 ```
 
-## AssocArray
+## AssocValue
 
 ```php
 <?php
