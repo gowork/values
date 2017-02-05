@@ -96,6 +96,11 @@ interface StringValue extends Value
      */
     public function postfix(StringValue $other);
 
+    /**
+     * @return StringValue
+     */
+    public function prefix(StringValue $other);
+
     public function length(): int;
 
     public function position(string $needle): ?int;

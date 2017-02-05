@@ -233,4 +233,9 @@ interface StringsValue extends ArrayValue, StringValue
      * @return StringsValue
      */
     public function postfix(StringValue $other);
+
+    /**
+     * @return StringsValue
+     */
+    public function prefix(StringValue $other);
 }

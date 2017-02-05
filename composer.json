@@ -15,7 +15,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "spec\\GW\\Value\\": "spec/"
+            "spec\\GW\\Value\\": "spec/",
+            "doc\\GW\\Value\\": "examples/"
         }
     },
     "minimum-stability": "dev"

@@ -22,11 +22,11 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @param callable $transformer function(mixed $value, string $key): mixed
+     * @param callable $transformer function(mixed $value): mixed
      */
     public function map(callable $transformer): AssocArray
     {
-        return new self(array_map($transformer, $this->items, $this->keys));
+        return new self(array_map($transformer, $this->items));
     }
 
     /**

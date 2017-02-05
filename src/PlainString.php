@@ -27,6 +27,11 @@ final class PlainString implements StringValue
         return new self($this->value . $other->toString());
     }
 
+    public function prefix(StringValue $other): PlainString
+    {
+        return new self($other->toString() . $this->value);
+    }
+
     public function stripTags(): PlainString
     {
         return new self(strip_tags($this->value));
