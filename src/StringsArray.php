@@ -320,7 +320,7 @@ final class StringsArray implements StringsValue
     {
         return $strings
             ->map(function ($string) {
-                return is_string($string) ? Strings::create($string) : $string;
+                return is_scalar($string) ? Strings::create((string)$string) : $string;
             })
             ->each(function ($string): void {
                 if (!$string instanceof StringValue) {
