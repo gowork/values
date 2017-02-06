@@ -967,7 +967,7 @@ public function filterEmpty();
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $value): mixed { ... }
+ * @param callable $transformer function(mixed $value[, string $key]): mixed { ... }
  * @return AssocValue
  */
 public function map(callable $transformer);
@@ -1079,7 +1079,7 @@ public function values(): ArrayValue;
 ```php
 <?php
 /**
- * @param callable $transformer function(string $key): string
+ * @param callable $transformer function(string $key[, mixed $value]): string
  * @return AssocValue
  */
 public function mapKeys(callable $transformer);

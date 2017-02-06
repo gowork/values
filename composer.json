@@ -19,5 +19,8 @@
             "doc\\GW\\Value\\": "examples/"
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "config": {
+        "bin-dir": "bin"
+    }
 }

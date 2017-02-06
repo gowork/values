@@ -12,21 +12,28 @@ final class AssocArray implements AssocValue
 
     public function __construct(array $items)
     {
-        $this->items = $this->transformArrayKeys($items, 'strval');
+        $this->items = $this->transformArrayKeys($items, function ($key): string {
+            return strval($key);
+        });
         $this->keys = array_keys($this->items);
     }
 
     private function transformArrayKeys(array $items, callable $transformer): array
     {
-        return array_combine(array_map($transformer, array_keys($items)), $items);
+        return array_combine(array_map($transformer, array_keys($items), $items), $items);
     }
 
     /**
-     * @param callable $transformer function(mixed $value): mixed
+     * @param callable $transformer function(mixed $value[, string $key]): mixed
      */
     public function map(callable $transformer): AssocArray
     {
-        return new self(array_map($transformer, $this->items));
+        $result = [];
+        foreach ($this->items as $key => $value) {
+            $result[$key] = $transformer($value, $key);
+        }
+
+        return new self($result);
     }
 
     /**
@@ -38,7 +45,7 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @param callable $transformer function(string $key): string
+     * @param callable $transformer function(string $key[, mixed $value]): string
      */
     public function mapKeys(callable $transformer): AssocArray
     {
@@ -169,7 +176,6 @@ final class AssocArray implements AssocValue
      */
     public function get(string $key, $default = null)
     {
-        // TODO what if does not exist?
         return $this->items[$key] ?? $default;
     }
 

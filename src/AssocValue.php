@@ -30,7 +30,7 @@ interface AssocValue extends Value, Collection, \IteratorAggregate, \ArrayAccess
     public function filterEmpty();
 
     /**
-     * @param callable $transformer function(mixed $value): mixed { ... }
+     * @param callable $transformer function(mixed $value[, string $key]): mixed { ... }
      * @return AssocValue
      */
     public function map(callable $transformer);
@@ -88,7 +88,7 @@ interface AssocValue extends Value, Collection, \IteratorAggregate, \ArrayAccess
     public function values(): ArrayValue;
 
     /**
-     * @param callable $transformer function(string $key): string
+     * @param callable $transformer function(string $key[, mixed $value]): string
      * @return AssocValue
      */
     public function mapKeys(callable $transformer);
