@@ -9,7 +9,9 @@
 ```php
 <?php
 
-$array = \GW\Value\Arrays::create(['a', 'b', 'c']);
+use GW\Value\Wrap;
+
+$array = Wrap::array(['a', 'b', 'c']);
 
 $array[0]; // 'a'
 $has = isset($array[3]); // false
@@ -43,9 +45,9 @@ Items are not reassigned, so state `ArrayValue` should not have changed.
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', 'b', 'c']);
+$array = Wrap::array(['a', 'b', 'c']);
 $mapped = $array->each(function (string $letter): void {
     echo $letter;
 });
@@ -75,9 +77,9 @@ When `$comparator` is not provided items are compared as strings.
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$names = Arrays::create(['John', 'Basil', 'John', 'Johny', 'Jon', 'Basile']);
+$names = Wrap::array(['John', 'Basil', 'John', 'Johny', 'Jon', 'Basile']);
 
 echo 'unique names = ';
 var_export($names->unique()->toArray());
@@ -134,9 +136,9 @@ Create new `ArrayValue` with items filtered by callback.
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create([1, 2, 3, 4]);
+$array = Wrap::array([1, 2, 3, 4]);
 $even = $array->filter(function (int $number): bool {
     return $number % 2 === 0;
 });
@@ -168,9 +170,9 @@ Filter out empty items from `ArrayValue`.
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', '', 'b', 'c']);
+$array = Wrap::array(['a', '', 'b', 'c']);
 $notEmpty = $array->filterEmpty();
 
 var_export($notEmpty->toArray());
@@ -202,9 +204,9 @@ Create new `ArrayValue` with items mapped by callback.
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', 'b', 'c']);
+$array = Wrap::array(['a', 'b', 'c']);
 $mapped = $array->map(function (string $letter): string {
     return 'new ' . $letter;
 });
@@ -238,10 +240,10 @@ Create new `ArrayValue` with items sorted by callback.
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 use GW\Value\Sorts;
 
-$array = Arrays::create(['c', 'a', 'b']);
+$array = Wrap::array(['c', 'a', 'b']);
 $customSort = $array->sort(function (string $a, string $b): int {
     return $a <=> $b;
 });
@@ -294,15 +296,15 @@ public function shuffle();
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$words = Arrays::create(['do', 'or', 'do', 'not', 'there', 'is', 'no', 'try']);
+$words = Wrap::array(['do', 'or', 'do', 'not', 'there', 'is', 'no', 'try']);
 
 echo $words->shuffle()->implode(' ')->toString();
 ```
 
 ```
-do not try do is there or no
+there or is no try do do not
 ```
 
 ### ArrayValue::reverse
@@ -320,9 +322,9 @@ public function reverse();
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$words = Arrays::create(['do', 'or', 'do', 'not', 'there', 'is', 'no', 'try']);
+$words = Wrap::array(['do', 'or', 'do', 'not', 'there', 'is', 'no', 'try']);
 
 echo $words->reverse()->implode(' ')->toString();
 ```
@@ -347,9 +349,9 @@ public function unshift($value);
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$words = Arrays::create(['a', 'b', 'c']);
+$words = Wrap::array(['a', 'b', 'c']);
 
 var_export($words->unshift('X')->toArray());
 ```
@@ -379,9 +381,9 @@ public function shift(&$value = null);
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$words = Arrays::create(['a', 'b', 'c']);
+$words = Wrap::array(['a', 'b', 'c']);
 
 var_export($words->shift($x)->toArray());
 echo PHP_EOL;
@@ -412,9 +414,9 @@ public function push($value);
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$words = Arrays::create(['a', 'b', 'c']);
+$words = Wrap::array(['a', 'b', 'c']);
 
 var_export($words->push('X')->toArray());
 ```
@@ -444,9 +446,9 @@ public function pop(&$value = null);
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$words = Arrays::create(['a', 'b', 'c']);
+$words = Wrap::array(['a', 'b', 'c']);
 
 var_export($words->pop($x)->toArray());
 echo PHP_EOL;
@@ -522,10 +524,10 @@ public function join(ArrayValue $other);
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$one = Arrays::create(['a', 'b', 'c']);
-$two = Arrays::create(['d', 'e', 'f']);
+$one = Wrap::array(['a', 'b', 'c']);
+$two = Wrap::array(['d', 'e', 'f']);
 
 var_export($one->join($two)->toArray());
 ```
@@ -556,9 +558,9 @@ public function slice(int $offset, int $length);
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$letters = Arrays::create(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
+$letters = Wrap::array(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
 
 var_export($letters->slice(2, 4)->toArray());
 echo PHP_EOL;
@@ -615,10 +617,10 @@ public function diff(ArrayValue $other, ?callable $comparator = null);
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$one = Arrays::create(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
-$two = Arrays::create(['c', 'd', 'e', 'F']);
+$one = Wrap::array(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
+$two = Wrap::array(['c', 'd', 'e', 'F']);
 
 var_export($one->diff($two)->toArray());
 
@@ -658,10 +660,10 @@ public function intersect(ArrayValue $other, ?callable $comparator = null);
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$one = Arrays::create(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
-$two = Arrays::create(['c', 'd', 'e', 'F']);
+$one = Wrap::array(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
+$two = Wrap::array(['c', 'd', 'e', 'F']);
 
 var_export($one->intersect($two)->toArray());
 
@@ -702,9 +704,9 @@ public function reduce(callable $transformer, $start);
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$prices = Arrays::create([10, 20, 50, 120]);
+$prices = Wrap::array([10, 20, 50, 120]);
 
 $summarize = function(int $sum, int $price): int {
     return $sum + $price;
@@ -739,9 +741,9 @@ public function implode(string $glue): StringValue;
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$prices = Arrays::create(['a', 'b', 'c', 'd']);
+$prices = Wrap::array(['a', 'b', 'c', 'd']);
 
 echo $prices->implode(' / ')->toString();
 ```
@@ -773,23 +775,22 @@ public function isEmpty(): bool;
 ```php
 <?php
 
-use GW\Value\Arrays;
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
 echo "['a']: ";
-var_export(Arrays::create(['a'])->isEmpty());
+var_export(Wrap::array(['a'])->isEmpty());
 echo PHP_EOL;
 
 echo "[]: ";
-var_export(Arrays::create([])->isEmpty());
+var_export(Wrap::array([])->isEmpty());
 echo PHP_EOL;
 
 echo "'a': ";
-var_export(Strings::create('a')->isEmpty());
+var_export(Wrap::string('a')->isEmpty());
 echo PHP_EOL;
 
 echo "'': ";
-var_export(Strings::create('')->isEmpty());
+var_export(Wrap::string('')->isEmpty());
 echo PHP_EOL;
 ```
 
@@ -815,14 +816,14 @@ public function first();
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', 'b', 'c']);
+$array = Wrap::array(['a', 'b', 'c']);
 
 echo 'array first: ' . $array->first();
 echo PHP_EOL;
 
-$assoc = Arrays::assoc(['a' => 1, 'b' => 2, 'c' => 3]);
+$assoc = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
 
 echo 'assoc first: ' . $assoc->first();
 echo PHP_EOL;
@@ -848,14 +849,14 @@ public function last();
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', 'b', 'c']);
+$array = Wrap::array(['a', 'b', 'c']);
 
 echo 'array last: ' . $array->last();
 echo PHP_EOL;
 
-$assoc = Arrays::assoc(['a' => 1, 'b' => 2, 'c' => 3]);
+$assoc = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
 
 echo 'assoc last: ' . $assoc->last();
 echo PHP_EOL;
@@ -879,9 +880,9 @@ public function count(): int;
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', 'b', 'c']);
+$array = Wrap::array(['a', 'b', 'c']);
 
 echo 'count: ' . $array->count();
 ```
@@ -903,7 +904,9 @@ count: 3
 ```php
 <?php
 
-$array = \GW\Value\Arrays::assoc(['a' => 1, 'b' => 2, 'c' => 3]);
+use GW\Value\Wrap;
+
+$array = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
 
 $array['a']; // 1
 $array[0]; // Exception
@@ -1063,7 +1066,7 @@ public function toAssocArray(): array;
 ```php
 <?php
 
-public function keys(): StringsValue;
+public function keys(): StringsArray;
 ```
 
 ### AssocValue::values
@@ -1184,23 +1187,22 @@ public function isEmpty(): bool;
 ```php
 <?php
 
-use GW\Value\Arrays;
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
 echo "['a']: ";
-var_export(Arrays::create(['a'])->isEmpty());
+var_export(Wrap::array(['a'])->isEmpty());
 echo PHP_EOL;
 
 echo "[]: ";
-var_export(Arrays::create([])->isEmpty());
+var_export(Wrap::array([])->isEmpty());
 echo PHP_EOL;
 
 echo "'a': ";
-var_export(Strings::create('a')->isEmpty());
+var_export(Wrap::string('a')->isEmpty());
 echo PHP_EOL;
 
 echo "'': ";
-var_export(Strings::create('')->isEmpty());
+var_export(Wrap::string('')->isEmpty());
 echo PHP_EOL;
 ```
 
@@ -1226,14 +1228,14 @@ public function first();
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', 'b', 'c']);
+$array = Wrap::array(['a', 'b', 'c']);
 
 echo 'array first: ' . $array->first();
 echo PHP_EOL;
 
-$assoc = Arrays::assoc(['a' => 1, 'b' => 2, 'c' => 3]);
+$assoc = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
 
 echo 'assoc first: ' . $assoc->first();
 echo PHP_EOL;
@@ -1259,14 +1261,14 @@ public function last();
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', 'b', 'c']);
+$array = Wrap::array(['a', 'b', 'c']);
 
 echo 'array last: ' . $array->last();
 echo PHP_EOL;
 
-$assoc = Arrays::assoc(['a' => 1, 'b' => 2, 'c' => 3]);
+$assoc = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
 
 echo 'assoc last: ' . $assoc->last();
 echo PHP_EOL;
@@ -1300,9 +1302,9 @@ public function count(): int;
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', 'b', 'c']);
+$array = Wrap::array(['a', 'b', 'c']);
 
 echo 'count: ' . $array->count();
 ```
@@ -1332,9 +1334,9 @@ public function stripTags();
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$html = Strings::create('<p>Html is <strong>cool</strong> but not always...</p>');
+$html = Wrap::string('<p>Html is <strong>cool</strong> but not always...</p>');
 
 echo $html->stripTags()->toString();
 ```
@@ -1358,9 +1360,9 @@ public function trim(string $characterMask = self::TRIM_MASK);
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create(' :.: I ♡ SPACE :.:  ');
+$text = Wrap::string(' :.: I ♡ SPACE :.:  ');
 
 echo $text->trim()->toString() . PHP_EOL;
 echo $text->trim(' .:')->toString() . PHP_EOL;
@@ -1386,9 +1388,9 @@ public function trimRight(string $characterMask = self::TRIM_MASK);
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create(' :.: I ♡ SPACE :.:  ');
+$text = Wrap::string(' :.: I ♡ SPACE :.:  ');
 
 echo $text->trimRight()->toString() . PHP_EOL;
 echo $text->trimRight(' .:')->toString() . PHP_EOL;
@@ -1414,9 +1416,9 @@ public function trimLeft(string $characterMask = self::TRIM_MASK);
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create(' :.: I ♡ SPACE :.:  ');
+$text = Wrap::string(' :.: I ♡ SPACE :.:  ');
 
 echo $text->trimLeft()->toString() . PHP_EOL;
 echo $text->trimLeft(' .:')->toString() . PHP_EOL;
@@ -1442,9 +1444,9 @@ public function lower();
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('SOMETIMES I WANNA SCREAM!');
+$text = Wrap::string('SOMETIMES I WANNA SCREAM!');
 
 echo $text->lower()->toString() . PHP_EOL;
 ```
@@ -1468,9 +1470,9 @@ public function upper();
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('it`s so quiet...');
+$text = Wrap::string('it`s so quiet...');
 
 echo $text->upper()->toString() . PHP_EOL;
 ```
@@ -1494,9 +1496,9 @@ public function lowerFirst();
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('CamelCaseMethod()');
+$text = Wrap::string('CamelCaseMethod()');
 
 echo $text->lowerFirst()->toString() . PHP_EOL;
 ```
@@ -1520,9 +1522,9 @@ public function upperFirst();
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('words don`t come easy');
+$text = Wrap::string('words don`t come easy');
 
 echo $text->upperFirst()->toString() . PHP_EOL;
 ```
@@ -1546,9 +1548,9 @@ public function upperWords();
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$html = Strings::create('words don`t come easy');
+$html = Wrap::string('words don`t come easy');
 
 echo $html->upperWords()->toString() . PHP_EOL;
 ```
@@ -1572,9 +1574,9 @@ public function padRight(int $length, string $string = ' ');
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('cut here ☞');
+$text = Wrap::string('cut here ☞');
 
 echo $text->padRight(16, '-')->toString();
 ```
@@ -1598,9 +1600,9 @@ public function padLeft(int $length, string $string = ' ');
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('☜ cut here');
+$text = Wrap::string('☜ cut here');
 
 echo $text->padLeft(16, '-')->toString();
 ```
@@ -1624,9 +1626,9 @@ public function padBoth(int $length, string $string = ' ');
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('☜ cut here ☞');
+$text = Wrap::string('☜ cut here ☞');
 
 echo $text->padBoth(24, '-')->toString();
 ```
@@ -1650,9 +1652,9 @@ public function replace(string $search, string $replace);
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('My favourite color is pink!');
+$text = Wrap::string('My favourite color is pink!');
 
 echo $text->replace('pink', 'blue')->toString();
 ```
@@ -1676,9 +1678,9 @@ public function replacePattern(string $pattern, string $replacement);
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('You are looking good! Really!');
+$text = Wrap::string('You are looking good! Really!');
 
 echo $text->replacePattern('/[aeiouy]/', '')->toString();
 ```
@@ -1702,9 +1704,9 @@ public function replacePatternCallback(string $pattern, callable $callback);
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('You are looking good! Really!');
+$text = Wrap::string('You are looking good! Really!');
 
 $replacer = function(array $matches): string {
     $vowel = $matches[0];
@@ -1743,11 +1745,11 @@ public function truncate(int $length, string $postfix = '...');
 ```php
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-echo Strings::create('It`s Short')->truncate(10)->toString() . PHP_EOL;
-echo Strings::create('This one is too long!')->truncate(10)->toString() . PHP_EOL;
-echo Strings::create('This one is too long!')->truncate(10, '+')->toString() . PHP_EOL;
+echo Wrap::string('It`s Short')->truncate(10)->toString() . PHP_EOL;
+echo Wrap::string('This one is too long!')->truncate(10)->toString() . PHP_EOL;
+echo Wrap::string('This one is too long!')->truncate(10, '+')->toString() . PHP_EOL;
 ```
 
 ```
@@ -1815,7 +1817,7 @@ public function positionLast(string $needle): ?int;
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function matchAllPatterns(string $pattern);
 ```
@@ -1825,7 +1827,7 @@ public function matchAllPatterns(string $pattern);
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function matchPatterns(string $pattern);
 ```
@@ -1843,7 +1845,7 @@ public function isMatching(string $pattern): bool;
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function splitByPattern(string $pattern);
 ```
@@ -1853,7 +1855,7 @@ public function splitByPattern(string $pattern);
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function explode(string $delimiter);
 ```
@@ -1895,23 +1897,22 @@ public function isEmpty(): bool;
 ```php
 <?php
 
-use GW\Value\Arrays;
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
 echo "['a']: ";
-var_export(Arrays::create(['a'])->isEmpty());
+var_export(Wrap::array(['a'])->isEmpty());
 echo PHP_EOL;
 
 echo "[]: ";
-var_export(Arrays::create([])->isEmpty());
+var_export(Wrap::array([])->isEmpty());
 echo PHP_EOL;
 
 echo "'a': ";
-var_export(Strings::create('a')->isEmpty());
+var_export(Wrap::string('a')->isEmpty());
 echo PHP_EOL;
 
 echo "'': ";
-var_export(Strings::create('')->isEmpty());
+var_export(Wrap::string('')->isEmpty());
 echo PHP_EOL;
 ```
 
@@ -1923,31 +1924,31 @@ echo PHP_EOL;
 ```
 
 
-## StringsValue
+## StringsArray
 
-### StringsValue::each
+### StringsArray::each
 
 ```php
 <?php
 /**
  * @param callable $callback function(StringValue $value): void
- * @return StringsValue
+ * @return StringsArray
  */
 public function each(callable $callback);
 ```
 
-### StringsValue::unique
+### StringsArray::unique
 
 ```php
 <?php
 /**
  * @param callable|null $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
- * @return StringsValue
+ * @return StringsArray
  */
 public function unique(?callable $comparator = null);
 ```
 
-### StringsValue::toArray
+### StringsArray::toArray
 
 ```php
 <?php
@@ -1957,114 +1958,114 @@ public function unique(?callable $comparator = null);
 public function toArray(): array;
 ```
 
-### StringsValue::filter
+### StringsArray::filter
 
 ```php
 <?php
 /**
  * @param callable $transformer function(StringValue $value): bool
- * @return StringsValue
+ * @return StringsArray
  */
 public function filter(callable $transformer);
 ```
 
-### StringsValue::filterEmpty
+### StringsArray::filterEmpty
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function filterEmpty();
 ```
 
-### StringsValue::map
+### StringsArray::map
 
 ```php
 <?php
 /**
  * @param callable $transformer function(StringValue $value): StringValue|string
- * @return StringsValue
+ * @return StringsArray
  */
 public function map(callable $transformer);
 ```
 
-### StringsValue::sort
+### StringsArray::sort
 
 ```php
 <?php
 /**
  * @param callable $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
- * @return StringsValue
+ * @return StringsArray
  */
 public function sort(callable $comparator);
 ```
 
-### StringsValue::shuffle
+### StringsArray::shuffle
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function shuffle();
 ```
 
-### StringsValue::reverse
+### StringsArray::reverse
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function reverse();
 ```
 
-### StringsValue::unshift
+### StringsArray::unshift
 
 ```php
 <?php
 /**
  * @param StringValue|string $value
- * @return StringsValue
+ * @return StringsArray
  */
 public function unshift($value);
 ```
 
-### StringsValue::shift
+### StringsArray::shift
 
 ```php
 <?php
 /**
  * @param mixed $value
- * @return StringsValue
+ * @return StringsArray
  */
 public function shift(&$value = null);
 ```
 
-### StringsValue::push
+### StringsArray::push
 
 ```php
 <?php
 /**
  * @param StringValue|string $value
- * @return StringsValue
+ * @return StringsArray
  */
 public function push($value);
 ```
 
-### StringsValue::pop
+### StringsArray::pop
 
 ```php
 <?php
 /**
  * @param mixed $value
- * @return StringsValue
+ * @return StringsArray
  */
 public function pop(&$value = null);
 ```
 
-### StringsValue::offsetExists
+### StringsArray::offsetExists
 
 ```php
 <?php
@@ -2074,7 +2075,7 @@ public function pop(&$value = null);
 public function offsetExists($offset): bool;
 ```
 
-### StringsValue::offsetGet
+### StringsArray::offsetGet
 
 ```php
 <?php
@@ -2085,7 +2086,7 @@ public function offsetExists($offset): bool;
 public function offsetGet($offset);
 ```
 
-### StringsValue::offsetSet
+### StringsArray::offsetSet
 
 ```php
 <?php
@@ -2098,7 +2099,7 @@ public function offsetGet($offset);
 public function offsetSet($offset, $value);
 ```
 
-### StringsValue::offsetUnset
+### StringsArray::offsetUnset
 
 ```php
 <?php
@@ -2110,49 +2111,49 @@ public function offsetSet($offset, $value);
 public function offsetUnset($offset);
 ```
 
-### StringsValue::join
+### StringsArray::join
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function join(ArrayValue $other);
 ```
 
-### StringsValue::slice
+### StringsArray::slice
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function slice(int $offset, int $length);
 ```
 
-### StringsValue::diff
+### StringsArray::diff
 
 ```php
 <?php
 /**
  * @param callable|null $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
- * @return StringsValue
+ * @return StringsArray
  */
 public function diff(ArrayValue $other, ?callable $comparator = null);
 ```
 
-### StringsValue::intersect
+### StringsArray::intersect
 
 ```php
 <?php
 /**
  * @param callable|null $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
- * @return StringsValue
+ * @return StringsArray
  */
 public function intersect(ArrayValue $other, ?callable $comparator = null);
 ```
 
-### StringsValue::reduce
+### StringsArray::reduce
 
 ```php
 <?php
@@ -2164,7 +2165,7 @@ public function intersect(ArrayValue $other, ?callable $comparator = null);
 public function reduce(callable $transformer, $start);
 ```
 
-### StringsValue::implode
+### StringsArray::implode
 
 ```php
 <?php
@@ -2172,202 +2173,441 @@ public function reduce(callable $transformer, $start);
 public function implode(string $glue): StringValue;
 ```
 
-### StringsValue::notEmpty
+### StringsArray::notEmpty
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function notEmpty();
 ```
 
-### StringsValue::stripTags
+### StringsArray::stripTags
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function stripTags();
 ```
 
-### StringsValue::trim
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::stringsArray(['<h1>Story</h1>', '<h2>Chapter 1</h2>', '<p>Once upon a time...</p>']);
+
+var_export($text->stripTags()->toArray());
+```
+
+```
+array (
+  0 => 'Story',
+  1 => 'Chapter 1',
+  2 => 'Once upon a time...',
+)
+```
+
+### StringsArray::trim
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function trim(string $characterMask = self::TRIM_MASK);
 ```
 
-### StringsValue::trimRight
+### StringsArray::trimRight
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function trimRight(string $characterMask = self::TRIM_MASK);
 ```
 
-### StringsValue::trimLeft
+### StringsArray::trimLeft
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function trimLeft(string $characterMask = self::TRIM_MASK);
 ```
 
-### StringsValue::lower
+### StringsArray::lower
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function lower();
 ```
 
-### StringsValue::upper
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::stringsArray(['SOMETIMES', 'I', 'WANNA', 'SCREAM!']);
+
+var_export($text->lower()->toArray());
+```
+
+```
+array (
+  0 => 'sometimes',
+  1 => 'i',
+  2 => 'wanna',
+  3 => 'scream!',
+)
+```
+
+### StringsArray::upper
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function upper();
 ```
 
-### StringsValue::lowerFirst
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::stringsArray(['it`s so quiet', 'and peaceful']);
+
+var_export($text->upper()->toArray());
+```
+
+```
+array (
+  0 => 'IT`S SO QUIET',
+  1 => 'AND PEACEFUL',
+)
+```
+
+### StringsArray::lowerFirst
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function lowerFirst();
 ```
 
-### StringsValue::upperFirst
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::stringsArray(['CamelCaseMethod', 'AnotherCamel']);
+
+var_export($text->lowerFirst()->toArray());
+```
+
+```
+array (
+  0 => 'camelCaseMethod',
+  1 => 'anotherCamel',
+)
+```
+
+### StringsArray::upperFirst
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function upperFirst();
 ```
 
-### StringsValue::upperWords
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::stringsArray(['it`s so quiet', 'and peaceful']);
+
+var_export($text->upperFirst()->toString());
+```
+
+```
+'It`s so quiet And peaceful'
+```
+
+### StringsArray::upperWords
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function upperWords();
 ```
 
-### StringsValue::padRight
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::stringsArray(['it`s so quiet', 'and peaceful']);
+
+var_export($text->upperWords()->toString());
+```
+
+```
+'It`s So Quiet And Peaceful'
+```
+
+### StringsArray::padRight
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function padRight(int $length, string $string = ' ');
 ```
 
-### StringsValue::padLeft
+### StringsArray::padLeft
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function padLeft(int $length, string $string = ' ');
 ```
 
-### StringsValue::padBoth
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::stringsArray(['one', 'two', 'three']);
+
+var_export($text->padLeft(16, '-')->toArray());
+```
+
+```
+array (
+  0 => '-------------one',
+  1 => '-------------two',
+  2 => '-----------three',
+)
+```
+
+### StringsArray::padBoth
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function padBoth(int $length, string $string = ' ');
 ```
 
-### StringsValue::replace
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::stringsArray(['one', 'two', 'three']);
+
+var_export($text->padBoth(24, '-')->toArray());
+```
+
+```
+array (
+  0 => '----------one-----------',
+  1 => '----------two-----------',
+  2 => '---------three----------',
+)
+```
+
+### StringsArray::replace
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function replace(string $search, string $replace);
 ```
 
-### StringsValue::replacePattern
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::stringsArray(['One.', 'Two.', 'Three.']);
+
+var_export($text->replace('.', '!!!')->toArray());
+```
+
+```
+array (
+  0 => 'One!!!',
+  1 => 'Two!!!',
+  2 => 'Three!!!',
+)
+```
+
+### StringsArray::replacePattern
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function replacePattern(string $pattern, string $replacement);
 ```
 
-### StringsValue::replacePatternCallback
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::stringsArray(['Please', 'censor', 'all', 'vowels!']);
+
+var_export($text->replacePattern('/[aeiouy]/', '*')->toArray());
+```
+
+```
+array (
+  0 => 'Pl**s*',
+  1 => 'c*ns*r',
+  2 => '*ll',
+  3 => 'v*w*ls!',
+)
+```
+
+### StringsArray::replacePatternCallback
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function replacePatternCallback(string $pattern, callable $callback);
 ```
 
-### StringsValue::truncate
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::stringsArray(['Please', 'censor', 'all', 'vowels!']);
+
+$replacer = function (array $match): string {
+    $letter = $match[0];
+
+    return '(' . $letter . ')';
+};
+
+var_export($text->replacePatternCallback('/[aeiouy]/', $replacer)->toArray());
+```
+
+```
+array (
+  0 => 'Pl(e)(a)s(e)',
+  1 => 'c(e)ns(o)r',
+  2 => '(a)ll',
+  3 => 'v(o)w(e)ls!',
+)
+```
+
+### StringsArray::truncate
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function truncate(int $length, string $postfix = '...');
 ```
 
-### StringsValue::substring
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::stringsArray(['short', 'quite long', 'very very long']);
+
+var_export($text->truncate(5, '~~')->toArray());
+```
+
+```
+array (
+  0 => 'short',
+  1 => 'quite~~',
+  2 => 'very ~~',
+)
+```
+
+### StringsArray::substring
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function substring(int $start, ?int $length = null);
 ```
 
-### StringsValue::postfix
+### StringsArray::postfix
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function postfix(StringValue $other);
 ```
 
-### StringsValue::prefix
+### StringsArray::prefix
 
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function prefix(StringValue $other);
 ```
@@ -2385,23 +2625,22 @@ public function isEmpty(): bool;
 ```php
 <?php
 
-use GW\Value\Arrays;
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
 echo "['a']: ";
-var_export(Arrays::create(['a'])->isEmpty());
+var_export(Wrap::array(['a'])->isEmpty());
 echo PHP_EOL;
 
 echo "[]: ";
-var_export(Arrays::create([])->isEmpty());
+var_export(Wrap::array([])->isEmpty());
 echo PHP_EOL;
 
 echo "'a': ";
-var_export(Strings::create('a')->isEmpty());
+var_export(Wrap::string('a')->isEmpty());
 echo PHP_EOL;
 
 echo "'': ";
-var_export(Strings::create('')->isEmpty());
+var_export(Wrap::string('')->isEmpty());
 echo PHP_EOL;
 ```
 
@@ -2427,14 +2666,14 @@ public function first();
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', 'b', 'c']);
+$array = Wrap::array(['a', 'b', 'c']);
 
 echo 'array first: ' . $array->first();
 echo PHP_EOL;
 
-$assoc = Arrays::assoc(['a' => 1, 'b' => 2, 'c' => 3]);
+$assoc = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
 
 echo 'assoc first: ' . $assoc->first();
 echo PHP_EOL;
@@ -2460,14 +2699,14 @@ public function last();
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', 'b', 'c']);
+$array = Wrap::array(['a', 'b', 'c']);
 
 echo 'array last: ' . $array->last();
 echo PHP_EOL;
 
-$assoc = Arrays::assoc(['a' => 1, 'b' => 2, 'c' => 3]);
+$assoc = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
 
 echo 'assoc last: ' . $assoc->last();
 echo PHP_EOL;
@@ -2491,9 +2730,9 @@ public function count(): int;
 ```php
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', 'b', 'c']);
+$array = Wrap::array(['a', 'b', 'c']);
 
 echo 'count: ' . $array->count();
 ```
@@ -2534,7 +2773,7 @@ public function positionLast(string $needle): ?int;
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function matchAllPatterns(string $pattern);
 ```
@@ -2544,7 +2783,7 @@ public function matchAllPatterns(string $pattern);
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function matchPatterns(string $pattern);
 ```
@@ -2562,7 +2801,7 @@ public function isMatching(string $pattern): bool;
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function splitByPattern(string $pattern);
 ```
@@ -2572,7 +2811,7 @@ public function splitByPattern(string $pattern);
 ```php
 <?php
 /**
- * @return StringsValue
+ * @return StringsArray
  */
 public function explode(string $delimiter);
 ```

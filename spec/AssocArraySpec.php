@@ -2,7 +2,7 @@
 
 namespace spec\GW\Value;
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 use GW\Value\AssocArray;
 use PhpSpec\ObjectBehavior;
 
@@ -27,7 +27,7 @@ final class AssocArraySpec extends ObjectBehavior
     {
         $keys = $this->keys();
         $keys->shouldNotBe($this);
-        $keys->shouldBeLike(Arrays::strings(['a', 'b', 'c']));
+        $keys->shouldBeLike(Wrap::stringsArray(['a', 'b', 'c']));
     }
 
     function it_should_return_filtered_array()
@@ -168,7 +168,7 @@ final class AssocArraySpec extends ObjectBehavior
     {
         $this->beConstructedWith(['zero', 'one', 'two']);
 
-        $this->keys()->shouldBeLike(Arrays::strings(['0', '1', '2']));
+        $this->keys()->shouldBeLike(Wrap::stringsArray(['0', '1', '2']));
     }
 
     function it_can_be_created_from_array()

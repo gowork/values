@@ -5,7 +5,9 @@
 ```php
 <?php
 
-$array = \GW\Value\Arrays::assoc(['a' => 1, 'b' => 2, 'c' => 3]);
+use GW\Value\Wrap;
+
+$array = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
 
 $array['a']; // 1
 $array[0]; // Exception

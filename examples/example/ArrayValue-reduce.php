@@ -1,8 +1,8 @@
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$prices = Arrays::create([10, 20, 50, 120]);
+$prices = Wrap::array([10, 20, 50, 120]);
 
 $summarize = function(int $sum, int $price): int {
     return $sum + $price;

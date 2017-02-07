@@ -1,8 +1,8 @@
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('You are looking good! Really!');
+$text = Wrap::string('You are looking good! Really!');
 
 $replacer = function(array $matches): string {
     $vowel = $matches[0];

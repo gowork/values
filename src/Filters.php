@@ -35,7 +35,7 @@ final class Filters
 
     public static function types(string ...$types): \Closure
     {
-        $callbacks = Arrays::create($types)->map([self::class, 'type'])->toArray();
+        $callbacks = Wrap::array($types)->map([self::class, 'type'])->toArray();
 
         return function ($value) use ($callbacks): bool {
             foreach ($callbacks as $callback) {

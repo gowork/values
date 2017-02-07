@@ -1,7 +1,7 @@
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('My favourite color is pink!');
+$text = Wrap::string('My favourite color is pink!');
 
 echo $text->replace('pink', 'blue')->toString();

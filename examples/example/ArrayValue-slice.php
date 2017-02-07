@@ -1,8 +1,8 @@
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$letters = Arrays::create(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
+$letters = Wrap::array(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
 
 var_export($letters->slice(2, 4)->toArray());
 echo PHP_EOL;

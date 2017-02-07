@@ -1,9 +1,9 @@
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$one = Arrays::create(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
-$two = Arrays::create(['c', 'd', 'e', 'F']);
+$one = Wrap::array(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
+$two = Wrap::array(['c', 'd', 'e', 'F']);
 
 var_export($one->diff($two)->toArray());
 

@@ -1,8 +1,8 @@
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', 'b', 'c']);
+$array = Wrap::array(['a', 'b', 'c']);
 $mapped = $array->each(function (string $letter): void {
     echo $letter;
 });

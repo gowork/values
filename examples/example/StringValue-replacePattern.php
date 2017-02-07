@@ -1,7 +1,7 @@
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('You are looking good! Really!');
+$text = Wrap::string('You are looking good! Really!');
 
 echo $text->replacePattern('/[aeiouy]/', '')->toString();

@@ -2,346 +2,240 @@
 
 namespace GW\Value;
 
-final class StringsArray implements StringsValue
+interface StringsArray extends ArrayValue, StringValue
 {
-    /** @var ArrayValue */
-    private $strings;
-
-    public function __construct(ArrayValue $strings)
-    {
-        $this->strings = $this->mapStringValues($strings);
-    }
-
-    public static function fromArray(array $strings): self
-    {
-        return new self(Arrays::create($strings));
-    }
-
-    public function join(ArrayValue $other): StringsArray
-    {
-        return new self($this->strings->join($this->mapStringValues($other)));
-    }
-
-    public function slice(int $offset, int $length): StringsArray
-    {
-        return new self($this->strings->slice($offset, $length));
-    }
-
-    public function diff(ArrayValue $other, ?callable $comparator = null): StringsArray
-    {
-        return new self($this->strings->diff($this->mapStringValues($other), $comparator));
-    }
-
-    public function intersect(ArrayValue $other, ?callable $comparator = null): StringsArray
-    {
-        return new self($this->strings->intersect($this->mapStringValues($other), $comparator));
-    }
-
-    public function reduce(callable $transformer, $start)
-    {
-        return $this->strings->reduce($transformer, $start);
-    }
-
-    public function map(callable $transformer): StringsArray
-    {
-        return new self($this->strings->map($transformer));
-    }
-
-    public function filter(callable $transformer): StringsArray
-    {
-        return new self($this->strings->filter($transformer));
-    }
-
-    public function implode(string $glue): StringValue
-    {
-        return $this->strings->implode($glue);
-    }
-
-    public function first(): ?StringValue
-    {
-        return $this->strings->first();
-    }
-
-    public function last(): ?StringValue
-    {
-        return $this->strings->last();
-    }
-
-    public function each(callable $callback): StringsArray
-    {
-        $this->strings->each($callback);
-
-        return $this;
-    }
+    // Array Value
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return Collection
+     * @param callable $callback function(StringValue $value): void
+     * @return StringsArray
      */
-    public function unique(?callable $comparator = null): StringsArray
-    {
-        return new self($this->strings->unique($comparator));
-    }
+    public function each(callable $callback);
+
+    /**
+     * @param callable|null $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
+     * @return StringsArray
+     */
+    public function unique(?callable $comparator = null);
 
     /**
      * @return StringValue[]
      */
-    public function toArray(): array
-    {
-        return $this->strings->toArray();
-    }
+    public function toArray(): array;
 
-    public function filterEmpty(): StringsArray
-    {
-        return new self($this->strings->filterEmpty());
-    }
+    /**
+     * @param callable $transformer function(StringValue $value): bool
+     * @return StringsArray
+     */
+    public function filter(callable $transformer);
 
-    public function sort(callable $comparator): StringsArray
-    {
-        return new self($this->strings->sort($comparator));
-    }
+    /**
+     * @return StringsArray
+     */
+    public function filterEmpty();
 
-    public function shuffle(): StringsArray
-    {
-        return new self($this->strings->shuffle());
-    }
+    /**
+     * @param callable $transformer function(StringValue $value): StringValue|string
+     * @return StringsArray
+     */
+    public function map(callable $transformer);
 
-    public function reverse(): StringsArray
-    {
-        return new self($this->strings->reverse());
-    }
+    /**
+     * @param callable $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
+     * @return StringsArray
+     */
+    public function sort(callable $comparator);
 
-    public function getIterator(): \Iterator
-    {
-        return $this->strings->getIterator();
-    }
+    /**
+     * @return StringsArray
+     */
+    public function shuffle();
 
-    public function offsetExists($offset): bool
-    {
-        return $this->strings->offsetExists($offset);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function reverse();
 
-    public function offsetGet($offset): StringValue
-    {
-        return $this->strings->offsetGet($offset);
-    }
+    /**
+     * @param StringValue|string $value
+     * @return StringsArray
+     */
+    public function unshift($value);
 
-    public function offsetSet($offset, $value)
-    {
-        $this->strings->offsetSet($offset, $value);
-    }
+    /**
+     * @param mixed $value
+     * @return StringsArray
+     */
+    public function shift(&$value = null);
 
-    public function offsetUnset($offset)
-    {
-        $this->strings->offsetUnset($offset);
-    }
+    /**
+     * @param StringValue|string $value
+     * @return StringsArray
+     */
+    public function push($value);
 
-    public function count(): int
-    {
-        return $this->strings->count();
-    }
+    /**
+     * @param mixed $value
+     * @return StringsArray
+     */
+    public function pop(&$value = null);
 
-    public function unshift($value): StringsArray
-    {
-        return new self($this->strings->unshift($value));
-    }
+    /**
+     * @param int $offset
+     */
+    public function offsetExists($offset): bool;
 
-    public function shift(&$value = null): StringsArray
-    {
-        return new self($this->strings->shift($value));
-    }
+    /**
+     * @param int $offset
+     * @return StringValue
+     */
+    public function offsetGet($offset);
 
-    public function push($value): StringsArray
-    {
-        return new self($this->strings->push($value));
-    }
+    /**
+     * @param int $offset
+     * @param StringValue|string $value
+     * @return void
+     * @throws \BadMethodCallException For immutable types.
+     */
+    public function offsetSet($offset, $value);
 
-    public function pop(&$value = null): StringsArray
-    {
-        return new self($this->strings->pop($value));
-    }
+    /**
+     * @param int $offset
+     * @return void
+     * @throws \BadMethodCallException For immutable types.
+     */
+    public function offsetUnset($offset);
 
-    public function stripTags(): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function join(ArrayValue $other);
 
-    public function trim(string $characterMask = self::TRIM_MASK): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__, $characterMask);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function slice(int $offset, int $length);
 
-    public function trimRight(string $characterMask = self::TRIM_MASK): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__, $characterMask);
-    }
+    /**
+     * @param callable|null $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
+     * @return StringsArray
+     */
+    public function diff(ArrayValue $other, ?callable $comparator = null);
 
-    public function trimLeft(string $characterMask = self::TRIM_MASK): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__, $characterMask);
-    }
+    /**
+     * @param callable|null $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
+     * @return StringsArray
+     */
+    public function intersect(ArrayValue $other, ?callable $comparator = null);
 
-    public function lower(): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__);
-    }
+    /**
+     * @param callable $transformer function(mixed $reduced, StringValue $value): mixed
+     * @param mixed $start
+     * @return mixed
+     */
+    public function reduce(callable $transformer, $start);
 
-    public function upper(): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__);
-    }
+    public function implode(string $glue): StringValue;
 
-    public function lowerFirst(): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function notEmpty();
 
-    public function upperFirst(): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__);
-    }
+    // StringValue
 
-    public function upperWords(): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function stripTags();
 
-    public function padRight(int $length, string $string = ' '): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__, $length, $string);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function trim(string $characterMask = self::TRIM_MASK);
 
-    public function padLeft(int $length, string $string = ' '): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__, $length, $string);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function trimRight(string $characterMask = self::TRIM_MASK);
 
-    public function padBoth(int $length, string $string = ' '): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__, $length, $string);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function trimLeft(string $characterMask = self::TRIM_MASK);
 
-    public function replace(string $search, string $replace): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__, $search, $replace);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function lower();
 
-    public function replacePattern(string $pattern, string $replacement): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__, $pattern, $replacement);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function upper();
 
-    public function replacePatternCallback(string $pattern, callable $callback): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__, $pattern, $callback);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function lowerFirst();
 
-    public function truncate(int $length, string $postfix = '...'): StringsValue
-    {
-        return $this->withMapByMethod(__FUNCTION__, $length, $postfix);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function upperFirst();
 
-    public function substring(int $start, ?int $length = null): StringValue
-    {
-        return $this->toStringValue()->substring($start, $length);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function upperWords();
 
-    public function postfix(StringValue $other): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__, $other);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function padRight(int $length, string $string = ' ');
 
-    public function prefix(StringValue $other): StringsArray
-    {
-        return $this->withMapByMethod(__FUNCTION__, $other);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function padLeft(int $length, string $string = ' ');
 
-    public function length(): int
-    {
-        return $this->toStringValue()->length();
-    }
+    /**
+     * @return StringsArray
+     */
+    public function padBoth(int $length, string $string = ' ');
 
-    public function position(string $needle): ?int
-    {
-        return $this->toStringValue()->position($needle);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function replace(string $search, string $replace);
 
-    public function positionLast(string $needle): ?int
-    {
-        return $this->toStringValue()->positionLast($needle);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function replacePattern(string $pattern, string $replacement);
 
-    public function matchAllPatterns(string $pattern): ArrayValue
-    {
-        return $this->toStringValue()->matchAllPatterns($pattern);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function replacePatternCallback(string $pattern, callable $callback);
 
-    public function matchPatterns(string $pattern): ArrayValue
-    {
-        return $this->toStringValue()->matchPatterns($pattern);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function truncate(int $length, string $postfix = '...');
 
-    public function isMatching(string $pattern): bool
-    {
-        return $this->toStringValue()->isMatching($pattern);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function substring(int $start, ?int $length = null);
 
-    public function splitByPattern(string $pattern): ArrayValue
-    {
-        return $this->toStringValue()->splitByPattern($pattern);
-    }
+    /**
+     * @return StringsArray
+     */
+    public function postfix(StringValue $other);
 
-    public function explode(string $delimiter): StringsValue
-    {
-        return $this->toStringValue()->explode($delimiter);
-    }
-
-    public function contains(string $substring): bool
-    {
-        return $this->toStringValue()->contains($substring);
-    }
-
-    public function toString(): string
-    {
-        return $this->toStringValue()->toString();
-    }
-
-    public function __toString(): string
-    {
-        return $this->toString();
-    }
-
-    public function notEmpty(): StringsArray
-    {
-        return $this->filter(Filters::notEmpty());
-    }
-
-    private function mapStringValues(ArrayValue $strings): ArrayValue
-    {
-        return $strings
-            ->map(function ($string) {
-                return is_scalar($string) ? Strings::create((string)$string) : $string;
-            })
-            ->each(function ($string): void {
-                if (!$string instanceof StringValue) {
-                    throw new \InvalidArgumentException('StringsValue can contain only StringValue');
-                }
-            }
-        );
-    }
-
-    private function withMapByMethod(string $method, ...$args): StringsArray
-    {
-        return new self($this->strings->map(Mappers::callMethod($method, ...$args)));
-    }
-
-    private function toStringValue(): StringValue
-    {
-        return $this->implode(' ');
-    }
-
-    public function isEmpty(): bool
-    {
-        return $this->strings->isEmpty() || $this->toStringValue()->isEmpty();
-    }
+    /**
+     * @return StringsArray
+     */
+    public function prefix(StringValue $other);
 }

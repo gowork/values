@@ -5,7 +5,9 @@
 ```php
 <?php
 
-$array = \GW\Value\Arrays::create(['a', 'b', 'c']);
+use GW\Value\Wrap;
+
+$array = Wrap::array(['a', 'b', 'c']);
 
 $array[0]; // 'a'
 $has = isset($array[3]); // false

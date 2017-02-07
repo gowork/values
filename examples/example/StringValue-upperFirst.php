@@ -1,7 +1,7 @@
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('words don`t come easy');
+$text = Wrap::string('words don`t come easy');
 
 echo $text->upperFirst()->toString() . PHP_EOL;

@@ -112,11 +112,11 @@ final class PlainString implements StringValue
         return new self(preg_replace_callback($pattern, $callback, $this->value));
     }
 
-    public function matchPatterns(string $pattern): StringsValue
+    public function matchPatterns(string $pattern): StringsArray
     {
         preg_match($pattern, $this->value, $matches);
 
-        return Arrays::strings($matches);
+        return Wrap::stringsArray($matches);
     }
 
     public function isMatching(string $pattern): bool
@@ -124,21 +124,21 @@ final class PlainString implements StringValue
         return $this->matchAllPatterns($pattern)->count() > 0;
     }
 
-    public function matchAllPatterns(string $pattern): StringsValue
+    public function matchAllPatterns(string $pattern): StringsArray
     {
         preg_match_all($pattern, $this->value, $matches, PREG_SET_ORDER);
 
-        return Arrays::strings($matches);
+        return Wrap::stringsArray($matches);
     }
 
-    public function splitByPattern(string $pattern): StringsValue
+    public function splitByPattern(string $pattern): StringsArray
     {
-        return Arrays::strings(preg_split($pattern, $this->value));
+        return Wrap::stringsArray(preg_split($pattern, $this->value));
     }
 
-    public function explode(string $delimiter): StringsValue
+    public function explode(string $delimiter): StringsArray
     {
-        return Arrays::strings(explode($delimiter, $this->value));
+        return Wrap::stringsArray(explode($delimiter, $this->value));
     }
 
     public function truncate(int $length, string $postfix = '...'): PlainString

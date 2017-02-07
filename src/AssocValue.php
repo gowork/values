@@ -83,7 +83,7 @@ interface AssocValue extends Value, Collection, \IteratorAggregate, \ArrayAccess
 
     public function toAssocArray(): array;
 
-    public function keys(): StringsValue;
+    public function keys(): StringsArray;
 
     public function values(): ArrayValue;
 
