@@ -1,8 +1,8 @@
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$words = Arrays::create(['do', 'or', 'do', 'not', 'there', 'is', 'no', 'try']);
+$words = Wrap::array(['do', 'or', 'do', 'not', 'there', 'is', 'no', 'try']);
 
 echo $words->reverse()->implode(' ')->toString();
 

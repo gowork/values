@@ -1,7 +1,7 @@
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('☜ cut here ☞');
+$text = Wrap::string('☜ cut here ☞');
 
 echo $text->padBoth(24, '-')->toString();

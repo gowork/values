@@ -1,9 +1,9 @@
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 use GW\Value\Sorts;
 
-$array = Arrays::create(['c', 'a', 'b']);
+$array = Wrap::array(['c', 'a', 'b']);
 $customSort = $array->sort(function (string $a, string $b): int {
     return $a <=> $b;
 });

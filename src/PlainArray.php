@@ -261,7 +261,7 @@ final class PlainArray implements ArrayValue
 
     public function implode(string $glue): StringValue
     {
-        return Strings::create(implode($glue, $this->toArray()));
+        return Wrap::string(implode($glue, $this->toArray()));
     }
 
     public function notEmpty(): PlainArray

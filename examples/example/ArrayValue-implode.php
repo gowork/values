@@ -1,7 +1,7 @@
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$prices = Arrays::create(['a', 'b', 'c', 'd']);
+$prices = Wrap::array(['a', 'b', 'c', 'd']);
 
 echo $prices->implode(' / ')->toString();

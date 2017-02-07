@@ -1,8 +1,8 @@
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$names = Arrays::create(['John', 'Basil', 'John', 'Johny', 'Jon', 'Basile']);
+$names = Wrap::array(['John', 'Basil', 'John', 'Johny', 'Jon', 'Basile']);
 
 echo 'unique names = ';
 var_export($names->unique()->toArray());

@@ -1,8 +1,8 @@
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create([1, 2, 3, 4]);
+$array = Wrap::array([1, 2, 3, 4]);
 $even = $array->filter(function (int $number): bool {
     return $number % 2 === 0;
 });

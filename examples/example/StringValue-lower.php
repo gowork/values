@@ -1,7 +1,7 @@
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('SOMETIMES I WANNA SCREAM!');
+$text = Wrap::string('SOMETIMES I WANNA SCREAM!');
 
 echo $text->lower()->toString() . PHP_EOL;

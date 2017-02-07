@@ -1,7 +1,7 @@
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', 'b', 'c']);
+$array = Wrap::array(['a', 'b', 'c']);
 
 echo 'count: ' . $array->count();

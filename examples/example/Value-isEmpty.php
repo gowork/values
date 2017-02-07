@@ -1,20 +1,19 @@
 <?php
 
-use GW\Value\Arrays;
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
 echo "['a']: ";
-var_export(Arrays::create(['a'])->isEmpty());
+var_export(Wrap::array(['a'])->isEmpty());
 echo PHP_EOL;
 
 echo "[]: ";
-var_export(Arrays::create([])->isEmpty());
+var_export(Wrap::array([])->isEmpty());
 echo PHP_EOL;
 
 echo "'a': ";
-var_export(Strings::create('a')->isEmpty());
+var_export(Wrap::string('a')->isEmpty());
 echo PHP_EOL;
 
 echo "'': ";
-var_export(Strings::create('')->isEmpty());
+var_export(Wrap::string('')->isEmpty());
 echo PHP_EOL;

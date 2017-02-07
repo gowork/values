@@ -37,11 +37,11 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @return StringsValue
+     * @return StringsArray
      */
-    public function keys(): StringsValue
+    public function keys(): StringsArray
     {
-        return Arrays::strings($this->keys);
+        return Wrap::stringsArray($this->keys);
     }
 
     /**
@@ -194,7 +194,7 @@ final class AssocArray implements AssocValue
 
     public function values(): ArrayValue
     {
-        return Arrays::create($this->items);
+        return Wrap::array($this->items);
     }
 
     /**

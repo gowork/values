@@ -1,8 +1,8 @@
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$one = Arrays::create(['a', 'b', 'c']);
-$two = Arrays::create(['d', 'e', 'f']);
+$one = Wrap::array(['a', 'b', 'c']);
+$two = Wrap::array(['d', 'e', 'f']);
 
 var_export($one->join($two)->toArray());

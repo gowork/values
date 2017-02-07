@@ -1,8 +1,8 @@
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$words = Arrays::create(['a', 'b', 'c']);
+$words = Wrap::array(['a', 'b', 'c']);
 
 var_export($words->shift($x)->toArray());
 echo PHP_EOL;

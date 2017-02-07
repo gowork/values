@@ -1,7 +1,7 @@
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create('CamelCaseMethod()');
+$text = Wrap::string('CamelCaseMethod()');
 
 echo $text->lowerFirst()->toString() . PHP_EOL;

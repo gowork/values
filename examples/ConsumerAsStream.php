@@ -2,7 +2,7 @@
 
 namespace doc\GW\Value;
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 use GW\Value\ArrayValue;
 use GW\Value\Stream;
 
@@ -72,4 +72,4 @@ class FooHandler implements Handler
 $stream = new BufferedStream(new Stream(), 10);
 $stream->emit(new FooMessage());
 
-(new ConsumerAsStream(Arrays::createFromValues(new FooHandler())))->openStream($stream);
+(new ConsumerAsStream(Wrap::arrayFromValues(new FooHandler())))->openStream($stream);

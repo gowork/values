@@ -1,7 +1,7 @@
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$html = Strings::create('words don`t come easy');
+$html = Wrap::string('words don`t come easy');
 
 echo $html->upperWords()->toString() . PHP_EOL;

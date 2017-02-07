@@ -2,10 +2,9 @@
 
 namespace doc\GW\Value;
 
-use GW\Value\Arrays;
 use GW\Value\AssocValue;
-use GW\Value\Strings;
 use GW\Value\StringValue;
+use GW\Value\Wrap;
 
 final class Template
 {
@@ -18,17 +17,17 @@ final class Template
     public function __construct(StringValue $template, AssocValue $params = null)
     {
         $this->template = $template;
-        $this->params =  ($params ?? Arrays::assoc())->map('strval');
+        $this->params =  ($params ?? Wrap::assocArray())->map('strval');
     }
 
     public static function fromFile(string $path): self
     {
-        return new self(Strings::create(file_get_contents($path)));
+        return new self(Wrap::string(file_get_contents($path)));
     }
 
     public static function fromString(string $template): self
     {
-        return new self(Strings::create($template));
+        return new self(Wrap::string($template));
     }
 
     public function withParams(AssocValue $params): self

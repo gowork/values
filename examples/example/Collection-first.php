@@ -1,13 +1,13 @@
 <?php
 
-use GW\Value\Arrays;
+use GW\Value\Wrap;
 
-$array = Arrays::create(['a', 'b', 'c']);
+$array = Wrap::array(['a', 'b', 'c']);
 
 echo 'array first: ' . $array->first();
 echo PHP_EOL;
 
-$assoc = Arrays::assoc(['a' => 1, 'b' => 2, 'c' => 3]);
+$assoc = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
 
 echo 'assoc first: ' . $assoc->first();
 echo PHP_EOL;

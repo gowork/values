@@ -2,9 +2,8 @@
 
 namespace doc\GW\Value;
 
-use GW\Value\Arrays;
-use GW\Value\Strings;
 use GW\Value\StringValue;
+use GW\Value\Wrap;
 
 final class ReadmeWriter
 {
@@ -12,12 +11,12 @@ final class ReadmeWriter
     {
         $markdown = Template::fromFile(__DIR__ . '/template/README.md');
 
-        $classTemplates = Arrays::create($classes)
+        $classTemplates = Wrap::array($classes)
             ->map(function(string $classRef): Template {
                 $class = new \ReflectionClass($classRef);
                 $classTemplate = $this->classTemplate($class);
 
-                $methodTemplates = Arrays::create($class->getMethods())
+                $methodTemplates = Wrap::array($class->getMethods())
                     ->map(function(\ReflectionMethod $method): Template {
                         return $this->methodTemplate($method);
                     });
@@ -49,16 +48,16 @@ final class ReadmeWriter
         $declaration = $this->methodDeclaration($method)->trim()->toString();
         $doc = $this->methodDoc($method)->toString();
 
-        $definition = Strings::create('*(definition not available)*');
+        $definition = Wrap::string('*(definition not available)*');
 
         if ($declaration || $doc) {
             $definition = Template::fromFile(__DIR__ . '/template/ClassMethodDefinition.md')
-                ->withParams(Arrays::assoc(compact('doc', 'declaration')))
+                ->withParams(Wrap::assocArray(compact('doc', 'declaration')))
                 ->render();
         }
 
         $template = Template::fromFile(__DIR__ . '/template/ClassMethod.md')
-            ->withParams(Arrays::assoc(compact('className', 'methodName', 'definition')));
+            ->withParams(Wrap::assocArray(compact('className', 'methodName', 'definition')));
 
         $descriptionFile = __DIR__ . "/template/{$className}-{$methodName}.md";
 
@@ -76,13 +75,13 @@ final class ReadmeWriter
 
     private function className(string $class): string
     {
-        return Strings::create($class)->explode('\\')->last();
+        return Wrap::string($class)->explode('\\')->last();
     }
 
     private function methodDeclaration(\ReflectionMethod $method): StringValue
     {
         if (empty($method->getFileName())) {
-            return Strings::create('');
+            return Wrap::string('');
         }
 
         return $this->getFileLines($method->getFileName(), $method->getStartLine(), $method->getEndLine());
@@ -90,18 +89,18 @@ final class ReadmeWriter
 
     private function getFileLines(string $file, int $start, int $end): StringValue
     {
-        return Arrays::strings(file($file, FILE_IGNORE_NEW_LINES))
+        return Wrap::stringsArray(file($file, FILE_IGNORE_NEW_LINES))
             ->slice($start - 1, $end - $start + 1)
             ->implode(PHP_EOL);
     }
 
     private function methodDoc(\ReflectionMethod $method): StringValue
     {
-        return Strings::create($method->getDocComment())
+        return Wrap::string($method->getDocComment())
             ->explode(PHP_EOL)
             ->trim()
             ->map(function(StringValue $line): StringValue {
-                return $line->substring(0, 1)->toString() === '*' ? $line->prefix(Strings::create(' ')) : $line;
+                return $line->substring(0, 1)->toString() === '*' ? $line->prefix(Wrap::string(' ')) : $line;
             })
             ->implode(PHP_EOL);
     }
@@ -111,7 +110,7 @@ final class ReadmeWriter
         $exampleFile = __DIR__ . "/example/{$class}-{$method}.php";
 
         if (!file_exists($exampleFile)) {
-            return Strings::create('');
+            return Wrap::string('');
         }
 
         ob_start();

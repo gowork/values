@@ -1,8 +1,8 @@
 <?php
 
-use GW\Value\Strings;
+use GW\Value\Wrap;
 
-$text = Strings::create(' :.: I ♡ SPACE :.:  ');
+$text = Wrap::string(' :.: I ♡ SPACE :.:  ');
 
 echo $text->trim()->toString() . PHP_EOL;
 echo $text->trim(' .:')->toString() . PHP_EOL;
