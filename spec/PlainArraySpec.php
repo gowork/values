@@ -4,6 +4,7 @@ namespace spec\GW\Value;
 
 use GW\Value\PlainArray;
 use GW\Value\Sorts;
+use GW\Value\Wrap;
 use PhpSpec\Exception\Example\FailureException;
 use PhpSpec\ObjectBehavior;
 
@@ -414,6 +415,13 @@ final class PlainArraySpec extends ObjectBehavior
 
         $this->shouldThrow(\BadMethodCallException::class)->during('offsetSet', [0, 'mutated 1']);
         $this->shouldThrow(\BadMethodCallException::class)->during('offsetUnset', [0]);
+    }
+
+    function it_can_be_converted_to_AssocValue()
+    {
+        $this->beConstructedWith(['item 0', 'item 1', 'item 2']);
+
+        $this->toAssocValue()->shouldBeLike(Wrap::assocArray(['0' => 'item 0', '1' => 'item 1', '2' => 'item 2']));
     }
 
     private function entityComparator(): \Closure

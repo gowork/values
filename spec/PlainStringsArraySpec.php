@@ -447,6 +447,22 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $lower->shouldBeLike(PlainStringsArray::fromArray(['Żaba', 'Means', 'Frog']));
     }
 
+    function it_can_be_converted_to_ArrayValue_containing_StringValue()
+    {
+        $this->beConstructedWithStrings('one', 'two', 'three');
+
+        $this->toArrayValue()
+            ->shouldBeLike(Wrap::array([Wrap::string('one'), Wrap::string('two'), Wrap::string('three')]));
+    }
+
+    function it_can_be_converted_to_AssocValue_containing_StringValue()
+    {
+        $this->beConstructedWithStrings('one', 'two', 'three');
+
+        $this->toAssocValue()
+            ->shouldBeLike(Wrap::assocArray([Wrap::string('one'), Wrap::string('two'), Wrap::string('three')]));
+    }
+
     private function beConstructedWithStrings(string ...$strings): void
     {
         $this->beConstructedWith(Wrap::array($strings));

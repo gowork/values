@@ -238,4 +238,14 @@ interface StringsArray extends ArrayValue, StringValue
      * @return StringsArray
      */
     public function prefix(StringValue $other);
+
+    /**
+     * @return ArrayValue<StringValue>
+     */
+    public function toArrayValue(): ArrayValue;
+
+    /**
+     * @return AssocValue<string, StringValue>
+     */
+    public function toAssocValue(): AssocValue;
 }

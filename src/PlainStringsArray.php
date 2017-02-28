@@ -348,4 +348,20 @@ final class PlainStringsArray implements StringsArray
     {
         return $this->strings->isEmpty() || $this->toStringValue()->isEmpty();
     }
+
+    /**
+     * @return ArrayValue<StringValue>
+     */
+    public function toArrayValue(): ArrayValue
+    {
+        return $this->strings;
+    }
+
+    /**
+     * @return AssocValue<string, StringValue>
+     */
+    public function toAssocValue(): AssocValue
+    {
+        return $this->strings->toAssocValue();
+    }
 }

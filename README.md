@@ -304,7 +304,7 @@ echo $words->shuffle()->implode(' ')->toString();
 ```
 
 ```
-there or is no try do do not
+there try do do or no is not
 ```
 
 ### ArrayValue::reverse
@@ -760,6 +760,44 @@ a / b / c / d
  * @return ArrayValue
  */
 public function notEmpty();
+```
+
+### ArrayValue::toAssocValue
+
+```php
+<?php
+
+public function toAssocValue(): AssocValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$array = Wrap::array(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
+
+var_export(
+    $array->toAssocValue()
+        ->mapKeys(function (string $oldKey, string $value): string {
+            return "{$oldKey}:{$value}";
+        })
+        ->toAssocArray()
+);
+```
+
+```
+array (
+  '0:a' => 'a',
+  '1:b' => 'b',
+  '2:c' => 'c',
+  '3:d' => 'd',
+  '4:e' => 'e',
+  '5:f' => 'f',
+  '6:g' => 'g',
+)
 ```
 
 ### Value::isEmpty
@@ -2610,6 +2648,118 @@ public function postfix(StringValue $other);
  * @return StringsArray
  */
 public function prefix(StringValue $other);
+```
+
+### StringsArray::toArrayValue
+
+```php
+<?php
+/**
+ * @return ArrayValue<StringValue>
+ */
+public function toArrayValue(): ArrayValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\StringValue;
+use GW\Value\Wrap;
+
+$men = ['Jack', 'John'];
+$women = ['Mary', 'Tia'];
+
+$array = Wrap::stringsArray(['John Black', 'Mary White', 'Jack Sparrow', 'Tia Dalma', 'Conchita Wurst']);
+
+var_export(
+    $array->toArrayValue()
+        ->map(function (StringValue $fullName) use ($women, $men): array {
+            [$name, $surname] = explode(' ', $fullName->toString());
+            $sex = in_array($name, $men, true) ? 'male' : (in_array($name, $women, true) ? 'female' : 'other');
+
+            return ['name' => $name, 'surname' => $surname, 'sex' => $sex];
+        })
+        ->toArray()
+);
+```
+
+```
+array (
+  0 => 
+  array (
+    'name' => 'John',
+    'surname' => 'Black',
+    'sex' => 'male',
+  ),
+  1 => 
+  array (
+    'name' => 'Mary',
+    'surname' => 'White',
+    'sex' => 'female',
+  ),
+  2 => 
+  array (
+    'name' => 'Jack',
+    'surname' => 'Sparrow',
+    'sex' => 'male',
+  ),
+  3 => 
+  array (
+    'name' => 'Tia',
+    'surname' => 'Dalma',
+    'sex' => 'female',
+  ),
+  4 => 
+  array (
+    'name' => 'Conchita',
+    'surname' => 'Wurst',
+    'sex' => 'other',
+  ),
+)
+```
+
+### StringsArray::toAssocValue
+
+```php
+<?php
+/**
+ * @return AssocValue<string, StringValue>
+ */
+public function toAssocValue(): AssocValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\StringValue;
+use GW\Value\Wrap;
+
+$array = Wrap::stringsArray(['John Black', 'Mary White', 'Jack Sparrow', 'Tia Dalma', 'Conchita Wurst']);
+
+var_export(
+    $array->toAssocValue()
+        ->map(function (StringValue $person): string {
+            return $person->toString();
+        })
+        ->mapKeys(function (string $oldKey, string $person): string {
+            return $person;
+        })
+        ->toAssocArray()
+);
+```
+
+```
+array (
+  'John Black' => 'John Black',
+  'Mary White' => 'Mary White',
+  'Jack Sparrow' => 'Jack Sparrow',
+  'Tia Dalma' => 'Tia Dalma',
+  'Conchita Wurst' => 'Conchita Wurst',
+)
 ```
 
 ### Value::isEmpty
