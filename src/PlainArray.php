@@ -273,4 +273,9 @@ final class PlainArray implements ArrayValue
     {
         return $this->items === [];
     }
+
+    public function toAssocValue(): AssocValue
+    {
+        return Wrap::assocArray($this->items);
+    }
 }
