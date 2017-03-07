@@ -431,6 +431,16 @@ final class PlainArraySpec extends ObjectBehavior
         $this->toStringsArray()->shouldBeLike(Wrap::stringsArray(['one', 'two', 'three']));
     }
 
+    function it_can_tell_if_has_element_or_not()
+    {
+        $this->beConstructedWith(['one', '2', 'three']);
+
+        $this->hasElement('one')->shouldReturn(true);
+        $this->hasElement('2')->shouldReturn(true);
+        $this->hasElement(2)->shouldReturn(false);
+        $this->hasElement('five')->shouldReturn(false);
+    }
+
     private function entityComparator(): \Closure
     {
         return function (DummyEntity $entityA, DummyEntity $entityB): int {

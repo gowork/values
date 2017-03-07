@@ -67,6 +67,13 @@ final class PlainStringsArray implements StringsArray
         return $this->strings->last();
     }
 
+    public function hasElement($element): bool
+    {
+        $stringValue = $element instanceof StringValue ? $element : Wrap::string($element);
+
+        return in_array($stringValue, $this->strings->toArray(), false);
+    }
+
     public function each(callable $callback): PlainStringsArray
     {
         $this->strings->each($callback);

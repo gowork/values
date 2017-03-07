@@ -913,6 +913,16 @@ array last: c
 assoc last: 3
 ```
 
+### Collection::hasElement
+
+```php
+<?php
+/**
+ * @param mixed $element
+ */
+public function hasElement($element): bool;
+```
+
 ### Countable::count
 
 ```php
@@ -1323,6 +1333,16 @@ echo PHP_EOL;
 ```
 array last: c
 assoc last: 3
+```
+
+### Collection::hasElement
+
+```php
+<?php
+/**
+ * @param mixed $element
+ */
+public function hasElement($element): bool;
 ```
 
 ### Collection::toArray
@@ -2229,6 +2249,26 @@ public function implode(string $glue): StringValue;
 public function notEmpty();
 ```
 
+### StringsArray::first
+
+```php
+<?php
+/**
+ * @return StringValue|null
+ */
+public function first();
+```
+
+### StringsArray::last
+
+```php
+<?php
+/**
+ * @return StringValue|null
+ */
+public function last();
+```
+
 ### StringsArray::stripTags
 
 ```php
@@ -2817,70 +2857,14 @@ echo PHP_EOL;
 '': true
 ```
 
-### Collection::first
+### Collection::hasElement
 
 ```php
 <?php
 /**
- * @return mixed
+ * @param mixed $element
  */
-public function first();
-```
-
-#### Examples
-
-```php
-<?php
-
-use GW\Value\Wrap;
-
-$array = Wrap::array(['a', 'b', 'c']);
-
-echo 'array first: ' . $array->first();
-echo PHP_EOL;
-
-$assoc = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
-
-echo 'assoc first: ' . $assoc->first();
-echo PHP_EOL;
-```
-
-```
-array first: a
-assoc first: 1
-```
-
-### Collection::last
-
-```php
-<?php
-/**
- * @return mixed
- */
-public function last();
-```
-
-#### Examples
-
-```php
-<?php
-
-use GW\Value\Wrap;
-
-$array = Wrap::array(['a', 'b', 'c']);
-
-echo 'array last: ' . $array->last();
-echo PHP_EOL;
-
-$assoc = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
-
-echo 'assoc last: ' . $assoc->last();
-echo PHP_EOL;
-```
-
-```
-array last: c
-assoc last: 3
+public function hasElement($element): bool;
 ```
 
 ### Countable::count

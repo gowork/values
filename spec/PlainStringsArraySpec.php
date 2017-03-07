@@ -470,6 +470,22 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $this->toStringsArray()->shouldReturn($this);
     }
 
+    function it_can_tell_is_has_a_string()
+    {
+        $this->beConstructedWithStrings('one', 'two', 'three');
+
+        $this->hasElement('one')->shouldReturn(true);
+        $this->hasElement('four')->shouldReturn(false);
+    }
+
+    function it_can_tell_is_has_a_wrapped_string()
+    {
+        $this->beConstructedWithStrings('one', 'two', 'three');
+
+        $this->hasElement(Wrap::string('one'))->shouldReturn(true);
+        $this->hasElement(Wrap::string('five'))->shouldReturn(false);
+    }
+
     private function beConstructedWithStrings(string ...$strings): void
     {
         $this->beConstructedWith(Wrap::array($strings));

@@ -15,6 +15,11 @@ interface Collection extends Filterable, Mappable, Sortable, Countable, Reversib
     public function last();
 
     /**
+     * @param mixed $element
+     */
+    public function hasElement($element): bool;
+
+    /**
      * @param callable $callback function(mixed $value): void
      * @return Collection
      */

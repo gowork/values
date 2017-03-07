@@ -142,6 +142,16 @@ interface StringsArray extends ArrayValue, StringValue
      */
     public function notEmpty();
 
+    /**
+     * @return StringValue|null
+     */
+    public function first();
+
+    /**
+     * @return StringValue|null
+     */
+    public function last();
+
     // StringValue
 
     /**
