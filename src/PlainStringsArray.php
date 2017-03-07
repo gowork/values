@@ -364,4 +364,9 @@ final class PlainStringsArray implements StringsArray
     {
         return $this->strings->toAssocValue();
     }
+
+    public function toStringsArray(): StringsArray
+    {
+        return $this;
+    }
 }

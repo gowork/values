@@ -149,4 +149,6 @@ interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \Arra
     public function notEmpty();
 
     public function toAssocValue(): AssocValue;
+
+    public function toStringsArray(): StringsArray;
 }
