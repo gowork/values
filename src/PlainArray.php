@@ -278,4 +278,9 @@ final class PlainArray implements ArrayValue
     {
         return Wrap::assocArray($this->items);
     }
+
+    public function toStringsArray(): StringsArray
+    {
+        return Wrap::stringsArray($this->items);
+    }
 }

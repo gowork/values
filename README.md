@@ -800,6 +800,14 @@ array (
 )
 ```
 
+### ArrayValue::toStringsArray
+
+```php
+<?php
+
+public function toStringsArray(): StringsArray;
+```
+
 ### Value::isEmpty
 
 ```php
@@ -2760,6 +2768,14 @@ array (
   'Tia Dalma' => 'Tia Dalma',
   'Conchita Wurst' => 'Conchita Wurst',
 )
+```
+
+### ArrayValue::toStringsArray
+
+```php
+<?php
+
+public function toStringsArray(): StringsArray;
 ```
 
 ### Value::isEmpty

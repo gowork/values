@@ -424,6 +424,13 @@ final class PlainArraySpec extends ObjectBehavior
         $this->toAssocValue()->shouldBeLike(Wrap::assocArray(['0' => 'item 0', '1' => 'item 1', '2' => 'item 2']));
     }
 
+    function it_can_be_converted_to_StringsArray()
+    {
+        $this->beConstructedWith(['one', 'two', 'three']);
+
+        $this->toStringsArray()->shouldBeLike(Wrap::stringsArray(['one', 'two', 'three']));
+    }
+
     private function entityComparator(): \Closure
     {
         return function (DummyEntity $entityA, DummyEntity $entityB): int {
