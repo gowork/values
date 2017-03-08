@@ -271,4 +271,14 @@ final class AssocArraySpec extends ObjectBehavior
 
         $this->isEmpty()->shouldReturn(true);
     }
+
+    function it_can_tell_if_has_element_or_not()
+    {
+        $this->beConstructedWith(['one' => 'one', 'two' => '2', '3' => 'three']);
+
+        $this->hasElement('one')->shouldReturn(true);
+        $this->hasElement('2')->shouldReturn(true);
+        $this->hasElement(2)->shouldReturn(false);
+        $this->hasElement('five')->shouldReturn(false);
+    }
 }

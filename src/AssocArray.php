@@ -205,6 +205,11 @@ final class AssocArray implements AssocValue
         return $this->values()->last();
     }
 
+    public function hasElement($element): bool
+    {
+        return in_array($element, $this->items, true);
+    }
+
     /**
      * @return mixed[]
      */

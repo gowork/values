@@ -213,6 +213,11 @@ final class PlainArray implements ArrayValue
         return $count > 0 ? $this->items[$count - 1] : null;
     }
 
+    public function hasElement($element): bool
+    {
+        return in_array($element, $this->items, true);
+    }
+
     public function count(): int
     {
         return count($this->items);
