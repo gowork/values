@@ -6,7 +6,7 @@ use GW\Value\AssocValue;
 use GW\Value\StringsArray;
 use GW\Value\StringValue;
 
-require 'vendor/autoload.php';
+require __DIR__ . 'vendor/autoload.php';
 
 $markdown = (new ReadmeWriter())->describeClasses([
     ArrayValue::class,

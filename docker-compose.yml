@@ -1,7 +1,0 @@
-version: "2"
-
-services:
-  develop:
-    image: gwrk.pl:5043/develop71
-    volumes:
-      - ./:/var/www
