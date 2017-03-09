@@ -441,6 +441,31 @@ final class PlainArraySpec extends ObjectBehavior
         $this->hasElement('five')->shouldReturn(false);
     }
 
+    function it_throws_InvalidArgumentException_when_sort_comparator_returns_something_other_than_int()
+    {
+        $this->beConstructedWith(['1', '2', '3']);
+
+        $this->shouldThrow(\InvalidArgumentException::class)->during('sort', [new InvalidComparator()]);
+    }
+
+    function it_throws_InvalidArgumentException_when_unique_comparator_returns_something_other_than_int()
+    {
+        $this->beConstructedWith(['1', '1', '3']);
+
+        $this->shouldThrow(\InvalidArgumentException::class)->during('unique', [new InvalidComparator()]);
+    }
+
+    function it_throws_InvalidArgumentException_when_filter_returns_something_else_than_boolean()
+    {
+        $this->beConstructedWith(['1', '1', '3']);
+
+        $invalidFilter = function(): int {
+            return 1;
+        };
+
+        $this->shouldThrow(\InvalidArgumentException::class)->during('filter', [$invalidFilter]);
+    }
+
     private function entityComparator(): \Closure
     {
         return function (DummyEntity $entityA, DummyEntity $entityB): int {

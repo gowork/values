@@ -47,9 +47,9 @@ final class PlainStringsArray implements StringsArray
         return new self($this->strings->map($transformer));
     }
 
-    public function filter(callable $transformer): PlainStringsArray
+    public function filter(callable $filter): PlainStringsArray
     {
-        return new self($this->strings->filter($transformer));
+        return new self($this->strings->filter($filter));
     }
 
     public function implode(string $glue): StringValue

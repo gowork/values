@@ -26,11 +26,11 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @param callable $transformer function(mixed $value): bool
+     * @param callable $filter function(mixed $value): bool
      */
-    public function filter(callable $transformer): PlainArray
+    public function filter(callable $filter): PlainArray
     {
-        return new self(array_filter($this->items, $transformer));
+        return new self(array_filter($this->items, Safe::filter($filter)));
     }
 
     /**
@@ -39,7 +39,7 @@ final class PlainArray implements ArrayValue
     public function sort(callable $comparator): PlainArray
     {
         $items = $this->items;
-        uasort($items, $comparator);
+        uasort($items, Safe::comparator($comparator));
 
         return new self($items);
     }
@@ -82,10 +82,11 @@ final class PlainArray implements ArrayValue
         }
 
         $result = [];
+        $safeComparator = Safe::comparator($comparator);
 
         foreach ($this->items as $valueA) {
             foreach ($result as $valueB) {
-                if ($comparator($valueA, $valueB) === 0) {
+                if ($safeComparator($valueA, $valueB) === 0) {
                     // item already in result
                     continue 2;
                 }
@@ -110,7 +111,7 @@ final class PlainArray implements ArrayValue
             return new self(array_diff($this->items, $other->toArray()));
         }
 
-        return new self(array_udiff($this->items, $other->toArray(), $comparator));
+        return new self(array_udiff($this->items, $other->toArray(), Safe::comparator($comparator)));
     }
 
     /**
@@ -126,7 +127,7 @@ final class PlainArray implements ArrayValue
             return new self(array_intersect($this->items, $other->toArray()));
         }
 
-        return new self(array_uintersect($this->items, $other->toArray(), $comparator));
+        return new self(array_uintersect($this->items, $other->toArray(), Safe::comparator($comparator)));
     }
 
     public function shuffle(): PlainArray
