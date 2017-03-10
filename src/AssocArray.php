@@ -57,15 +57,15 @@ final class AssocArray implements AssocValue
         return $this->filter(Filters::notEmpty());
     }
 
-    public function filter(callable $transformer): AssocArray
+    public function filter(callable $filter): AssocArray
     {
-        return new self(array_filter($this->items, $transformer));
+        return new self(array_filter($this->items, Safe::filter($filter)));
     }
 
     public function sort(callable $comparator): AssocArray
     {
         $items = $this->items;
-        uasort($items, $comparator);
+        uasort($items, Safe::comparator($comparator));
 
         return new self($items);
     }
@@ -89,7 +89,7 @@ final class AssocArray implements AssocValue
     public function sortKeys(callable $comparator): AssocArray
     {
         $items = $this->items;
-        uksort($items, $comparator);
+        uksort($items, Safe::comparator($comparator));
 
         return new self($items);
     }
@@ -116,10 +116,11 @@ final class AssocArray implements AssocValue
         }
 
         $result = [];
+        $safeComparator = Safe::comparator($comparator);
 
         foreach ($this->items as $keyA => $valueA) {
             foreach ($result as $valueB) {
-                if ($comparator($valueA, $valueB) === 0) {
+                if ($safeComparator($valueA, $valueB) === 0) {
                     // item already in result
                     continue 2;
                 }

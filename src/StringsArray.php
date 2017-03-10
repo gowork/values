@@ -24,10 +24,10 @@ interface StringsArray extends ArrayValue, StringValue
     public function toArray(): array;
 
     /**
-     * @param callable $transformer function(StringValue $value): bool
+     * @param callable $filter function(StringValue $value): bool
      * @return StringsArray
      */
-    public function filter(callable $transformer);
+    public function filter(callable $filter);
 
     /**
      * @return StringsArray

@@ -24,10 +24,10 @@ interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \Arra
     public function toArray(): array;
 
     /**
-     * @param callable $transformer function(mixed $value): bool { ... }
+     * @param callable $filter function(mixed $value): bool { ... }
      * @return ArrayValue
      */
-    public function filter(callable $transformer);
+    public function filter(callable $filter);
 
     /**
      * @return ArrayValue

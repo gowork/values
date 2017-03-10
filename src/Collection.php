@@ -37,10 +37,10 @@ interface Collection extends Filterable, Mappable, Sortable, Countable, Reversib
     public function toArray(): array;
 
     /**
-     * @param callable $transformer function(mixed $value): bool { ... }
+     * @param callable $filter function(mixed $value): bool { ... }
      * @return Collection
      */
-    public function filter(callable $transformer);
+    public function filter(callable $filter);
 
     /**
      * @return Collection

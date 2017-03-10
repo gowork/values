@@ -123,10 +123,10 @@ Return primitive `array` from subject `ArrayValue`.
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $value): bool { ... }
+ * @param callable $filter function(mixed $value): bool { ... }
  * @return ArrayValue
  */
-public function filter(callable $transformer);
+public function filter(callable $filter);
 ```
 
 Create new `ArrayValue` with items filtered by callback.
@@ -1005,10 +1005,10 @@ public function unique(?callable $comparator = null);
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $value): bool { ... }
+ * @param callable $filter function(mixed $value): bool { ... }
  * @return AssocValue
  */
-public function filter(callable $transformer);
+public function filter(callable $filter);
 ```
 
 ### AssocValue::filterEmpty
@@ -2029,10 +2029,10 @@ public function toArray(): array;
 ```php
 <?php
 /**
- * @param callable $transformer function(StringValue $value): bool
+ * @param callable $filter function(StringValue $value): bool
  * @return StringsArray
  */
-public function filter(callable $transformer);
+public function filter(callable $filter);
 ```
 
 ### StringsArray::filterEmpty
