@@ -172,6 +172,11 @@ final class PlainStringsArray implements StringsArray
         return new self($this->strings->pop($value));
     }
 
+    public function transform(callable $transformer): PlainStringsArray
+    {
+        return $this->withMapByMethod(__FUNCTION__, $transformer);
+    }
+
     public function stripTags(): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__);

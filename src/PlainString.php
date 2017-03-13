@@ -32,6 +32,11 @@ final class PlainString implements StringValue
         return new self($other->toString() . $this->value);
     }
 
+    public function transform(callable $transformer): PlainString
+    {
+        return new self($transformer($this->value));
+    }
+
     public function stripTags(): PlainString
     {
         return new self(strip_tags($this->value));

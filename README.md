@@ -1385,6 +1385,17 @@ count: 3
 
 ## StringValue
 
+### StringValue::transform
+
+```php
+<?php
+/**
+ * @param callable $transformer function(string $value): string
+ * @return StringValue
+ */
+public function transform(callable $transformer);
+```
+
 ### StringValue::stripTags
 
 ```php
@@ -2267,6 +2278,17 @@ public function first();
  * @return StringValue|null
  */
 public function last();
+```
+
+### StringsArray::transform
+
+```php
+<?php
+/**
+ * @param callable $transformer function(string $value): string
+ * @return StringsArray
+ */
+public function transform(callable $transformer);
 ```
 
 ### StringsArray::stripTags

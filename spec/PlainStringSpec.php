@@ -311,4 +311,17 @@ final class PlainStringSpec extends ObjectBehavior
         $this->position('zonk')->shouldReturn(null);
         $this->positionLast('zonk')->shouldReturn(null);
     }
+
+    function it_accepts_custom_transformer_working_on_primitive_string()
+    {
+        $this->beConstructedWith('Hide my secret!');
+
+        $transformer = function (string $value): string {
+            return md5($value);
+        };
+
+        $transformed = $this->transform($transformer);
+        $transformed->shouldNotBe($this);
+        $transformed->shouldBeLike(new PlainString(md5('Hide my secret!')));
+    }
 }

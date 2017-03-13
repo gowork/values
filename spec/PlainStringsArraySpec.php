@@ -486,6 +486,15 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $this->hasElement(Wrap::string('five'))->shouldReturn(false);
     }
 
+    function it_transforms_all_strings_with_custom_callback()
+    {
+        $this->beConstructedWithStrings('one', 'two', 'three');
+
+        $transformed = $this->transform('md5');
+        $transformed->shouldNotBe($this);
+        $transformed->shouldBeLike(PlainStringsArray::fromArray([md5('one'), md5('two'), md5('three')]));
+    }
+
     private function beConstructedWithStrings(string ...$strings): void
     {
         $this->beConstructedWith(Wrap::array($strings));
