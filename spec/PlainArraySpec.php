@@ -57,6 +57,72 @@ final class PlainArraySpec extends ObjectBehavior
         $mapped->shouldNotBe($this);
         $mapped->shouldBeLike(new PlainArray([100, 50, 0, 1, 0]));
     }
+
+    function it_maps_with_flattening_with_array_transformer()
+    {
+        $this->shouldFlatMapBandMembersWith(
+            function (array $band): array {
+                return $band['members'];
+            }
+        );
+    }
+
+    function it_maps_with_flattening_with_iterator_transformer()
+    {
+        $this->shouldFlatMapBandMembersWith(
+            function (array $band): \Iterator {
+                return new \ArrayIterator($band['members']);
+            }
+        );
+    }
+
+    function it_throws_InvalidArgumentException_when_flatMap_transformer_is_not_iterable()
+    {
+        $this->beConstructedWith([['a'], ['b'], ['c']]);
+
+        $invalidTransformer = function (array $item): string {
+            return $item[0];
+        };
+
+        $this->shouldThrow(\InvalidArgumentException::class)->during('flatMap', [$invalidTransformer]);
+    }
+
+    private function shouldFlatMapBandMembersWith(callable $mapper): void
+    {
+        $this->beConstructedWith([
+            [
+                'band' => 'The Beatles',
+                'members' => ['John', 'Paul', 'George', 'Ringo'],
+            ],
+            [
+                'band' => 'Rolling Stones',
+                'members' => ['Mick', 'Keith', 'Ron', 'Charlie'],
+            ],
+            [
+                'band' => 'Led Zeppelin',
+                'members' => ['Robert', 'Jimmy', 'John Paul', 'John'],
+            ],
+        ]);
+
+        $legends = $this->flatMap($mapper);
+        $legends->shouldNotBe($this);
+        $legends->shouldBeLike(
+            new PlainArray([
+                'John',
+                'Paul',
+                'George',
+                'Ringo',
+                'Mick',
+                'Keith',
+                'Ron',
+                'Charlie',
+                'Robert',
+                'Jimmy',
+                'John Paul',
+                'John',
+            ])
+        );
+    }
     
     function it_filters_items_with_closure()
     {

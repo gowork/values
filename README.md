@@ -222,6 +222,17 @@ array (
 )
 ```
 
+### ArrayValue::flatMap
+
+```php
+<?php
+/**
+ * @param callable $transformer function(mixed $value): iterable { ... }
+ * @return ArrayValue
+ */
+public function flatMap(callable $transformer);
+```
+
 ### ArrayValue::sort
 
 ```php
@@ -2054,6 +2065,17 @@ public function filterEmpty();
  * @return StringsArray
  */
 public function map(callable $transformer);
+```
+
+### StringsArray::flatMap
+
+```php
+<?php
+/**
+ * @param callable $transformer function(StringValue $value): iterable { ... }
+ * @return StringsArray
+ */
+public function flatMap(callable $transformer);
 ```
 
 ### StringsArray::sort

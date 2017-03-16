@@ -18,6 +18,13 @@ final class Safe
         };
     }
 
+    public static function iterableTransformer(callable $callable): \Closure
+    {
+        return function(...$args) use ($callable): iterable {
+            return self::guard($callable(...$args), 'is_iterable', 'Iterable transformer must return iterable value.');
+        };
+    }
+
     private static function guard($value, callable $assertion, string $message)
     {
         if ($assertion($value) === false) {
