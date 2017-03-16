@@ -20,6 +20,22 @@ final class PlainArray implements ArrayValue
         return new self(array_map($transformer, $this->items));
     }
 
+    /**
+     * @param callable $transformer function(mixed $value): iterable
+     */
+    public function flatMap(callable $transformer): PlainArray
+    {
+        $elements = [];
+        $safeTransformer = Safe::iterableTransformer($transformer);
+
+        foreach ($this->items as $item) {
+            $transformed = $safeTransformer($item);
+            $elements[] = is_array($transformed) ? $transformed : iterator_to_array($transformed);
+        }
+
+        return new self(array_merge(...$elements));
+    }
+
     public function filterEmpty(): PlainArray
     {
         return $this->filter(Filters::notEmpty());

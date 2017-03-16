@@ -47,6 +47,11 @@ final class PlainStringsArray implements StringsArray
         return new self($this->strings->map($transformer));
     }
 
+    public function flatMap(callable $transformer): PlainStringsArray
+    {
+        return new self($this->strings->flatMap($transformer));
+    }
+
     public function filter(callable $filter): PlainStringsArray
     {
         return new self($this->strings->filter($filter));

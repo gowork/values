@@ -41,6 +41,12 @@ interface StringsArray extends ArrayValue, StringValue
     public function map(callable $transformer);
 
     /**
+     * @param callable $transformer function(StringValue $value): iterable { ... }
+     * @return StringsArray
+     */
+    public function flatMap(callable $transformer);
+
+    /**
      * @param callable $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
      * @return StringsArray
      */

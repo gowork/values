@@ -3,8 +3,9 @@
 namespace spec\GW\Value;
 
 use GW\Value\ArrayValue;
-use GW\Value\Sorts;
 use GW\Value\PlainStringsArray;
+use GW\Value\Sorts;
+use GW\Value\StringsArray;
 use GW\Value\StringValue;
 use GW\Value\Wrap;
 use PhpSpec\Exception\Example\FailureException;
@@ -122,6 +123,20 @@ final class PlainStringsArraySpec extends ObjectBehavior
         };
 
         $this->map($mapper)->shouldBeLike(PlainStringsArray::fromArray(['AAA', 'BBB', 'CCC', 'DDD']));
+    }
+
+    function it_flat_maps_string_values()
+    {
+        $this->beConstructedWithStrings('blue ball', 'red balloon', 'green grass');
+
+        $mapped = $this->flatMap(
+            function (StringValue $words): StringsArray {
+                return $words->explode(' ');
+            }
+        );
+
+        $mapped->shouldNotBe($this);
+        $mapped->shouldBeLike(PlainStringsArray::fromArray(['blue', 'ball', 'red', 'balloon', 'green', 'grass']));
     }
 
     function it_returns_first_and_last()

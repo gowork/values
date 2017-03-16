@@ -41,6 +41,12 @@ interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \Arra
     public function map(callable $transformer);
 
     /**
+     * @param callable $transformer function(mixed $value): iterable { ... }
+     * @return ArrayValue
+     */
+    public function flatMap(callable $transformer);
+
+    /**
      * @param callable $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      * @return ArrayValue
      */
