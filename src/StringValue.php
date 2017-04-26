@@ -7,6 +7,12 @@ interface StringValue extends Value
     public const TRIM_MASK = " \t\n\r\0\x0B";
 
     /**
+     * @param callable $transformer function(string $value): string
+     * @return StringValue
+     */
+    public function transform(callable $transformer);
+
+    /**
      * @return StringValue
      */
     public function stripTags();

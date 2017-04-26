@@ -161,6 +161,12 @@ interface StringsArray extends ArrayValue, StringValue
     // StringValue
 
     /**
+     * @param callable $transformer function(string $value): string
+     * @return StringsArray
+     */
+    public function transform(callable $transformer);
+
+    /**
      * @return StringsArray
      */
     public function stripTags();
