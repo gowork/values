@@ -111,6 +111,23 @@ final class AssocArraySpec extends ObjectBehavior
         );
     }
 
+    function it_can_create_a_copy_without_multiple_keys()
+    {
+        $array = $this->without('a', 'c');
+        $array->shouldNotBe($this);
+        $array->shouldBeLike(new AssocArray(['b' => 'berni']));
+    }
+
+    function it_can_create_a_copy_with_only_given_set_of_keys()
+    {
+        $array = $this->only('a', 'c');
+
+        $array->shouldNotBe($this);
+        $array->shouldBeLike(new AssocArray(['a' => 'alf', 'c' => 'clifford']));
+
+        $this->only('a')->shouldBeLike(new AssocArray(['a' => 'alf']));
+    }
+
     function it_can_delete_element_by_value()
     {
         $array = $this->withoutElement('alf');

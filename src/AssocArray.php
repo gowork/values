@@ -145,12 +145,14 @@ final class AssocArray implements AssocValue
         return new self(array_merge($this->items, $other->toAssocArray()));
     }
 
-    public function without(string $key): AssocArray
+    public function without(string ...$keys): AssocArray
     {
-        $items = $this->items;
-        unset($items[$key]);
+        return new self(array_diff_key($this->items, array_flip($keys)));
+    }
 
-        return new self($items);
+    public function only(string ...$keys): AssocArray
+    {
+        return new self(array_intersect_key($this->items, array_flip($keys)));
     }
 
     /**
