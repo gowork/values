@@ -33,7 +33,7 @@ final class PlainArray implements ArrayValue
             $elements[] = is_array($transformed) ? $transformed : iterator_to_array($transformed);
         }
 
-        return new self(array_merge(...$elements));
+        return new self(array_merge([], ...$elements));
     }
 
     public function filterEmpty(): PlainArray

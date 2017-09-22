@@ -87,6 +87,17 @@ final class PlainArraySpec extends ObjectBehavior
         $this->shouldThrow(\InvalidArgumentException::class)->during('flatMap', [$invalidTransformer]);
     }
 
+    function it_can_flat_map_empty_array()
+    {
+        $this->beConstructedWith([[], []]);
+
+        $transformer = function (): array {
+            return [];
+        };
+
+        $this->flatMap($transformer)->shouldBeLike(new PlainArray([]));
+    }
+
     private function shouldFlatMapBandMembersWith(callable $mapper): void
     {
         $this->beConstructedWith([
