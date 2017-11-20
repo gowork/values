@@ -4,16 +4,16 @@ GW/Values is a library to wrap PHP's primitive values into cleaner and more user
 
 ## Installation
 
-It works only on PHP 7.1. This library is available on Composer/Packagist as `goworkpl/values`. To install it execute:
+It works only on PHP 7.1. This library is available on Composer/Packagist as `gowork/values`. To install it execute:
 ```
-composer require goworkpl/values ^0.1
+composer require gowork/values ^0.1
 ```
 
 or manually update your `composer.json` with:
 ```
 (...)
 "require": {
-    "goworkpl/values": "^0.1"
+    "gowork/values": "^0.1"
 }
 ```
 
@@ -25,7 +25,7 @@ See [![here](docs/examples.md)]
 
 ## Contributing
 
-Want to contribute? Perfect! Submit an issue or Pull Request and explain what would you like to see in GW/Values.
+Want to contribute? Perfect! Submit an issue or Pull Request and explain what would you like to see in `GW/Value`.
 
 ## License
 
