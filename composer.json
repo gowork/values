@@ -1,7 +1,23 @@
 {
     "name": "gw/value",
-    "description": "PHP primitive types value objects.",
     "type": "library",
+    "description": "PHP primitive types value objects.",
+    "keywords": ["primitive", "type", "value object"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Damian Zaprzałek",
+            "email": "sz.p.damian@gmail.com"
+        },
+        {
+            "name": "Bronisław Białek",
+            "email": "after89@gmail.com"
+        },
+        {
+            "name": "Dawid Łakomski",
+            "email": "dawid.lakomski@gmail.com"
+        }
+    ],
     "require": {
         "php": "^7.1"
     },
