@@ -1182,10 +1182,19 @@ public function with(string $key, $value);
 ```php
 <?php
 /**
- * @param string $key
  * @return AssocValue
  */
-public function without(string $key);
+public function without(string ...$keys);
+```
+
+### AssocValue::only
+
+```php
+<?php
+/**
+ * @return AssocValue
+ */
+public function only(string ...$keys);
 ```
 
 ### AssocValue::withoutElement
@@ -2747,7 +2756,7 @@ public function prefix(StringValue $other);
 ```php
 <?php
 /**
- * @return ArrayValue<StringValue>
+ * @return ArrayValue ArrayValue<StringValue>
  */
 public function toArrayValue(): ArrayValue;
 ```
@@ -2817,7 +2826,7 @@ array (
 ```php
 <?php
 /**
- * @return AssocValue<string, StringValue>
+ * @return AssocValue AssocValue<string, StringValue>
  */
 public function toAssocValue(): AssocValue;
 ```
