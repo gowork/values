@@ -25,8 +25,8 @@ final class Filters
                 return $callable($value);
             }
 
-            if (is_object($value)) {
-                return get_class($value) === $type;
+            if (\is_object($value)) {
+                return \get_class($value) === $type;
             }
 
             return false;
@@ -55,7 +55,7 @@ final class Filters
 
     public static function notTypes(string ...$types): \Closure
     {
-        return self::not(self::types($types));
+        return self::not(self::types(...$types));
     }
 
     public static function not(callable $filter): \Closure

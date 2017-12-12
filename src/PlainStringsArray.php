@@ -76,7 +76,7 @@ final class PlainStringsArray implements StringsArray
     {
         $stringValue = $element instanceof StringValue ? $element : Wrap::string($element);
 
-        return in_array($stringValue, $this->strings->toArray(), false);
+        return \in_array($stringValue, $this->strings->toArray(), false);
     }
 
     public function each(callable $callback): PlainStringsArray
@@ -88,7 +88,6 @@ final class PlainStringsArray implements StringsArray
 
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return Collection
      */
     public function unique(?callable $comparator = null): PlainStringsArray
     {
@@ -142,12 +141,12 @@ final class PlainStringsArray implements StringsArray
         return $this->strings->offsetGet($offset);
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->strings->offsetSet($offset, $value);
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->strings->offsetUnset($offset);
     }
@@ -367,7 +366,7 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
-     * @return ArrayValue<StringValue>
+     * @return ArrayValue ArrayValue<StringValue>
      */
     public function toArrayValue(): ArrayValue
     {
@@ -375,7 +374,7 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
-     * @return AssocValue<string, StringValue>
+     * @return AssocValue AssocValue<string, StringValue>
      */
     public function toAssocValue(): AssocValue
     {
