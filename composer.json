@@ -22,7 +22,8 @@
         "php": "^7.1"
     },
     "require-dev": {
-        "phpspec/phpspec": "^3.2"
+        "phpspec/phpspec": "^4.2",
+        "phpstan/phpstan": "^0.9"
     },
     "autoload": {
         "psr-4": {
@@ -35,7 +36,6 @@
             "doc\\GW\\Value\\": "examples/"
         }
     },
-    "minimum-stability": "dev",
     "config": {
         "bin-dir": "bin"
     }

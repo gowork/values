@@ -106,13 +106,11 @@ interface AssocValue extends Value, Collection, \IteratorAggregate, \ArrayAccess
     public function with(string $key, $value);
 
     /**
-     * @param string $key
      * @return AssocValue
      */
     public function without(string ...$keys);
 
     /**
-     * @param string $key
      * @return AssocValue
      */
     public function only(string ...$keys);
