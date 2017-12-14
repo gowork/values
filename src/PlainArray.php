@@ -26,11 +26,10 @@ final class PlainArray implements ArrayValue
     public function flatMap(callable $transformer): PlainArray
     {
         $elements = [];
-        $safeTransformer = Safe::iterableTransformer($transformer);
 
         foreach ($this->items as $item) {
-            $transformed = $safeTransformer($item);
-            $elements[] = is_array($transformed) ? $transformed : iterator_to_array($transformed);
+            $transformed = $transformer($item);
+            $elements[] = \is_array($transformed) ? $transformed : iterator_to_array($transformed);
         }
 
         return new self(array_merge([], ...$elements));
@@ -46,7 +45,7 @@ final class PlainArray implements ArrayValue
      */
     public function filter(callable $filter): PlainArray
     {
-        return new self(array_filter($this->items, Safe::filter($filter)));
+        return new self(array_filter($this->items, $filter));
     }
 
     /**
@@ -55,7 +54,7 @@ final class PlainArray implements ArrayValue
     public function sort(callable $comparator): PlainArray
     {
         $items = $this->items;
-        uasort($items, Safe::comparator($comparator));
+        uasort($items, $comparator);
 
         return new self($items);
     }
@@ -84,8 +83,7 @@ final class PlainArray implements ArrayValue
 
     public function slice(int $offset, int $length): PlainArray
     {
-        // TODO require valid values or just leave to php?
-        return new self(array_slice($this->items, $offset, $length));
+        return new self(\array_slice($this->items, $offset, $length));
     }
 
     /**
@@ -98,11 +96,10 @@ final class PlainArray implements ArrayValue
         }
 
         $result = [];
-        $safeComparator = Safe::comparator($comparator);
 
         foreach ($this->items as $valueA) {
             foreach ($result as $valueB) {
-                if ($safeComparator($valueA, $valueB) === 0) {
+                if ($comparator($valueA, $valueB) === 0) {
                     // item already in result
                     continue 2;
                 }
@@ -127,7 +124,7 @@ final class PlainArray implements ArrayValue
             return new self(array_diff($this->items, $other->toArray()));
         }
 
-        return new self(array_udiff($this->items, $other->toArray(), Safe::comparator($comparator)));
+        return new self(array_udiff($this->items, $other->toArray(), $comparator));
     }
 
     /**
@@ -143,7 +140,7 @@ final class PlainArray implements ArrayValue
             return new self(array_intersect($this->items, $other->toArray()));
         }
 
-        return new self(array_uintersect($this->items, $other->toArray(), Safe::comparator($comparator)));
+        return new self(array_uintersect($this->items, $other->toArray(), $comparator));
     }
 
     public function shuffle(): PlainArray
@@ -184,7 +181,7 @@ final class PlainArray implements ArrayValue
     public function push($value): PlainArray
     {
         $clone = clone $this;
-        array_push($clone->items, $value);
+        $clone->items[] = $value;
 
         return $clone;
     }
@@ -232,12 +229,12 @@ final class PlainArray implements ArrayValue
 
     public function hasElement($element): bool
     {
-        return in_array($element, $this->items, true);
+        return \in_array($element, $this->items, true);
     }
 
     public function count(): int
     {
-        return count($this->items);
+        return \count($this->items);
     }
 
     /**
@@ -255,7 +252,6 @@ final class PlainArray implements ArrayValue
 
     public function offsetExists($offset): bool
     {
-        // TODO require int offset
         return isset($this->items[$offset]);
     }
 
@@ -265,19 +261,16 @@ final class PlainArray implements ArrayValue
      */
     public function offsetGet($offset)
     {
-        // TODO require int offset
         return $this->items[$offset];
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
-        // TODO more proper exception
         throw new \BadMethodCallException('ArrayValue is immutable');
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
-        // TODO more proper exception
         throw new \BadMethodCallException('ArrayValue is immutable');
     }
 

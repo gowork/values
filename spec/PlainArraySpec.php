@@ -76,17 +76,6 @@ final class PlainArraySpec extends ObjectBehavior
         );
     }
 
-    function it_throws_InvalidArgumentException_when_flatMap_transformer_is_not_iterable()
-    {
-        $this->beConstructedWith([['a'], ['b'], ['c']]);
-
-        $invalidTransformer = function (array $item): string {
-            return $item[0];
-        };
-
-        $this->shouldThrow(\InvalidArgumentException::class)->during('flatMap', [$invalidTransformer]);
-    }
-
     function it_can_flat_map_empty_array()
     {
         $this->beConstructedWith([[], []]);
@@ -516,31 +505,6 @@ final class PlainArraySpec extends ObjectBehavior
         $this->hasElement('2')->shouldReturn(true);
         $this->hasElement(2)->shouldReturn(false);
         $this->hasElement('five')->shouldReturn(false);
-    }
-
-    function it_throws_InvalidArgumentException_when_sort_comparator_returns_something_other_than_int()
-    {
-        $this->beConstructedWith(['1', '2', '3']);
-
-        $this->shouldThrow(\InvalidArgumentException::class)->during('sort', [new InvalidComparator()]);
-    }
-
-    function it_throws_InvalidArgumentException_when_unique_comparator_returns_something_other_than_int()
-    {
-        $this->beConstructedWith(['1', '1', '3']);
-
-        $this->shouldThrow(\InvalidArgumentException::class)->during('unique', [new InvalidComparator()]);
-    }
-
-    function it_throws_InvalidArgumentException_when_filter_returns_something_else_than_boolean()
-    {
-        $this->beConstructedWith(['1', '1', '3']);
-
-        $invalidFilter = function(): int {
-            return 1;
-        };
-
-        $this->shouldThrow(\InvalidArgumentException::class)->during('filter', [$invalidFilter]);
     }
 
     private function entityComparator(): \Closure

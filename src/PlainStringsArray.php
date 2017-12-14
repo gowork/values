@@ -95,7 +95,7 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
-     * @return StringValue[]
+     * @return string[]
      */
     public function toArray(): array
     {
@@ -126,7 +126,7 @@ final class PlainStringsArray implements StringsArray
         return new self($this->strings->reverse());
     }
 
-    public function getIterator(): \Iterator
+    public function getIterator(): \Traversable
     {
         return $this->strings->getIterator();
     }

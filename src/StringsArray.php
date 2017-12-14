@@ -19,7 +19,7 @@ interface StringsArray extends ArrayValue, StringValue
     public function unique(?callable $comparator = null);
 
     /**
-     * @return StringValue[]
+     * @return string[]
      */
     public function toArray(): array;
 
