@@ -1,0 +1,20 @@
+{
+    "bootstrap": "vendor/autoload.php",
+    "path": "benchmarks",
+    "time_unit": "seconds",
+    "progress": "dots",
+    "reports": {
+        "values": {
+            "extends": "default",
+            "cols": ["benchmark", "subject", "revs", "mem_peak", "time_rev", "diff"],
+            "break": ["groups"]
+        }
+    },
+    "outputs": {
+        "md": {
+            "extends": "markdown",
+            "file": "BENCHMARKS.md",
+            "title": "Performance: native vs wrapped"
+        }
+    }
+}

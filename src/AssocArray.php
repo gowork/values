@@ -7,20 +7,9 @@ final class AssocArray implements AssocValue
     /** @var array */
     private $items;
 
-    /** @var string[] */
-    private $keys;
-
     public function __construct(array $items)
     {
-        $this->items = $this->transformArrayKeys($items, function ($key): string {
-            return strval($key);
-        });
-        $this->keys = array_keys($this->items);
-    }
-
-    private function transformArrayKeys(array $items, callable $transformer): array
-    {
-        return array_combine(array_map($transformer, array_keys($items), $items), $items);
+        $this->items = $items;
     }
 
     /**
@@ -41,7 +30,7 @@ final class AssocArray implements AssocValue
      */
     public function keys(): StringsArray
     {
-        return Wrap::stringsArray($this->keys);
+        return Wrap::stringsArray(array_keys($this->items));
     }
 
     /**
@@ -49,7 +38,7 @@ final class AssocArray implements AssocValue
      */
     public function mapKeys(callable $transformer): AssocArray
     {
-        return new self($this->transformArrayKeys($this->items, $transformer));
+        return new self(array_combine(array_map($transformer, array_keys($this->items), $this->items), $this->items));
     }
 
     public function filterEmpty(): AssocArray
@@ -59,13 +48,13 @@ final class AssocArray implements AssocValue
 
     public function filter(callable $filter): AssocArray
     {
-        return new self(array_filter($this->items, Safe::filter($filter)));
+        return new self(array_filter($this->items, $filter));
     }
 
     public function sort(callable $comparator): AssocArray
     {
         $items = $this->items;
-        uasort($items, Safe::comparator($comparator));
+        uasort($items, $comparator);
 
         return new self($items);
     }
@@ -89,7 +78,7 @@ final class AssocArray implements AssocValue
     public function sortKeys(callable $comparator): AssocArray
     {
         $items = $this->items;
-        uksort($items, Safe::comparator($comparator));
+        uksort($items, $comparator);
 
         return new self($items);
     }
@@ -116,11 +105,9 @@ final class AssocArray implements AssocValue
         }
 
         $result = [];
-        $safeComparator = Safe::comparator($comparator);
-
         foreach ($this->items as $keyA => $valueA) {
             foreach ($result as $valueB) {
-                if ($safeComparator($valueA, $valueB) === 0) {
+                if ($comparator($valueA, $valueB) === 0) {
                     // item already in result
                     continue 2;
                 }
@@ -210,7 +197,7 @@ final class AssocArray implements AssocValue
 
     public function hasElement($element): bool
     {
-        return in_array($element, $this->items, true);
+        return \in_array($element, $this->items, true);
     }
 
     /**
@@ -233,7 +220,7 @@ final class AssocArray implements AssocValue
 
     public function count(): int
     {
-        return count($this->items);
+        return \count($this->items);
     }
 
     public function isEmpty(): bool
@@ -243,23 +230,21 @@ final class AssocArray implements AssocValue
 
     public function offsetExists($offset): bool
     {
-        // TODO require int offset
         return isset($this->items[$offset]);
     }
 
     public function offsetGet($offset)
     {
-        // TODO require string offset
         return $this->items[$offset];
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
-        throw new \BadMethodCallException('ArrayValue is immutable');
+        throw new \BadMethodCallException('AssocArray is immutable');
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
-        throw new \BadMethodCallException('ArrayValue is immutable');
+        throw new \BadMethodCallException('AssocArray is immutable');
     }
 }
