@@ -2,6 +2,7 @@
 
 namespace spec\GW\Value;
 
+use GW\Value\PlainArray;
 use GW\Value\PlainString;
 use PhpSpec\ObjectBehavior;
 
@@ -323,5 +324,14 @@ final class PlainStringSpec extends ObjectBehavior
         $transformed = $this->transform($transformer);
         $transformed->shouldNotBe($this);
         $transformed->shouldBeLike(new PlainString(md5('Hide my secret!')));
+    }
+
+    function it_returns_ArrayValue_containing_regex_matches()
+    {
+        $this->beConstructedWith('<b>Lorem</b> ipsum dolor sit <i>amet</i>');
+
+        $matches = $this->matchAllPatterns('#<[^>]+>(lorem|amet)</[^>]+>#ui');
+        $matches->shouldNotBe($this);
+        $matches->shouldBeLike(new PlainArray([['<b>Lorem</b>', 'Lorem'], ['<i>amet</i>', 'amet']]));
     }
 }

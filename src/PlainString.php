@@ -129,11 +129,11 @@ final class PlainString implements StringValue
         return $this->matchAllPatterns($pattern)->count() > 0;
     }
 
-    public function matchAllPatterns(string $pattern): StringsArray
+    public function matchAllPatterns(string $pattern): ArrayValue
     {
         preg_match_all($pattern, $this->value, $matches, PREG_SET_ORDER);
 
-        return Wrap::stringsArray($matches);
+        return Wrap::array($matches);
     }
 
     public function splitByPattern(string $pattern): StringsArray

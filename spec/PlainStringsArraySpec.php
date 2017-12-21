@@ -3,6 +3,7 @@
 namespace spec\GW\Value;
 
 use GW\Value\ArrayValue;
+use GW\Value\PlainArray;
 use GW\Value\PlainStringsArray;
 use GW\Value\Sorts;
 use GW\Value\StringsArray;
@@ -508,6 +509,15 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $transformed = $this->transform('md5');
         $transformed->shouldNotBe($this);
         $transformed->shouldBeLike(PlainStringsArray::fromArray([md5('one'), md5('two'), md5('three')]));
+    }
+
+    function it_returns_PlainArray_containing_regex_matches()
+    {
+        $this->beConstructedWithStrings('Lorem', 'ipsum', 'dolor', 'sit', 'amet');
+
+        $matches = $this->matchAllPatterns('/(lorem|dolor)/ui');
+        $matches->shouldNotBe($this);
+        $matches->shouldBeLike(new PlainArray([['Lorem', 'Lorem'], ['dolor', 'dolor']]));
     }
 
     private function beConstructedWithStrings(string ...$strings): void
