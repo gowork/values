@@ -2,11 +2,18 @@
 
 namespace GW\Value;
 
+use GW\Value\IterableValue;
+
 final class Wrap
 {
     public static function array(array $array = []): ArrayValue
     {
         return new PlainArray($array);
+    }
+
+    public static function iterable(iterable $iterator = []): IterableValue
+    {
+        return new IterableValue($iterator);
     }
 
     public static function arrayFromValues(...$array): ArrayValue
