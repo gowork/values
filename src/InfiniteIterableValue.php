@@ -5,13 +5,49 @@ namespace GW\Value;
 final class InfiniteIterableValue implements IterableValue
 {
     /** @var iterable */
+    private $iterable;
+
+    /** @var iterable */
     private $iterator;
 
-    public function __construct(iterable $iterator)
+    /** @var bool */
+    private $rewindable;
+
+    /** @var bool */
+    private $used = false;
+
+    /** @var array|null */
+    private $values;
+
+    public function __construct(iterable $iterable, bool $rewindable = false)
     {
-        $this->iterator = function () use ($iterator) {
-            yield from $iterator;
-        };
+        $this->iterable = $iterable;
+        $this->rewindable = $rewindable;
+
+        if ($this->rewindable) {
+            $this->iterator = function () {
+                if ($this->values !== null) {
+                    yield from $this->values;
+                    return;
+                }
+
+                $this->values = [];
+
+                foreach ($this->iterable as $item) {
+                    yield $item;
+                    $this->values[] = $item;
+                }
+            };
+        } else {
+            $this->iterator = function () {
+                if ($this->used) {
+                    throw new \RuntimeException('IterableValue is already used.');
+                }
+
+                yield from $this->iterable;
+                $this->used = true;
+            };
+        }
     }
 
     /**
@@ -319,5 +355,15 @@ final class InfiniteIterableValue implements IterableValue
     public function getIterator(): \Traversable
     {
         yield from ($this->iterator)();
+    }
+
+    public function use(iterable $iterable): IterableValue
+    {
+        $clone = clone $this;
+        $clone->iterable = $iterable;
+        $clone->values = null;
+        $clone->used = false;
+
+        return $clone;
     }
 }

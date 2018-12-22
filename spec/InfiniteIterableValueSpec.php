@@ -219,7 +219,7 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
     function it_returns_diff_using_string_comparison_by_default()
     {
         $items = ['item 1', 'item 2', 'item 3', 'item 4'];
-        $this->beConstructedWith($items);
+        $this->beConstructedWith($items, true);
 
         $this->diff(new PlainArray([]))->toArray()->shouldBeLike(['item 1', 'item 2', 'item 3', 'item 4']);
         $this->diff(new PlainArray($items))->toArray()->shouldBeLike([]);
@@ -234,7 +234,7 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $jack = new DummyEntity(3, 'Jack');
         $averell = new DummyEntity(4, 'Averell');
 
-        $this->beConstructedWith([$joe, $william, $jack, $averell]);
+        $this->beConstructedWith([$joe, $william, $jack, $averell], true);
 
         $comparator = $this->entityComparator();
 
@@ -250,7 +250,7 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
     function it_returns_intersection_using_string_comparison_by_default()
     {
         $items = ['item 1', 'item 2', 'item 3', 'item 4'];
-        $this->beConstructedWith($items);
+        $this->beConstructedWith($items, true);
 
         $this->intersect(new PlainArray([]))->toArray()->shouldBeLike([]);
         $this->intersect(new PlainArray($items))->toArray()->shouldBeLike(['item 1', 'item 2', 'item 3', 'item 4']);
@@ -267,7 +267,7 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $jack = new DummyEntity(3, 'Jack');
         $averell = new DummyEntity(4, 'Averell');
 
-        $this->beConstructedWith([$joe, $william, $jack, $averell]);
+        $this->beConstructedWith([$joe, $william, $jack, $averell], true);
 
         $comparator = $this->entityComparator();
 
@@ -336,6 +336,31 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $this->beConstructedWith([]);
         $this->shouldImplement(\IteratorAggregate::class);
         $this->getIterator()->shouldHaveType(\Iterator::class);
+    }
+
+    function it_can_rewind_generated_items()
+    {
+        $this->beConstructedWith((function () {
+            yield from [\random_bytes(100), \random_bytes(100)];
+        })(), true);
+
+        $firstValues = $this->toArray()->getWrappedObject();
+        $this->toArray()->shouldBeLike($firstValues);
+    }
+
+    function it_can_be_used_with_new_iterable()
+    {
+        $this->beConstructedThrough(function () {
+            $value = new InfiniteIterableValue([1, 2, 3]);
+            $value->toArray();
+
+            return $value->map(function (int $v): int {
+                    return $v + 1;
+                })
+                ->use([10, 11, 12]);
+        });
+
+        $this->toArray()->shouldEqual([11, 12, 13]);
     }
 
     private function entityComparator(): \Closure

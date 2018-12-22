@@ -2,8 +2,6 @@
 
 namespace GW\Value;
 
-use GW\Value\InfiniteIterableValue;
-
 final class Wrap
 {
     public static function array(array $array = []): ArrayValue
@@ -14,6 +12,11 @@ final class Wrap
     public static function iterable(iterable $iterator = []): InfiniteIterableValue
     {
         return new InfiniteIterableValue($iterator);
+    }
+
+    public static function rewindableIterable(iterable $iterator = []): InfiniteIterableValue
+    {
+        return new InfiniteIterableValue($iterator, true);
     }
 
     public static function arrayFromValues(...$array): ArrayValue

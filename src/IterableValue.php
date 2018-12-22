@@ -98,4 +98,6 @@ interface IterableValue extends \IteratorAggregate
      * @return mixed[]
      */
     public function toArray(): array;
+
+    public function use(iterable $iterable): IterableValue;
 }
