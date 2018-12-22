@@ -4,28 +4,56 @@ namespace GW\Value;
 
 final class InfiniteIterableValue implements IterableValue
 {
-    /** @var iterable */
-    private $iterable;
+    /** @var \Closure */
+    private $rootIterator;
 
-    /** @var iterable */
+    /** @var object&callable */
     private $iterator;
-
-    /** @var bool */
-    private $rewindable;
-
-    /** @var bool */
-    private $used = false;
 
     /** @var array|null */
     private $values;
 
     public function __construct(iterable $iterable, bool $rewindable = false)
     {
-        $this->iterable = $iterable;
-        $this->rewindable = $rewindable;
+        $this->iterator = new class ($iterable, $rewindable) {
+            /** @var iterable */
+            private $iterable;
+            /** @var bool */
+            private $used = false;
+            /** @var array|null */
+            private $values;
+            /** @var bool */
+            private $rewindable;
 
-        if ($this->rewindable) {
-            $this->iterator = function () {
+            public function __construct(iterable $iterable, bool $rewindable)
+            {
+                $this->iterable = $iterable;
+                $this->rewindable = $rewindable;
+            }
+
+            public function replaceIterable($iterable): void
+            {
+                $this->iterable = $iterable;
+                $this->used = false;
+            }
+
+            public function __invoke(): iterable
+            {
+                if ($this->rewindable) {
+                    yield from $this->rewindableIterator();
+                    return;
+                }
+
+                if ($this->used) {
+                    throw new \RuntimeException('IterableValue is already used.');
+                }
+
+                yield from $this->iterable;
+                $this->used = true;
+            }
+
+            private function rewindableIterator(): iterable
+            {
                 if ($this->values !== null) {
                     yield from $this->values;
                     return;
@@ -37,17 +65,10 @@ final class InfiniteIterableValue implements IterableValue
                     yield $item;
                     $this->values[] = $item;
                 }
-            };
-        } else {
-            $this->iterator = function () {
-                if ($this->used) {
-                    throw new \RuntimeException('IterableValue is already used.');
-                }
+            }
+        };
 
-                yield from $this->iterable;
-                $this->used = true;
-            };
-        }
+        $this->rootIterator = $this->iterator;
     }
 
     /**
@@ -360,9 +381,7 @@ final class InfiniteIterableValue implements IterableValue
     public function use(iterable $iterable): IterableValue
     {
         $clone = clone $this;
-        $clone->iterable = $iterable;
-        $clone->values = null;
-        $clone->used = false;
+        $clone->rootIterator->replaceIterable($iterable);
 
         return $clone;
     }
