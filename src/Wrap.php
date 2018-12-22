@@ -2,7 +2,7 @@
 
 namespace GW\Value;
 
-use GW\Value\IterableValue;
+use GW\Value\InfiniteIterableValue;
 
 final class Wrap
 {
@@ -11,9 +11,9 @@ final class Wrap
         return new PlainArray($array);
     }
 
-    public static function iterable(iterable $iterator = []): IterableValue
+    public static function iterable(iterable $iterator = []): InfiniteIterableValue
     {
-        return new IterableValue($iterator);
+        return new InfiniteIterableValue($iterator);
     }
 
     public static function arrayFromValues(...$array): ArrayValue
