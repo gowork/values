@@ -353,6 +353,45 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $this->toArray()->shouldEqual([11, 12, 13]);
     }
 
+    function it_can_be_casted_to_array_twice()
+    {
+        $this->beConstructedWith([1, 2, 3]);
+        $this->toArray()->shouldEqual([1, 2, 3]);
+        $this->toArray()->shouldEqual([1, 2, 3]);
+    }
+
+    function it_can_be_chained()
+    {
+        $this->beConstructedWith([1, 2, 3]);
+        $modified = $this
+            ->filter(function (int $i): bool {return $i === 2;})
+            ->map(function (int $i): int {return $i*2;});
+
+        $modified
+            ->toArray()
+            ->shouldEqual([4]);
+
+        $modified
+            ->map(function (int $i): int {return $i*2;})
+            ->toArray()
+            ->shouldEqual([8]);
+
+        $modified
+            ->toArray()
+            ->shouldEqual([4]);
+
+        $modified
+            ->use([2, 2, 5])
+            ->map(function (int $i): int {return $i*2;})
+            ->toArray()
+            ->shouldEqual([8, 8]);
+
+        $modified
+            ->use([2, 2, 5])
+            ->toArray()
+            ->shouldEqual([4, 4]);
+    }
+
     private function entityComparator(): \Closure
     {
         return function (DummyEntity $entityA, DummyEntity $entityB): int {
