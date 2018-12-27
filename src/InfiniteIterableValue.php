@@ -7,39 +7,12 @@ final class InfiniteIterableValue implements IterableValue
     /** @var \Closure */
     private $rootIterator;
 
-    /** @var object&callable */
+    /** @var Iterator */
     private $iterator;
 
     public function __construct(iterable $iterable)
     {
-        $this->iterator = new class ($iterable) {
-            /** @var iterable */
-            private $iterable;
-            /** @var bool */
-            private $used = false;
-
-            public function __construct(iterable $iterable)
-            {
-                $this->iterable = $iterable;
-            }
-
-            public function replaceIterable($iterable): void
-            {
-                $this->iterable = $iterable;
-                $this->used = false;
-            }
-
-            public function __invoke(): iterable
-            {
-                if ($this->used) {
-                    throw new \RuntimeException('IterableValue is already used.');
-                }
-
-                yield from $this->iterable;
-                $this->used = $this->iterable instanceof \Generator;
-            }
-        };
-
+        $this->iterator = new Iterator($iterable);
         $this->rootIterator = $this->iterator;
     }
 
