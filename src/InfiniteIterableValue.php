@@ -4,10 +4,10 @@ namespace GW\Value;
 
 final class InfiniteIterableValue implements IterableValue
 {
-    /** @var \Closure */
+    /** @var Iterator */
     private $rootIterator;
 
-    /** @var Iterator */
+    /** @var object&callable */
     private $iterator;
 
     public function __construct(iterable $iterable)
