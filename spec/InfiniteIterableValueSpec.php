@@ -357,6 +357,7 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
     {
         $this->beConstructedThrough(function () {
             $value = new InfiniteIterableValue([1, 2, 3, 4]);
+            $value = $value->map(function (int $v): int {return $v+1;});
 
             foreach ($value as $k => $v) {
                 if ($k === 1) {
@@ -367,7 +368,7 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
             return $value;
         });
 
-        $this->toArray()->shouldEqual([1, 2, 3, 4]);
+        $this->toArray()->shouldEqual([2, 3, 4, 5]);
     }
 
     function it_can_be_casted_to_array_twice()
