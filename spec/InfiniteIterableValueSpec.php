@@ -338,16 +338,6 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $this->getIterator()->shouldHaveType(\Iterator::class);
     }
 
-    function it_can_rewind_generated_items()
-    {
-        $this->beConstructedWith((function () {
-            yield from [\random_bytes(100), \random_bytes(100)];
-        })(), true);
-
-        $firstValues = $this->toArray()->getWrappedObject();
-        $this->toArray()->shouldBeLike($firstValues);
-    }
-
     function it_can_be_used_with_new_iterable()
     {
         $this->beConstructedThrough(function () {

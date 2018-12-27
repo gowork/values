@@ -14,11 +14,6 @@ final class Wrap
         return new InfiniteIterableValue($iterator);
     }
 
-    public static function rewindableIterable(iterable $iterator = []): InfiniteIterableValue
-    {
-        return new InfiniteIterableValue($iterator, true);
-    }
-
     public static function arrayFromValues(...$array): ArrayValue
     {
         return new PlainArray($array);

@@ -10,25 +10,17 @@ final class InfiniteIterableValue implements IterableValue
     /** @var object&callable */
     private $iterator;
 
-    /** @var array|null */
-    private $values;
-
-    public function __construct(iterable $iterable, bool $rewindable = false)
+    public function __construct(iterable $iterable)
     {
-        $this->iterator = new class ($iterable, $rewindable) {
+        $this->iterator = new class ($iterable) {
             /** @var iterable */
             private $iterable;
             /** @var bool */
             private $used = false;
-            /** @var array|null */
-            private $values;
-            /** @var bool */
-            private $rewindable;
 
-            public function __construct(iterable $iterable, bool $rewindable)
+            public function __construct(iterable $iterable)
             {
                 $this->iterable = $iterable;
-                $this->rewindable = $rewindable;
             }
 
             public function replaceIterable($iterable): void
@@ -39,32 +31,12 @@ final class InfiniteIterableValue implements IterableValue
 
             public function __invoke(): iterable
             {
-                if ($this->rewindable) {
-                    yield from $this->rewindableIterator();
-                    return;
-                }
-
                 if ($this->used) {
                     throw new \RuntimeException('IterableValue is already used.');
                 }
 
                 yield from $this->iterable;
-                $this->used = true;
-            }
-
-            private function rewindableIterator(): iterable
-            {
-                if ($this->values !== null) {
-                    yield from $this->values;
-                    return;
-                }
-
-                $this->values = [];
-
-                foreach ($this->iterable as $item) {
-                    yield $item;
-                    $this->values[] = $item;
-                }
+                $this->used = $this->iterable instanceof \Generator;
             }
         };
 
