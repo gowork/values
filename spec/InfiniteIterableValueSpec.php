@@ -353,11 +353,35 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $this->toArray()->shouldEqual([11, 12, 13]);
     }
 
+    function it_can_be_used_after_iteration_break()
+    {
+        $this->beConstructedThrough(function () {
+            $value = new InfiniteIterableValue([1, 2, 3, 4]);
+
+            foreach ($value as $k => $v) {
+                if ($k === 1) {
+                    break;
+                }
+            }
+
+            return $value;
+        });
+
+        $this->toArray()->shouldEqual([1, 2, 3, 4]);
+    }
+
     function it_can_be_casted_to_array_twice()
     {
         $this->beConstructedWith([1, 2, 3]);
         $this->toArray()->shouldEqual([1, 2, 3]);
         $this->toArray()->shouldEqual([1, 2, 3]);
+    }
+
+    function it_cannot_be_used_twice_if_generator()
+    {
+        $this->beConstructedWith((function () {yield from [2, 2, 5];})());
+        $this->toArray()->shouldEqual([2, 2, 5]);
+        $this->shouldThrow()->during('toArray');
     }
 
     function it_can_be_chained()
