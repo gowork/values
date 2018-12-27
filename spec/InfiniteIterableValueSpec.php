@@ -390,6 +390,11 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
             ->use([2, 2, 5])
             ->toArray()
             ->shouldEqual([4, 4]);
+
+        $modified
+            ->use((function () {yield from [2, 2, 5];})())
+            ->toArray()
+            ->shouldEqual([4, 4]);
     }
 
     private function entityComparator(): \Closure
