@@ -104,11 +104,9 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function filter(callable $filter): InfiniteIterableValue
     {
-        $currentIterator = $this->iterator;
-
         $clone = clone $this;
-        $clone->iterator = function () use ($filter, $currentIterator) {
-            foreach ($currentIterator() as $value) {
+        $clone->iterator = function () use ($filter) {
+            foreach (($this->iterator)() as $value) {
                 if ($filter($value)) {
                     yield $value;
                 }
@@ -129,11 +127,9 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function map(callable $transformer)
     {
-        $currentIterator = $this->iterator;
-
         $clone = clone $this;
-        $clone->iterator = function () use ($transformer, $currentIterator) {
-            foreach ($currentIterator() as $value) {
+        $clone->iterator = function () use ($transformer) {
+            foreach (($this->iterator)() as $value) {
                 yield $transformer($value);
             }
         };
@@ -147,11 +143,9 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function flatMap(callable $transformer)
     {
-        $currentIterator = $this->iterator;
-
         $clone = clone $this;
-        $clone->iterator = function () use ($transformer, $currentIterator) {
-            foreach ($currentIterator() as $value) {
+        $clone->iterator = function () use ($transformer) {
+            foreach (($this->iterator)() as $value) {
                 yield from $transformer($value);
             }
         };
@@ -170,12 +164,10 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function unshift($value)
     {
-        $currentIterator = $this->iterator;
-
         $clone = clone $this;
-        $clone->iterator = function () use ($value, $currentIterator) {
+        $clone->iterator = function () use ($value) {
             yield $value;
-            yield from $currentIterator();
+            yield from ($this->iterator)();
         };
 
         return $clone;
@@ -187,11 +179,9 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function push($value)
     {
-        $currentIterator = $this->iterator;
-
         $clone = clone $this;
-        $clone->iterator = function () use ($value, $currentIterator) {
-            yield from $currentIterator();
+        $clone->iterator = function () use ($value) {
+            yield from ($this->iterator)();
             yield $value;
         };
 
@@ -203,11 +193,9 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function join(IterableValue $other)
     {
-        $currentIterator = $this->iterator;
-
         $clone = clone $this;
-        $clone->iterator = function () use ($other, $currentIterator) {
-            yield from $currentIterator();
+        $clone->iterator = function () use ($other) {
+            yield from ($this->iterator)();
             yield from $other;
         };
 
@@ -219,11 +207,9 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function slice(int $offset, int $length)
     {
-        $currentIterator = $this->iterator;
-
         $clone = clone $this;
-        $clone->iterator = function () use ($offset, $length, $currentIterator) {
-            foreach ($currentIterator() as $value) {
+        $clone->iterator = function () use ($offset, $length) {
+            foreach (($this->iterator)() as $value) {
                 if ($offset-- > 0) {
                     continue;
                 }
@@ -245,13 +231,11 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function diff(ArrayValue $other, ?callable $comparator = null)
     {
-        $currentIterator = $this->iterator;
-
         $clone = clone $this;
-        $clone->iterator = function () use ($other, $comparator, $currentIterator) {
+        $clone->iterator = function () use ($other, $comparator) {
             $otherValues = $other->toArray();
 
-            foreach ($currentIterator() as $value) {
+            foreach (($this->iterator)() as $value) {
                 if ($comparator === null) {
                     $found = \in_array($value, $otherValues, true);
                 } else {
@@ -281,13 +265,11 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null)
     {
-        $currentIterator = $this->iterator;
-
         $clone = clone $this;
-        $clone->iterator = function () use ($other, $comparator, $currentIterator) {
+        $clone->iterator = function () use ($other, $comparator) {
             $otherValues = $other->toArray();
 
-            foreach ($currentIterator() as $value) {
+            foreach (($this->iterator)() as $value) {
                 if ($comparator === null) {
                     $found = \in_array($value, $otherValues, true);
                 } else {
