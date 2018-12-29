@@ -2,7 +2,10 @@
 
 namespace GW\Value;
 
-final class Iterator
+/**
+ * @internal
+ */
+final class IterableValueIterator
 {
     /** @var iterable */
     private $iterable;

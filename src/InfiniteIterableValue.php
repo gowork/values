@@ -4,7 +4,7 @@ namespace GW\Value;
 
 final class InfiniteIterableValue implements IterableValue
 {
-    /** @var Iterator */
+    /** @var IterableValueIterator */
     private $rootIterator;
 
     /** @var object&callable */
@@ -12,7 +12,7 @@ final class InfiniteIterableValue implements IterableValue
 
     public function __construct(iterable $iterable)
     {
-        $this->iterator = new Iterator($iterable);
+        $this->iterator = new IterableValueIterator($iterable);
         $this->rootIterator = $this->iterator;
     }
 
