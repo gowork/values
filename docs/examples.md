@@ -123,7 +123,7 @@ Return primitive `array` from subject `ArrayValue`.
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool { ... }
+ * @param callable $filter function(mixed $value): bool
  * @return ArrayValue
  */
 public function filter(callable $filter);
@@ -191,7 +191,7 @@ array (
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $value): mixed { ... }
+ * @param callable $transformer function(mixed $value): mixed
  * @return ArrayValue
  */
 public function map(callable $transformer);
@@ -227,10 +227,167 @@ array (
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $value): iterable { ... }
+ * @param callable $transformer function(mixed $value): iterable
  * @return ArrayValue
  */
 public function flatMap(callable $transformer);
+```
+
+### ArrayValue::groupBy
+
+```php
+<?php
+/**
+ * @param callable $reducer function(mixed $value): string|int|bool
+ * @return AssocValue AssocValue<ArrayValue>
+ */
+public function groupBy(callable $reducer): AssocValue;
+```
+
+Group items by key extracted from value by `$reducer` callback.
+
+Result is `AssocValue` containing association: `['key1' => [items reduced to key1], 'key2' => [items reduced to key2]]`.
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\ArrayValue;
+use GW\Value\Wrap;
+
+$payments = Wrap::array([
+    ['group' => 'food', 'amount' => 10],
+    ['group' => 'drinks', 'amount' => 10],
+    ['group' => 'food', 'amount' => 20],
+    ['group' => 'travel', 'amount' => 500],
+    ['group' => 'drinks', 'amount' => 20],
+    ['group' => 'food', 'amount' => 50],
+]);
+
+$get = function (string $key): \Closure {
+    return function (array $payment) use ($key) {
+        return $payment[$key];
+    };
+};
+
+echo 'grouped expenses:', PHP_EOL;
+var_export(
+    $payments
+        ->groupBy($get('group'))
+        ->map(function (ArrayValue $group) use ($get): array {
+            return $group->map($get('amount'))->toArray();
+        })
+        ->toAssocArray()
+);
+echo PHP_EOL, PHP_EOL;
+
+$numbers = Wrap::array([1, 2, 3, 4, 3, 4, 5, 6, 7, 8, 9]);
+$even = function (int $number): int {
+    return $number % 2;
+};
+
+echo 'even partition:', PHP_EOL;
+var_export(
+    $numbers
+        ->groupBy($even)
+        ->map(function (ArrayValue $group) {
+            return $group->toArray();
+        })
+        ->toArray()
+);
+```
+
+```
+grouped expenses:
+array (
+  'food' => 
+  array (
+    0 => 10,
+    1 => 20,
+    2 => 50,
+  ),
+  'drinks' => 
+  array (
+    0 => 10,
+    1 => 20,
+  ),
+  'travel' => 
+  array (
+    0 => 500,
+  ),
+)
+
+even partition:
+array (
+  0 => 
+  array (
+    0 => 1,
+    1 => 3,
+    2 => 3,
+    3 => 5,
+    4 => 7,
+    5 => 9,
+  ),
+  1 => 
+  array (
+    0 => 2,
+    1 => 4,
+    2 => 4,
+    3 => 6,
+    4 => 8,
+  ),
+)
+```
+
+### ArrayValue::chunk
+
+```php
+<?php
+/**
+ * @return ArrayValue
+ */
+public function chunk(int $size);
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$array = Wrap::array([1, 2, 3, 4, 3, 4, 5, 6, 7, 8, 9]);
+
+var_export($array->chunk(3)->toArray());
+```
+
+```
+array (
+  0 => 
+  array (
+    0 => 1,
+    1 => 2,
+    2 => 3,
+  ),
+  1 => 
+  array (
+    0 => 4,
+    1 => 3,
+    2 => 4,
+  ),
+  2 => 
+  array (
+    0 => 5,
+    1 => 6,
+    2 => 7,
+  ),
+  3 => 
+  array (
+    0 => 8,
+    1 => 9,
+  ),
+)
 ```
 
 ### ArrayValue::sort
@@ -612,6 +769,88 @@ array (
 )
 ```
 
+### ArrayValue::splice
+
+```php
+<?php
+/**
+ * @return ArrayValue
+ */
+public function splice(int $offset, int $length, array $replacement = []);
+```
+
+Remove or replace slice of `ArrayValue` items.
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$letters = Wrap::array(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
+
+var_export($letters->splice(2, 4)->toArray());
+echo PHP_EOL;
+
+var_export($letters->splice(2, 4, ['x', 'y', 'z'])->toArray());
+echo PHP_EOL;
+
+var_export($letters->splice(-1, 1)->toArray());
+echo PHP_EOL;
+
+var_export($letters->splice(-1, 1, ['x', 'y'])->toArray());
+echo PHP_EOL;
+
+var_export($letters->splice(0, 3)->toArray());
+echo PHP_EOL;
+
+var_export($letters->splice(0, 100)->toArray());
+echo PHP_EOL;
+```
+
+```
+array (
+  0 => 'a',
+  1 => 'b',
+  2 => 'g',
+)
+array (
+  0 => 'a',
+  1 => 'b',
+  2 => 'x',
+  3 => 'y',
+  4 => 'z',
+  5 => 'g',
+)
+array (
+  0 => 'a',
+  1 => 'b',
+  2 => 'c',
+  3 => 'd',
+  4 => 'e',
+  5 => 'f',
+)
+array (
+  0 => 'a',
+  1 => 'b',
+  2 => 'c',
+  3 => 'd',
+  4 => 'e',
+  5 => 'f',
+  6 => 'x',
+  7 => 'y',
+)
+array (
+  0 => 'd',
+  1 => 'e',
+  2 => 'f',
+  3 => 'g',
+)
+array (
+)
+```
+
 ### ArrayValue::diff
 
 ```php
@@ -634,6 +873,7 @@ $one = Wrap::array(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
 $two = Wrap::array(['c', 'd', 'e', 'F']);
 
 var_export($one->diff($two)->toArray());
+echo PHP_EOL;
 
 $lowercaseComparator = function(string $a, string $b): int {
     return mb_strtolower($a) <=> mb_strtolower($b);
@@ -648,7 +888,8 @@ array (
   1 => 'b',
   2 => 'f',
   3 => 'g',
-)array (
+)
+array (
   0 => 'a',
   1 => 'b',
   2 => 'g',
@@ -819,7 +1060,7 @@ array (
 public function toStringsArray(): StringsArray;
 ```
 
-### Value::isEmpty
+### ArrayValue::isEmpty
 
 ```php
 <?php
@@ -841,24 +1082,14 @@ echo PHP_EOL;
 echo "[]: ";
 var_export(Wrap::array([])->isEmpty());
 echo PHP_EOL;
-
-echo "'a': ";
-var_export(Wrap::string('a')->isEmpty());
-echo PHP_EOL;
-
-echo "'': ";
-var_export(Wrap::string('')->isEmpty());
-echo PHP_EOL;
 ```
 
 ```
 ['a']: false
 []: true
-'a': false
-'': true
 ```
 
-### Collection::first
+### ArrayValue::first
 
 ```php
 <?php
@@ -878,20 +1109,13 @@ use GW\Value\Wrap;
 $array = Wrap::array(['a', 'b', 'c']);
 
 echo 'array first: ' . $array->first();
-echo PHP_EOL;
-
-$assoc = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
-
-echo 'assoc first: ' . $assoc->first();
-echo PHP_EOL;
 ```
 
 ```
 array first: a
-assoc first: 1
 ```
 
-### Collection::last
+### ArrayValue::last
 
 ```php
 <?php
@@ -911,20 +1135,35 @@ use GW\Value\Wrap;
 $array = Wrap::array(['a', 'b', 'c']);
 
 echo 'array last: ' . $array->last();
-echo PHP_EOL;
-
-$assoc = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
-
-echo 'assoc last: ' . $assoc->last();
-echo PHP_EOL;
 ```
 
 ```
 array last: c
-assoc last: 3
 ```
 
-### Collection::hasElement
+### ArrayValue::find
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool
+ * @return mixed
+ */
+public function find(callable $filter);
+```
+
+### ArrayValue::findLast
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool
+ * @return mixed
+ */
+public function findLast(callable $filter);
+```
+
+### ArrayValue::hasElement
 
 ```php
 <?php
@@ -934,7 +1173,27 @@ assoc last: 3
 public function hasElement($element): bool;
 ```
 
-### Countable::count
+### ArrayValue::any
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool
+ */
+public function any(callable $filter): bool;
+```
+
+### ArrayValue::every
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool
+ */
+public function every(callable $filter): bool;
+```
+
+### ArrayValue::count
 
 ```php
 <?php
@@ -958,7 +1217,7 @@ echo 'count: ' . $array->count();
 count: 3
 ```
 
-### IteratorAggregate::getIterator
+### ArrayValue::getIterator
 
 *(definition not available)*
 
@@ -1016,7 +1275,7 @@ public function unique(?callable $comparator = null);
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool { ... }
+ * @param callable $filter function(mixed $value): bool
  * @return AssocValue
  */
 public function filter(callable $filter);
@@ -1037,7 +1296,7 @@ public function filterEmpty();
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $value[, string $key]): mixed { ... }
+ * @param callable $transformer function(mixed $value[, string $key]): mixed
  * @return AssocValue
  */
 public function map(callable $transformer);
@@ -1250,7 +1509,7 @@ public function get(string $key, $default = null);
 public function has(string $key): bool;
 ```
 
-### Value::isEmpty
+### AssocValue::isEmpty
 
 ```php
 <?php
@@ -1258,38 +1517,7 @@ public function has(string $key): bool;
 public function isEmpty(): bool;
 ```
 
-#### Examples
-
-```php
-<?php
-
-use GW\Value\Wrap;
-
-echo "['a']: ";
-var_export(Wrap::array(['a'])->isEmpty());
-echo PHP_EOL;
-
-echo "[]: ";
-var_export(Wrap::array([])->isEmpty());
-echo PHP_EOL;
-
-echo "'a': ";
-var_export(Wrap::string('a')->isEmpty());
-echo PHP_EOL;
-
-echo "'': ";
-var_export(Wrap::string('')->isEmpty());
-echo PHP_EOL;
-```
-
-```
-['a']: false
-[]: true
-'a': false
-'': true
-```
-
-### Collection::first
+### AssocValue::first
 
 ```php
 <?php
@@ -1306,23 +1534,16 @@ public function first();
 
 use GW\Value\Wrap;
 
-$array = Wrap::array(['a', 'b', 'c']);
-
-echo 'array first: ' . $array->first();
-echo PHP_EOL;
-
 $assoc = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
 
 echo 'assoc first: ' . $assoc->first();
-echo PHP_EOL;
 ```
 
 ```
-array first: a
 assoc first: 1
 ```
 
-### Collection::last
+### AssocValue::last
 
 ```php
 <?php
@@ -1339,23 +1560,38 @@ public function last();
 
 use GW\Value\Wrap;
 
-$array = Wrap::array(['a', 'b', 'c']);
-
-echo 'array last: ' . $array->last();
-echo PHP_EOL;
-
 $assoc = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
 
 echo 'assoc last: ' . $assoc->last();
-echo PHP_EOL;
 ```
 
 ```
-array last: c
 assoc last: 3
 ```
 
-### Collection::hasElement
+### AssocValue::find
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool
+ * @return mixed
+ */
+public function find(callable $filter);
+```
+
+### AssocValue::findLast
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool
+ * @return mixed
+ */
+public function findLast(callable $filter);
+```
+
+### AssocValue::hasElement
 
 ```php
 <?php
@@ -1365,7 +1601,27 @@ assoc last: 3
 public function hasElement($element): bool;
 ```
 
-### Collection::toArray
+### AssocValue::any
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool
+ */
+public function any(callable $filter): bool;
+```
+
+### AssocValue::every
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool
+ */
+public function every(callable $filter): bool;
+```
+
+### AssocValue::toArray
 
 ```php
 <?php
@@ -1375,7 +1631,7 @@ public function hasElement($element): bool;
 public function toArray(): array;
 ```
 
-### Countable::count
+### AssocValue::count
 
 ```php
 <?php
@@ -1383,23 +1639,7 @@ public function toArray(): array;
 public function count(): int;
 ```
 
-#### Examples
-
-```php
-<?php
-
-use GW\Value\Wrap;
-
-$array = Wrap::array(['a', 'b', 'c']);
-
-echo 'count: ' . $array->count();
-```
-
-```
-count: 3
-```
-
-### IteratorAggregate::getIterator
+### AssocValue::getIterator
 
 *(definition not available)*
 
@@ -1981,7 +2221,7 @@ public function toString(): string;
 public function __toString(): string;
 ```
 
-### Value::isEmpty
+### StringValue::isEmpty
 
 ```php
 <?php
@@ -1996,14 +2236,6 @@ public function isEmpty(): bool;
 
 use GW\Value\Wrap;
 
-echo "['a']: ";
-var_export(Wrap::array(['a'])->isEmpty());
-echo PHP_EOL;
-
-echo "[]: ";
-var_export(Wrap::array([])->isEmpty());
-echo PHP_EOL;
-
 echo "'a': ";
 var_export(Wrap::string('a')->isEmpty());
 echo PHP_EOL;
@@ -2014,8 +2246,6 @@ echo PHP_EOL;
 ```
 
 ```
-['a']: false
-[]: true
 'a': false
 '': true
 ```
@@ -2050,7 +2280,7 @@ public function unique(?callable $comparator = null);
 ```php
 <?php
 /**
- * @return StringValue[]
+ * @return string[]
  */
 public function toArray(): array;
 ```
@@ -2092,10 +2322,53 @@ public function map(callable $transformer);
 ```php
 <?php
 /**
- * @param callable $transformer function(StringValue $value): iterable { ... }
+ * @param callable $transformer function(StringValue $value): iterable
  * @return StringsArray
  */
 public function flatMap(callable $transformer);
+```
+
+### StringsArray::groupBy
+
+```php
+<?php
+/**
+ * @param callable $reducer function(StringValue $value): string|int|bool
+ * @return AssocValue AssocValue<StringsArray>
+ */
+public function groupBy(callable $reducer): AssocValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\StringsArray;
+use GW\Value\Wrap;
+
+$text = 'I would like to ask a question about the meaning of life';
+$stopwords = ['i', 'to', 'a', 'the', 'of'];
+
+$wordGroups = Wrap::string($text)
+    ->lower()
+    ->explode(' ')
+    ->groupBy(function (string $word) use ($stopwords): string {
+        return in_array($word, $stopwords, true) ? 'stopwords' : 'words';
+    });
+
+/** @var StringsArray $stopwords */
+$stopwords = $wordGroups->get('stopwords');
+echo 'stopwords: ', $stopwords->implode(', ')->toString(), PHP_EOL;
+
+/** @var StringsArray $words */
+$words = $wordGroups->get('words');
+echo 'words: ', $words->implode(', ')->toString(), PHP_EOL;
+```
+
+```
+stopwords: i, to, a, the, of
+words: would, like, ask, question, about, meaning, life
 ```
 
 ### StringsArray::sort
@@ -2239,6 +2512,16 @@ public function join(ArrayValue $other);
 public function slice(int $offset, int $length);
 ```
 
+### StringsArray::splice
+
+```php
+<?php
+/**
+ * @return StringsArray
+ */
+public function splice(int $offset, int $length, array $replacement = []);
+```
+
 ### StringsArray::diff
 
 ```php
@@ -2309,6 +2592,22 @@ public function first();
  * @return StringValue|null
  */
 public function last();
+```
+
+### StringsArray::find
+
+```php
+<?php
+
+public function find(callable $filter): ?StringValue;
+```
+
+### StringsArray::findLast
+
+```php
+<?php
+
+public function findLast(callable $filter): ?StringValue;
 ```
 
 ### StringsArray::transform
@@ -2863,7 +3162,17 @@ array (
 )
 ```
 
-### ArrayValue::toStringsArray
+### StringsArray::chunk
+
+```php
+<?php
+/**
+ * @return ArrayValue
+ */
+public function chunk(int $size);
+```
+
+### StringsArray::toStringsArray
 
 ```php
 <?php
@@ -2871,7 +3180,7 @@ array (
 public function toStringsArray(): StringsArray;
 ```
 
-### Value::isEmpty
+### StringsArray::isEmpty
 
 ```php
 <?php
@@ -2879,38 +3188,7 @@ public function toStringsArray(): StringsArray;
 public function isEmpty(): bool;
 ```
 
-#### Examples
-
-```php
-<?php
-
-use GW\Value\Wrap;
-
-echo "['a']: ";
-var_export(Wrap::array(['a'])->isEmpty());
-echo PHP_EOL;
-
-echo "[]: ";
-var_export(Wrap::array([])->isEmpty());
-echo PHP_EOL;
-
-echo "'a': ";
-var_export(Wrap::string('a')->isEmpty());
-echo PHP_EOL;
-
-echo "'': ";
-var_export(Wrap::string('')->isEmpty());
-echo PHP_EOL;
-```
-
-```
-['a']: false
-[]: true
-'a': false
-'': true
-```
-
-### Collection::hasElement
+### StringsArray::hasElement
 
 ```php
 <?php
@@ -2920,7 +3198,27 @@ echo PHP_EOL;
 public function hasElement($element): bool;
 ```
 
-### Countable::count
+### StringsArray::any
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool
+ */
+public function any(callable $filter): bool;
+```
+
+### StringsArray::every
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool
+ */
+public function every(callable $filter): bool;
+```
+
+### StringsArray::count
 
 ```php
 <?php
@@ -2928,26 +3226,10 @@ public function hasElement($element): bool;
 public function count(): int;
 ```
 
-#### Examples
-
-```php
-<?php
-
-use GW\Value\Wrap;
-
-$array = Wrap::array(['a', 'b', 'c']);
-
-echo 'count: ' . $array->count();
-```
-
-```
-count: 3
-```
-
-### IteratorAggregate::getIterator
+### StringsArray::getIterator
 
 *(definition not available)*
-### StringValue::length
+### StringsArray::length
 
 ```php
 <?php
@@ -2955,7 +3237,7 @@ count: 3
 public function length(): int;
 ```
 
-### StringValue::position
+### StringsArray::position
 
 ```php
 <?php
@@ -2963,7 +3245,7 @@ public function length(): int;
 public function position(string $needle): ?int;
 ```
 
-### StringValue::positionLast
+### StringsArray::positionLast
 
 ```php
 <?php
@@ -2971,17 +3253,17 @@ public function position(string $needle): ?int;
 public function positionLast(string $needle): ?int;
 ```
 
-### StringValue::matchAllPatterns
+### StringsArray::matchAllPatterns
 
 ```php
 <?php
 /**
- * @return StringsArray
+ * @return ArrayValue
  */
 public function matchAllPatterns(string $pattern);
 ```
 
-### StringValue::matchPatterns
+### StringsArray::matchPatterns
 
 ```php
 <?php
@@ -2991,7 +3273,7 @@ public function matchAllPatterns(string $pattern);
 public function matchPatterns(string $pattern);
 ```
 
-### StringValue::isMatching
+### StringsArray::isMatching
 
 ```php
 <?php
@@ -2999,7 +3281,7 @@ public function matchPatterns(string $pattern);
 public function isMatching(string $pattern): bool;
 ```
 
-### StringValue::splitByPattern
+### StringsArray::splitByPattern
 
 ```php
 <?php
@@ -3009,7 +3291,7 @@ public function isMatching(string $pattern): bool;
 public function splitByPattern(string $pattern);
 ```
 
-### StringValue::explode
+### StringsArray::explode
 
 ```php
 <?php
@@ -3019,7 +3301,7 @@ public function splitByPattern(string $pattern);
 public function explode(string $delimiter);
 ```
 
-### StringValue::contains
+### StringsArray::contains
 
 ```php
 <?php
@@ -3027,7 +3309,7 @@ public function explode(string $delimiter);
 public function contains(string $substring): bool;
 ```
 
-### StringValue::toString
+### StringsArray::toString
 
 ```php
 <?php
@@ -3035,7 +3317,7 @@ public function contains(string $substring): bool;
 public function toString(): string;
 ```
 
-### StringValue::__toString
+### StringsArray::__toString
 
 ```php
 <?php

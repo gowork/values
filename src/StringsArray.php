@@ -41,10 +41,16 @@ interface StringsArray extends ArrayValue, StringValue
     public function map(callable $transformer);
 
     /**
-     * @param callable $transformer function(StringValue $value): iterable { ... }
+     * @param callable $transformer function(StringValue $value): iterable
      * @return StringsArray
      */
     public function flatMap(callable $transformer);
+
+    /**
+     * @param callable $reducer function(StringValue $value): string|int|bool
+     * @return AssocValue AssocValue<StringsArray>
+     */
+    public function groupBy(callable $reducer): AssocValue;
 
     /**
      * @param callable $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
@@ -123,6 +129,11 @@ interface StringsArray extends ArrayValue, StringValue
     public function slice(int $offset, int $length);
 
     /**
+     * @return StringsArray
+     */
+    public function splice(int $offset, int $length, array $replacement = []);
+
+    /**
      * @param callable|null $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
      * @return StringsArray
      */
@@ -157,6 +168,10 @@ interface StringsArray extends ArrayValue, StringValue
      * @return StringValue|null
      */
     public function last();
+
+    public function find(callable $filter): ?StringValue;
+
+    public function findLast(callable $filter): ?StringValue;
 
     // StringValue
 

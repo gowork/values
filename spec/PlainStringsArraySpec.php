@@ -53,7 +53,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
             ->shouldBeLike(PlainStringsArray::fromArray(['string 1', 'string 2', 'string 3', 'string 4']));
     }
 
-    function it_returns_a_slice()
+    function it_can_be_sliced()
     {
         $this->beConstructedWithStrings('string 1', 'string 2', 'string 3', 'string 4');
 
@@ -63,6 +63,19 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $this->slice(1, 2)->shouldBeLike(PlainStringsArray::fromArray(['string 2', 'string 3']));
         $this->slice(0, 4)->shouldBeLike($this);
         $this->slice(0, 500)->shouldBeLike($this);
+    }
+
+    function it_can_be_spliced()
+    {
+        $this->beConstructedWithStrings('string 1', 'string 2', 'string 3', 'string 4');
+
+        $this->splice(1, 2)->shouldBeLike(PlainStringsArray::fromArray(['string 1', 'string 4']));
+        $this->splice(1, 2, ['string x', 'string y'])
+            ->shouldBeLike(PlainStringsArray::fromArray(['string 1', 'string x', 'string y', 'string 4']));
+        $this->splice(0, 3)->shouldBeLike(PlainStringsArray::fromArray(['string 4']));
+        $this->splice(-1, 1)->shouldBeLike(PlainStringsArray::fromArray(['string 1', 'string 2', 'string 3']));
+        $this->splice(0, 100)->shouldBeLike(PlainStringsArray::fromArray([]));
+        $this->splice(0, 0, ['string 0'])->shouldBeLike(PlainStringsArray::fromArray(['string 0', 'string 1', 'string 2', 'string 3', 'string 4']));
     }
 
     function it_returns_diff()
@@ -138,6 +151,23 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $mapped->shouldNotBe($this);
         $mapped->shouldBeLike(PlainStringsArray::fromArray(['blue', 'ball', 'red', 'balloon', 'green', 'grass']));
+    }
+
+    function it_can_group_items()
+    {
+        $this->beConstructedWithStrings('red', 'green', 'blue', 'black');
+
+        $this
+            ->groupBy(function (StringValue $value): string {
+                return $value->substring(0, 1)->toString();
+            })
+            ->shouldBeLike(
+                Wrap::assocArray([
+                    'r' => PlainStringsArray::fromArray(['red']),
+                    'g' => PlainStringsArray::fromArray(['green']),
+                    'b' => PlainStringsArray::fromArray(['blue', 'black']),
+                ])
+            );
     }
 
     function it_returns_first_and_last()
