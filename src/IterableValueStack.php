@@ -10,7 +10,7 @@ final class IterableValueStack
     /** @var IterableValueIterator */
     private $iterable;
 
-    /** @var array[] */
+    /** @var callable[] */
     private $modifiers = [];
 
     public function __construct(IterableValueIterator $iterable)
