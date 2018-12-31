@@ -196,7 +196,7 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @param callable $filter function(mixed $value): bool { ... }
+     * @param callable $filter function(mixed $value): bool
      * @return mixed
      */
     public function find(callable $filter)
@@ -205,7 +205,7 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @param callable $filter function(mixed $value): bool { ... }
+     * @param callable $filter function(mixed $value): bool
      * @return mixed
      */
     public function findLast(callable $filter)
