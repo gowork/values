@@ -4,16 +4,12 @@ namespace GW\Value;
 
 final class InfiniteIterableValue implements IterableValue
 {
-    /** @var IterableValueIterator */
-    private $rootIterator;
-
-    /** @var object&callable */
-    private $iterator;
+    /** @var IterableValueStack */
+    private $stack;
 
     public function __construct(iterable $iterable)
     {
-        $this->iterator = new IterableValueIterator($iterable);
-        $this->rootIterator = $this->iterator;
+        $this->stack = new IterableValueStack(new IterableValueIterator($iterable));
     }
 
     /**
@@ -22,7 +18,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function each(callable $callback)
     {
-        foreach (($this->iterator)() as $value) {
+        foreach ($this->stack->iterate() as $value) {
             $callback($value);
         }
 
@@ -65,7 +61,7 @@ final class InfiniteIterableValue implements IterableValue
     {
         $return = [];
 
-        foreach (($this->iterator)() as $value) {
+        foreach ($this->stack->iterate() as $value) {
             $return[] = $value;
         }
 
@@ -78,13 +74,13 @@ final class InfiniteIterableValue implements IterableValue
     public function filter(callable $filter): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->iterator = function () use ($filter) {
-            foreach (($this->iterator)() as $value) {
+        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($filter) {
+            foreach ($iterable as $value) {
                 if ($filter($value)) {
                     yield $value;
                 }
             }
-        };
+        });
 
         return $clone;
     }
@@ -101,11 +97,11 @@ final class InfiniteIterableValue implements IterableValue
     public function map(callable $transformer)
     {
         $clone = clone $this;
-        $clone->iterator = function () use ($transformer) {
-            foreach (($this->iterator)() as $value) {
+        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($transformer) {
+            foreach ($iterable as $value) {
                 yield $transformer($value);
             }
-        };
+        });
 
         return $clone;
     }
@@ -117,11 +113,11 @@ final class InfiniteIterableValue implements IterableValue
     public function flatMap(callable $transformer)
     {
         $clone = clone $this;
-        $clone->iterator = function () use ($transformer) {
-            foreach (($this->iterator)() as $value) {
+        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($transformer) {
+            foreach ($iterable as $value) {
                 yield from $transformer($value);
             }
-        };
+        });
 
         return $clone;
     }
@@ -138,10 +134,10 @@ final class InfiniteIterableValue implements IterableValue
     public function unshift($value)
     {
         $clone = clone $this;
-        $clone->iterator = function () use ($value) {
+        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($value) {
             yield $value;
-            yield from ($this->iterator)();
-        };
+            yield from $iterable;
+        });
 
         return $clone;
     }
@@ -153,10 +149,10 @@ final class InfiniteIterableValue implements IterableValue
     public function push($value)
     {
         $clone = clone $this;
-        $clone->iterator = function () use ($value) {
-            yield from ($this->iterator)();
+        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($value) {
+            yield from $iterable;
             yield $value;
-        };
+        });
 
         return $clone;
     }
@@ -167,10 +163,10 @@ final class InfiniteIterableValue implements IterableValue
     public function join(IterableValue $other)
     {
         $clone = clone $this;
-        $clone->iterator = function () use ($other) {
-            yield from ($this->iterator)();
+        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($other) {
+            yield from $iterable;
             yield from $other;
-        };
+        });
 
         return $clone;
     }
@@ -181,8 +177,8 @@ final class InfiniteIterableValue implements IterableValue
     public function slice(int $offset, int $length)
     {
         $clone = clone $this;
-        $clone->iterator = function () use ($offset, $length) {
-            foreach (($this->iterator)() as $value) {
+        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($offset, $length) {
+            foreach ($iterable as $value) {
                 if ($offset-- > 0) {
                     continue;
                 }
@@ -193,7 +189,7 @@ final class InfiniteIterableValue implements IterableValue
 
                 yield $value;
             }
-        };
+        });
 
         return $clone;
     }
@@ -205,10 +201,10 @@ final class InfiniteIterableValue implements IterableValue
     public function diff(ArrayValue $other, ?callable $comparator = null)
     {
         $clone = clone $this;
-        $clone->iterator = function () use ($other, $comparator) {
+        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($other, $comparator) {
             $otherValues = $other->toArray();
 
-            foreach (($this->iterator)() as $value) {
+            foreach ($iterable as $value) {
                 if ($comparator === null) {
                     $found = \in_array($value, $otherValues, true);
                 } else {
@@ -227,7 +223,7 @@ final class InfiniteIterableValue implements IterableValue
 
                 yield $value;
             }
-        };
+        });
 
         return $clone;
     }
@@ -239,10 +235,10 @@ final class InfiniteIterableValue implements IterableValue
     public function intersect(ArrayValue $other, ?callable $comparator = null)
     {
         $clone = clone $this;
-        $clone->iterator = function () use ($other, $comparator) {
+        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($other, $comparator) {
             $otherValues = $other->toArray();
 
-            foreach (($this->iterator)() as $value) {
+            foreach ($iterable as $value) {
                 if ($comparator === null) {
                     $found = \in_array($value, $otherValues, true);
                 } else {
@@ -261,7 +257,7 @@ final class InfiniteIterableValue implements IterableValue
 
                 yield $value;
             }
-        };
+        });
 
         return $clone;
     }
@@ -273,7 +269,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function reduce(callable $transformer, $start)
     {
-        foreach (($this->iterator)() as $value) {
+        foreach ($this->stack->iterate() as $value) {
             $start = $transformer($start, $value);
         }
 
@@ -293,7 +289,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function first()
     {
-        foreach (($this->iterator)() as $value) {
+        foreach ($this->stack->iterate() as $value) {
             return $value;
         }
 
@@ -302,13 +298,13 @@ final class InfiniteIterableValue implements IterableValue
 
     public function getIterator(): \Traversable
     {
-        yield from ($this->iterator)();
+        yield from $this->stack->iterate();
     }
 
     public function use(iterable $iterable): IterableValue
     {
         $clone = clone $this;
-        $clone->rootIterator->replaceIterable($iterable);
+        $clone->stack = $this->stack->replaceIterator(new IterableValueIterator($iterable));
 
         return $clone;
     }

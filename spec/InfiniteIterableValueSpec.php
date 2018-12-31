@@ -412,9 +412,21 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
             ->shouldEqual([8, 8]);
 
         $modified
+            ->toArray()
+            ->shouldEqual([4]);
+
+        $modified
             ->use([2, 2, 5])
             ->toArray()
             ->shouldEqual([4, 4]);
+
+        $modified
+            ->toArray()
+            ->shouldEqual([4]);
+
+        $this
+            ->toArray()
+            ->shouldEqual([1, 2, 3]);
 
         $modified
             ->use((function () {yield from [2, 2, 5];})())
