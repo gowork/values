@@ -142,7 +142,7 @@ interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \Arra
     /**
      * @return ArrayValue
      */
-    public function splice(int $offset, int $length, array $replacement = []);
+    public function splice(int $offset, int $length, ?ArrayValue $replacement = null);
 
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}

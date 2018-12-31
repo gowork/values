@@ -129,9 +129,10 @@ interface StringsArray extends ArrayValue, StringValue
     public function slice(int $offset, int $length);
 
     /**
+     * @param ArrayValue $replacement ArrayValue<string>|ArrayValue<StringValue>
      * @return StringsArray
      */
-    public function splice(int $offset, int $length, array $replacement = []);
+    public function splice(int $offset, int $length, ?ArrayValue $replacement = null);
 
     /**
      * @param callable|null $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}

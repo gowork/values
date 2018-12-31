@@ -106,10 +106,10 @@ final class PlainArray implements ArrayValue
         return new self(\array_slice($this->items, $offset, $length));
     }
 
-    public function splice(int $offset, int $length, array $replacement = []): PlainArray
+    public function splice(int $offset, int $length, ?ArrayValue $replacement = null): PlainArray
     {
         $items = $this->items;
-        \array_splice($items, $offset, $length, $replacement);
+        \array_splice($items, $offset, $length, $replacement !== null ? $replacement->toArray() : []);
 
         return new self($items);
     }

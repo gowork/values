@@ -291,7 +291,7 @@ echo 'even partition:', PHP_EOL;
 var_export(
     $numbers
         ->groupBy($even)
-        ->map(function (ArrayValue $group) {
+        ->map(function (ArrayValue $group): array {
             return $group->toArray();
         })
         ->toArray()
@@ -776,7 +776,7 @@ array (
 /**
  * @return ArrayValue
  */
-public function splice(int $offset, int $length, array $replacement = []);
+public function splice(int $offset, int $length, ?ArrayValue $replacement = null);
 ```
 
 Remove or replace slice of `ArrayValue` items.
@@ -793,13 +793,13 @@ $letters = Wrap::array(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
 var_export($letters->splice(2, 4)->toArray());
 echo PHP_EOL;
 
-var_export($letters->splice(2, 4, ['x', 'y', 'z'])->toArray());
+var_export($letters->splice(2, 4, Wrap::array(['x', 'y', 'z']))->toArray());
 echo PHP_EOL;
 
 var_export($letters->splice(-1, 1)->toArray());
 echo PHP_EOL;
 
-var_export($letters->splice(-1, 1, ['x', 'y'])->toArray());
+var_export($letters->splice(-1, 1, Wrap::array(['x', 'y']))->toArray());
 echo PHP_EOL;
 
 var_export($letters->splice(0, 3)->toArray());
@@ -2154,7 +2154,7 @@ public function positionLast(string $needle): ?int;
 ```php
 <?php
 /**
- * @return StringsArray
+ * @return ArrayValue
  */
 public function matchAllPatterns(string $pattern);
 ```
@@ -2517,9 +2517,10 @@ public function slice(int $offset, int $length);
 ```php
 <?php
 /**
+ * @param ArrayValue $replacement ArrayValue<string>|ArrayValue<StringValue>
  * @return StringsArray
  */
-public function splice(int $offset, int $length, array $replacement = []);
+public function splice(int $offset, int $length, ?ArrayValue $replacement = null);
 ```
 
 ### StringsArray::diff

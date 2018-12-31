@@ -70,12 +70,18 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $this->beConstructedWithStrings('string 1', 'string 2', 'string 3', 'string 4');
 
         $this->splice(1, 2)->shouldBeLike(PlainStringsArray::fromArray(['string 1', 'string 4']));
-        $this->splice(1, 2, ['string x', 'string y'])
+
+        $this->splice(1, 2, Wrap::array(['string x', 'string y']))
             ->shouldBeLike(PlainStringsArray::fromArray(['string 1', 'string x', 'string y', 'string 4']));
+
         $this->splice(0, 3)->shouldBeLike(PlainStringsArray::fromArray(['string 4']));
+
         $this->splice(-1, 1)->shouldBeLike(PlainStringsArray::fromArray(['string 1', 'string 2', 'string 3']));
+
         $this->splice(0, 100)->shouldBeLike(PlainStringsArray::fromArray([]));
-        $this->splice(0, 0, ['string 0'])->shouldBeLike(PlainStringsArray::fromArray(['string 0', 'string 1', 'string 2', 'string 3', 'string 4']));
+
+        $this->splice(0, 0, PlainStringsArray::fromArray(['string 0']))
+            ->shouldBeLike(PlainStringsArray::fromArray(['string 0', 'string 1', 'string 2', 'string 3', 'string 4']));
     }
 
     function it_returns_diff()

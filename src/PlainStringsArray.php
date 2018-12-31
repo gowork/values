@@ -28,9 +28,9 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
-     * @param string[]|StringValue[] $replacement
+     * @param ArrayValue $replacement ArrayValue<string>|ArrayValue<StringValue>
      */
-    public function splice(int $offset, int $length, array $replacement = []): PlainStringsArray
+    public function splice(int $offset, int $length, ?ArrayValue $replacement = null): PlainStringsArray
     {
         return new self($this->strings->splice($offset, $length, $replacement));
     }

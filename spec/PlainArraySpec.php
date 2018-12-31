@@ -332,6 +332,35 @@ final class PlainArraySpec extends ObjectBehavior
         $this->slice(5, 1)->shouldBeLike(new PlainArray(['item 6']));
     }
 
+    function it_allows_to_remove_slice_from_array_with_splice()
+    {
+        $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
+
+        $this->splice(0, 1)->shouldNotBe($this);
+        $this->splice(0, 0)->shouldBeLike($this);
+        $this->splice(0, 1)->shouldBeLike(new PlainArray(['item 2', 'item 3', 'item 4', 'item 5', 'item 6']));
+        $this->splice(1, 4)->shouldBeLike(new PlainArray(['item 1', 'item 6']));
+        $this->splice(5, 1)->shouldBeLike(new PlainArray(['item 1', 'item 2', 'item 3', 'item 4', 'item 5']));
+        $this->splice(-1, 1)->shouldBeLike(new PlainArray(['item 1', 'item 2', 'item 3', 'item 4', 'item 5']));
+    }
+
+    function it_allows_to_replace_slice_of_array_with_splice()
+    {
+        $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
+
+        $this->splice(0, 1, new PlainArray(['X', 'Y']))
+            ->shouldBeLike(new PlainArray(['X', 'Y', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']));
+
+        $this->splice(1, 4, new PlainArray(['X', 'Y']))
+            ->shouldBeLike(new PlainArray(['item 1', 'X', 'Y','item 6']));
+
+        $this->splice(5, 1, new PlainArray(['X', 'Y']))
+            ->shouldBeLike(new PlainArray(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'X', 'Y']));
+
+        $this->splice(-1, 1, new PlainArray(['X', 'Y']))
+            ->shouldBeLike(new PlainArray(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'X', 'Y']));
+    }
+
     function it_can_return_clone_with_unique_values_comparing_them_as_strings()
     {
         $this->beConstructedWith(['item 1', 'item 2', 'item 2', 'item 3', 'item 4', 'item 4', 'item 5']);
