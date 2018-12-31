@@ -195,9 +195,37 @@ final class AssocArray implements AssocValue
         return $this->values()->last();
     }
 
+    /**
+     * @param callable $filter function(mixed $value): bool
+     * @return mixed
+     */
+    public function find(callable $filter)
+    {
+        return $this->values()->find($filter);
+    }
+
+    /**
+     * @param callable $filter function(mixed $value): bool
+     * @return mixed
+     */
+    public function findLast(callable $filter)
+    {
+        return $this->values()->findLast($filter);
+    }
+
     public function hasElement($element): bool
     {
         return \in_array($element, $this->items, true);
+    }
+
+    public function any(callable $filter): bool
+    {
+        return $this->values()->any($filter);
+    }
+
+    public function every(callable $filter): bool
+    {
+        return $this->values()->every($filter);
     }
 
     /**

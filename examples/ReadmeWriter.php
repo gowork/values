@@ -2,6 +2,7 @@
 
 namespace doc\GW\Value;
 
+use GW\Value\Collection;
 use GW\Value\StringValue;
 use GW\Value\Wrap;
 
@@ -17,8 +18,8 @@ final class ReadmeWriter
                 $classTemplate = $this->classTemplate($class);
 
                 $methodTemplates = Wrap::array($class->getMethods())
-                    ->map(function(\ReflectionMethod $method): Template {
-                        return $this->methodTemplate($method);
+                    ->map(function(\ReflectionMethod $method) use ($class): Template {
+                        return $this->methodTemplate($class, $method);
                     });
 
                 return $classTemplate->withParam('methods', $methodTemplates->implode(''));
@@ -41,9 +42,9 @@ final class ReadmeWriter
         return $template;
     }
 
-    private function methodTemplate(\ReflectionMethod $method): Template
+    private function methodTemplate(\ReflectionClass $class, \ReflectionMethod $method): Template
     {
-        $className = $this->className($method->class);
+        $className = $this->className($class->getName());
         $methodName = $method->name;
         $declaration = $this->methodDeclaration($method)->trim()->toString();
         $doc = $this->methodDoc($method)->toString();

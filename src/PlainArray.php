@@ -35,6 +35,26 @@ final class PlainArray implements ArrayValue
         return new self(array_merge([], ...$elements));
     }
 
+    public function groupBy(callable $reducer): AssocValue
+    {
+        $groups = [];
+        $empty = Wrap::array([]);
+
+        foreach ($this->items as $item) {
+            $key = $reducer($item);
+            $key = \is_bool($key) ? (string)(int)$key : (string)$key;
+            /** @var ArrayValue[] $groups */
+            $groups[$key] = ($groups[$key] ?? $empty)->push($item);
+        }
+
+        return Wrap::assocArray($groups);
+    }
+
+    public function chunk(int $size): PlainArray
+    {
+        return new self(\array_chunk($this->items, $size, false));
+    }
+
     public function filterEmpty(): PlainArray
     {
         return $this->filter(Filters::notEmpty());
@@ -84,6 +104,14 @@ final class PlainArray implements ArrayValue
     public function slice(int $offset, int $length): PlainArray
     {
         return new self(\array_slice($this->items, $offset, $length));
+    }
+
+    public function splice(int $offset, int $length, ?ArrayValue $replacement = null): PlainArray
+    {
+        $items = $this->items;
+        \array_splice($items, $offset, $length, $replacement !== null ? $replacement->toArray() : []);
+
+        return new self($items);
     }
 
     /**
@@ -227,9 +255,61 @@ final class PlainArray implements ArrayValue
         return $count > 0 ? $this->items[$count - 1] : null;
     }
 
+    /**
+     * @param callable $filter function(mixed $value): bool
+     * @return mixed
+     */
+    public function find(callable $filter)
+    {
+        foreach ($this->items as $item) {
+            if ($filter($item)) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param callable $filter function(mixed $value): bool
+     * @return mixed
+     */
+    public function findLast(callable $filter)
+    {
+        foreach (\array_reverse($this->items) as $item) {
+            if ($filter($item)) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
     public function hasElement($element): bool
     {
         return \in_array($element, $this->items, true);
+    }
+
+    public function any(callable $filter): bool
+    {
+        foreach ($this->items as $item) {
+            if ($filter($item)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function every(callable $filter): bool
+    {
+        foreach ($this->items as $item) {
+            if (!$filter($item)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function count(): int

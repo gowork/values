@@ -27,6 +27,14 @@ final class PlainStringsArray implements StringsArray
         return new self($this->strings->slice($offset, $length));
     }
 
+    /**
+     * @param ArrayValue $replacement ArrayValue<string>|ArrayValue<StringValue>
+     */
+    public function splice(int $offset, int $length, ?ArrayValue $replacement = null): PlainStringsArray
+    {
+        return new self($this->strings->splice($offset, $length, $replacement));
+    }
+
     public function diff(ArrayValue $other, ?callable $comparator = null): PlainStringsArray
     {
         return new self($this->strings->diff($this->mapStringValues($other), $comparator));
@@ -52,6 +60,24 @@ final class PlainStringsArray implements StringsArray
         return new self($this->strings->flatMap($transformer));
     }
 
+    public function groupBy(callable $reducer): AssocValue
+    {
+        return $this->strings
+            ->groupBy($reducer)
+            ->map(function (ArrayValue $value): StringsArray {
+                return $value->toStringsArray();
+            });
+    }
+
+    /**
+     * @param int $size
+     * @return ArrayValue ArrayValue<array<StringValue>>
+     */
+    public function chunk(int $size): ArrayValue
+    {
+        return $this->strings->chunk($size);
+    }
+
     public function filter(callable $filter): PlainStringsArray
     {
         return new self($this->strings->filter($filter));
@@ -72,11 +98,31 @@ final class PlainStringsArray implements StringsArray
         return $this->strings->last();
     }
 
+    public function find(callable $filter): ?StringValue
+    {
+        return $this->strings->find($filter);
+    }
+
+    public function findLast(callable $filter): ?StringValue
+    {
+        return $this->strings->findLast($filter);
+    }
+
     public function hasElement($element): bool
     {
         $stringValue = $element instanceof StringValue ? $element : Wrap::string($element);
 
         return \in_array($stringValue, $this->strings->toArray(), false);
+    }
+
+    public function any(callable $filter): bool
+    {
+        return $this->strings->any($filter);
+    }
+
+    public function every(callable $filter): bool
+    {
+        return $this->strings->every($filter);
     }
 
     public function each(callable $callback): PlainStringsArray

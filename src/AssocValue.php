@@ -19,7 +19,7 @@ interface AssocValue extends Value, Collection, \IteratorAggregate, \ArrayAccess
     public function unique(?callable $comparator = null);
 
     /**
-     * @param callable $filter function(mixed $value): bool { ... }
+     * @param callable $filter function(mixed $value): bool
      * @return AssocValue
      */
     public function filter(callable $filter);
@@ -30,7 +30,7 @@ interface AssocValue extends Value, Collection, \IteratorAggregate, \ArrayAccess
     public function filterEmpty();
 
     /**
-     * @param callable $transformer function(mixed $value[, string $key]): mixed { ... }
+     * @param callable $transformer function(mixed $value[, string $key]): mixed
      * @return AssocValue
      */
     public function map(callable $transformer);

@@ -162,6 +162,18 @@ final class AssocArraySpec extends ObjectBehavior
         $this->last()->shouldBe('clifford');
     }
 
+    function it_can_find_matching_value()
+    {
+        $this->beConstructedWith(['one', 'two', 'three', 'four', 'five', 'six']);
+
+        $fourChars = function (string $value): bool {
+            return \strlen($value) === 4;
+        };
+
+        $this->find($fourChars)->shouldReturn('four');
+        $this->findLast($fourChars)->shouldReturn('five');
+    }
+
     function it_can_return_array()
     {
         $this->toArray()->shouldBe(['alf', 'berni', 'clifford']);

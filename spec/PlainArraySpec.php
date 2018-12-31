@@ -2,6 +2,7 @@
 
 namespace spec\GW\Value;
 
+use GW\Value\Filters;
 use GW\Value\PlainArray;
 use GW\Value\Sorts;
 use GW\Value\Wrap;
@@ -85,6 +86,105 @@ final class PlainArraySpec extends ObjectBehavior
         };
 
         $this->flatMap($transformer)->shouldBeLike(new PlainArray([]));
+    }
+
+    function it_can_group_elements_by_key_generated_from_value()
+    {
+        $this->beConstructedWith([1, 2, 3, 4, 5, 10, 100, 101]);
+
+        $transformer = function (int $value): string {
+            return ($value % 2) === 0 ? 'even' : 'odd';
+        };
+
+        $this->groupBy($transformer)
+            ->shouldBeLike(
+                Wrap::assocArray([
+                    'even' => Wrap::array([2, 4, 10, 100]),
+                    'odd' => Wrap::array([1, 3, 5, 101])
+                ])
+            );
+    }
+
+    function it_can_be_grouped_by_integer_key()
+    {
+        $this->beConstructedWith([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+        $transformer = function (int $value): int {
+            return $value % 3;
+        };
+
+        $grouped = $this->groupBy($transformer);
+        $grouped->shouldBeLike(
+            Wrap::assocArray([
+                0 => Wrap::array([3, 6, 9]),
+                1 => Wrap::array([1, 4, 7]),
+                2 => Wrap::array([2, 5, 8])
+            ])
+        );
+        $grouped->get('0')->toArray()->shouldReturn([3, 6, 9]);
+    }
+
+    function it_can_be_partitioned_by_boolean_value()
+    {
+        $this->beConstructedWith([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+        $isEven = function (int $value): bool {
+            return ($value % 2) === 0;
+        };
+
+        $grouped = $this->groupBy($isEven);
+        $grouped->shouldBeLike(
+            Wrap::assocArray([
+                0 => Wrap::array([1, 3, 5, 7, 9]),
+                1 => Wrap::array([2, 4, 6, 8]),
+            ])
+        );
+
+        $grouped->get('1')->shouldBeLike(Wrap::array([2, 4, 6, 8]));
+    }
+
+    function it_allows_to_check_if_any_element_satisfies_filter_condition()
+    {
+        $this->beConstructedWith([2, 4, 6, 8, 10, 12, 14, 16]);
+
+        $isEven = function (int $value): bool {
+            return ($value % 2) === 0;
+        };
+        $isOdd = Filters::not($isEven);
+        $isTwo = Filters::equal(2);
+        $isHundred = Filters::equal(100);
+
+        $this->any($isEven)->shouldReturn(true);
+        $this->any($isTwo)->shouldReturn(true);
+
+        $this->any($isOdd)->shouldReturn(false);
+        $this->any($isHundred)->shouldReturn(false);
+    }
+
+    function it_allows_to_check_if_every_element_satisfies_filter_condition()
+    {
+        $this->beConstructedWith([2, 4, 6, 8, 10, 12, 14, 16]);
+
+        $isEven = function (int $value): bool {
+            return ($value % 2) === 0;
+        };
+        $isOdd = Filters::not($isEven);
+        $isTwo = Filters::equal(2);
+        $isHundred = Filters::equal(100);
+
+        $this->every($isEven)->shouldReturn(true);
+
+        $this->every($isTwo)->shouldReturn(false);
+        $this->every($isOdd)->shouldReturn(false);
+        $this->every($isHundred)->shouldReturn(false);
+    }
+
+    function it_allows_to_split_array_to_chunks_of_given_size()
+    {
+        $this->beConstructedWith([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+        $this->chunk(3)->toArray()->shouldBeLike([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        $this->chunk(5)->toArray()->shouldBeLike([[1, 2, 3, 4, 5], [6, 7, 8, 9]]);
     }
 
     private function shouldFlatMapBandMembersWith(callable $mapper): void
@@ -230,6 +330,35 @@ final class PlainArraySpec extends ObjectBehavior
         $this->slice(0, 1)->shouldBeLike(new PlainArray(['item 1']));
         $this->slice(1, 4)->shouldBeLike(new PlainArray(['item 2', 'item 3', 'item 4', 'item 5']));
         $this->slice(5, 1)->shouldBeLike(new PlainArray(['item 6']));
+    }
+
+    function it_allows_to_remove_slice_from_array_with_splice()
+    {
+        $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
+
+        $this->splice(0, 1)->shouldNotBe($this);
+        $this->splice(0, 0)->shouldBeLike($this);
+        $this->splice(0, 1)->shouldBeLike(new PlainArray(['item 2', 'item 3', 'item 4', 'item 5', 'item 6']));
+        $this->splice(1, 4)->shouldBeLike(new PlainArray(['item 1', 'item 6']));
+        $this->splice(5, 1)->shouldBeLike(new PlainArray(['item 1', 'item 2', 'item 3', 'item 4', 'item 5']));
+        $this->splice(-1, 1)->shouldBeLike(new PlainArray(['item 1', 'item 2', 'item 3', 'item 4', 'item 5']));
+    }
+
+    function it_allows_to_replace_slice_of_array_with_splice()
+    {
+        $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
+
+        $this->splice(0, 1, new PlainArray(['X', 'Y']))
+            ->shouldBeLike(new PlainArray(['X', 'Y', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']));
+
+        $this->splice(1, 4, new PlainArray(['X', 'Y']))
+            ->shouldBeLike(new PlainArray(['item 1', 'X', 'Y','item 6']));
+
+        $this->splice(5, 1, new PlainArray(['X', 'Y']))
+            ->shouldBeLike(new PlainArray(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'X', 'Y']));
+
+        $this->splice(-1, 1, new PlainArray(['X', 'Y']))
+            ->shouldBeLike(new PlainArray(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'X', 'Y']));
     }
 
     function it_can_return_clone_with_unique_values_comparing_them_as_strings()
@@ -445,6 +574,45 @@ final class PlainArraySpec extends ObjectBehavior
 
         $this->first()->shouldReturn('item 1');
         $this->last()->shouldReturn('item 3');
+    }
+
+    function it_finds_first_item_that_matches_condition()
+    {
+        $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 11', 'item 22', 'item 33']);
+
+        $this
+            ->find(function (string $item): bool {
+                return strpos($item, '2') !== false;
+            })
+            ->shouldReturn('item 2');
+    }
+
+    function it_finds_last_item_that_matches_condition()
+    {
+        $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 11', 'item 22', 'item 33']);
+
+        $this
+            ->findLast(function (string $item): bool {
+                return strpos($item, '2') !== false;
+            })
+            ->shouldReturn('item 22');
+    }
+
+    function it_finds_null_when_no_item_matches_condition()
+    {
+        $this->beConstructedWith(['item 1', 'item 2', 'item 3']);
+
+        $this
+            ->find(function (string $item): bool {
+                return strpos($item, 'x') !== false;
+            })
+            ->shouldReturn(null);
+
+        $this
+            ->findLast(function (string $item): bool {
+                return strpos($item, 'x') !== false;
+            })
+            ->shouldReturn(null);
     }
 
     function it_returns_array_of_items()

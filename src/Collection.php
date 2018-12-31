@@ -15,9 +15,31 @@ interface Collection extends Filterable, Mappable, Sortable, Countable, Reversib
     public function last();
 
     /**
+     * @param callable $filter function(mixed $value): bool
+     * @return mixed
+     */
+    public function find(callable $filter);
+
+    /**
+     * @param callable $filter function(mixed $value): bool
+     * @return mixed
+     */
+    public function findLast(callable $filter);
+
+    /**
      * @param mixed $element
      */
     public function hasElement($element): bool;
+
+    /**
+     * @param callable $filter function(mixed $value): bool
+     */
+    public function any(callable $filter): bool;
+
+    /**
+     * @param callable $filter function(mixed $value): bool
+     */
+    public function every(callable $filter): bool;
 
     /**
      * @param callable $callback function(mixed $value): void
@@ -37,7 +59,7 @@ interface Collection extends Filterable, Mappable, Sortable, Countable, Reversib
     public function toArray(): array;
 
     /**
-     * @param callable $filter function(mixed $value): bool { ... }
+     * @param callable $filter function(mixed $value): bool
      * @return Collection
      */
     public function filter(callable $filter);
@@ -48,7 +70,7 @@ interface Collection extends Filterable, Mappable, Sortable, Countable, Reversib
     public function filterEmpty();
 
     /**
-     * @param callable $transformer function(mixed $value): mixed { ... }
+     * @param callable $transformer function(mixed $value): mixed
      * @return Collection
      */
     public function map(callable $transformer);

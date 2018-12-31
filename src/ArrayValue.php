@@ -24,7 +24,7 @@ interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \Arra
     public function toArray(): array;
 
     /**
-     * @param callable $filter function(mixed $value): bool { ... }
+     * @param callable $filter function(mixed $value): bool
      * @return ArrayValue
      */
     public function filter(callable $filter);
@@ -35,16 +35,27 @@ interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \Arra
     public function filterEmpty();
 
     /**
-     * @param callable $transformer function(mixed $value): mixed { ... }
+     * @param callable $transformer function(mixed $value): mixed
      * @return ArrayValue
      */
     public function map(callable $transformer);
 
     /**
-     * @param callable $transformer function(mixed $value): iterable { ... }
+     * @param callable $transformer function(mixed $value): iterable
      * @return ArrayValue
      */
     public function flatMap(callable $transformer);
+
+    /**
+     * @param callable $reducer function(mixed $value): string|int|bool
+     * @return AssocValue AssocValue<ArrayValue>
+     */
+    public function groupBy(callable $reducer): AssocValue;
+
+    /**
+     * @return ArrayValue
+     */
+    public function chunk(int $size);
 
     /**
      * @param callable $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
@@ -127,6 +138,11 @@ interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \Arra
      * @return ArrayValue
      */
     public function slice(int $offset, int $length);
+
+    /**
+     * @return ArrayValue
+     */
+    public function splice(int $offset, int $length, ?ArrayValue $replacement = null);
 
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
