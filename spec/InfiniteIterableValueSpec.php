@@ -179,6 +179,24 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $this->slice(5, 1)->toArray()->shouldBeLike(['item 6']);
     }
 
+    function it_slice_and_do_not_take_elements_above_end_index()
+    {
+        $takenElements = 0;
+        $iterator = function () use (&$takenElements) {
+            foreach (range(0, 123) as $item) {
+                $takenElements++;
+                yield $item;
+            }
+        };
+
+        $this->beConstructedWith($iterator());
+        $this->slice(0, 3)->toArray()->shouldEqual([0, 1, 2]);
+
+        if ($takenElements !== 3) {
+            throw new FailureException('Slice should not take elements above end index');
+        }
+    }
+
     function it_can_return_clone_with_unique_values_comparing_them_as_strings()
     {
         $this->beConstructedWith(['item 1', 'item 2', 'item 2', 'item 3', 'item 4', 'item 4', 'item 5']);
