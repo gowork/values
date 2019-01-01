@@ -183,11 +183,11 @@ final class InfiniteIterableValue implements IterableValue
                     continue;
                 }
 
-                if ($length-- <= 0) {
+                yield $value;
+
+                if (--$length <= 0) {
                     break;
                 }
-
-                yield $value;
             }
         });
 
