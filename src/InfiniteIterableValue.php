@@ -202,19 +202,13 @@ final class InfiniteIterableValue implements IterableValue
     {
         $clone = clone $this;
         $clone->stack = $clone->stack->push(function (iterable $iterable) use ($other, $comparator) {
-            $otherValues = $other->toArray();
-
             foreach ($iterable as $value) {
                 if ($comparator === null) {
-                    $found = \in_array($value, $otherValues, true);
+                    $found = $other->hasElement($value);
                 } else {
-                    $found = false;
-                    foreach ($otherValues as $otherValue) {
-                        if ($comparator($otherValue, $value) === 0) {
-                            $found = true;
-                            break;
-                        }
-                    }
+                    $found = $other->any(function($otherValue) use ($value, $comparator): bool {
+                        return $comparator($otherValue, $value) === 0;
+                    });
                 }
 
                 if ($found) {
@@ -236,19 +230,13 @@ final class InfiniteIterableValue implements IterableValue
     {
         $clone = clone $this;
         $clone->stack = $clone->stack->push(function (iterable $iterable) use ($other, $comparator) {
-            $otherValues = $other->toArray();
-
             foreach ($iterable as $value) {
                 if ($comparator === null) {
-                    $found = \in_array($value, $otherValues, true);
+                    $found = $other->hasElement($value);
                 } else {
-                    $found = false;
-                    foreach ($otherValues as $otherValue) {
-                        if ($comparator($otherValue, $value) === 0) {
-                            $found = true;
-                            break;
-                        }
-                    }
+                    $found = $other->any(function($otherValue) use ($value, $comparator): bool {
+                        return $comparator($otherValue, $value) === 0;
+                    });
                 }
 
                 if (!$found) {
