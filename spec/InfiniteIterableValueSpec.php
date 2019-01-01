@@ -2,6 +2,7 @@
 
 namespace spec\GW\Value;
 
+use GW\Value\Filters;
 use GW\Value\InfiniteIterableValue;
 use GW\Value\PlainArray;
 use GW\Value\Sorts;
@@ -450,6 +451,49 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
             ->use((function () {yield from [2, 2, 5];})())
             ->toArray()
             ->shouldEqual([4, 4]);
+    }
+
+    function it_allows_to_split_array_to_chunks_of_given_size()
+    {
+        $this->beConstructedWith([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+        $this->chunk(3)->toArray()->shouldBeLike([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        $this->chunk(5)->toArray()->shouldBeLike([[1, 2, 3, 4, 5], [6, 7, 8, 9]]);
+    }
+
+    function it_allows_to_flatten_array_of_chunks()
+    {
+        $this->beConstructedWith([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        $this->flatten()->toArray()->shouldBeLike([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    }
+
+    function it_allows_to_check_if_any_element_satisfies_filter_condition()
+    {
+        $this->beConstructedWith([2, 4, 6, 8, 10, 12, 14, 16]);
+
+        $isEven = function (int $value): bool {
+            return ($value % 2) === 0;
+        };
+        $isOdd = Filters::not($isEven);
+        $isTwo = Filters::equal(2);
+        $isHundred = Filters::equal(100);
+
+        $this->any($isEven)->shouldReturn(true);
+        $this->any($isTwo)->shouldReturn(true);
+
+        $this->any($isOdd)->shouldReturn(false);
+        $this->any($isHundred)->shouldReturn(false);
+    }
+
+    function it_finds_first_item_that_matches_condition()
+    {
+        $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 11', 'item 22', 'item 33']);
+
+        $this
+            ->find(function (string $item): bool {
+                return strpos($item, '2') !== false;
+            })
+            ->shouldReturn('item 2');
     }
 
     private function entityComparator(): \Closure
