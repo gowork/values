@@ -9,6 +9,11 @@ final class Wrap
         return new PlainArray($array);
     }
 
+    public static function iterable(iterable $iterator = []): InfiniteIterableValue
+    {
+        return new InfiniteIterableValue($iterator);
+    }
+
     public static function arrayFromValues(...$array): ArrayValue
     {
         return new PlainArray($array);
