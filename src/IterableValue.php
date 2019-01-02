@@ -100,4 +100,25 @@ interface IterableValue extends \IteratorAggregate
     public function toArray(): array;
 
     public function use(iterable $iterable): IterableValue;
+
+    /**
+     * @return IterableValue
+     */
+    public function chunk(int $size);
+
+    /**
+     * @return IterableValue
+     */
+    public function flatten();
+
+    /**
+     * @param callable $filter function(mixed $value): bool
+     */
+    public function any(callable $filter): bool;
+
+    /**
+     * @param callable $filter function(mixed $value): bool
+     * @return mixed
+     */
+    public function find(callable $filter);
 }

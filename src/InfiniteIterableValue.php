@@ -265,6 +265,73 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
+     * @param callable $filter function(mixed $value): bool
+     * @return mixed
+     */
+    public function find(callable $filter)
+    {
+        foreach ($this->stack->iterate() as $item) {
+            if ($filter($item)) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+    public function any(callable $filter): bool
+    {
+        foreach ($this->stack->iterate() as $value) {
+            if ($filter($value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return IterableValue
+     */
+    public function chunk(int $size)
+    {
+        $clone = clone $this;
+        $clone->stack = $this->stack->push(function (iterable $iterable) use ($size) {
+            $buffer = [];
+
+            foreach ($iterable as $item) {
+                $buffer[] = $item;
+
+                if (\count($buffer) === $size) {
+                    yield $buffer;
+                    $buffer = [];
+                }
+            }
+
+            if ($buffer !== []) {
+                yield $buffer;
+            }
+        });
+
+        return $clone;
+    }
+
+    /**
+     * @return IterableValue
+     */
+    public function flatten()
+    {
+        $clone = clone $this;
+        $clone->stack = $this->stack->push(function (iterable $iterable) {
+            foreach ($iterable as $item) {
+                yield from $item;
+            }
+        });
+
+        return $clone;
+    }
+
+    /**
      * @return IterableValue
      */
     public function notEmpty()
