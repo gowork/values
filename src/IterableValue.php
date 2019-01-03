@@ -92,6 +92,11 @@ interface IterableValue extends \IteratorAggregate
      */
     public function first();
 
+    /**
+     * @return mixed
+     */
+    public function last();
+
     public function toArrayValue(): ArrayValue;
 
     /**
@@ -118,7 +123,18 @@ interface IterableValue extends \IteratorAggregate
 
     /**
      * @param callable $filter function(mixed $value): bool
+     */
+    public function every(callable $filter): bool;
+
+    /**
+     * @param callable $filter function(mixed $value): bool
      * @return mixed
      */
     public function find(callable $filter);
+
+    /**
+     * @param callable $filter function(mixed $value): bool
+     * @return mixed
+     */
+    public function findLast(callable $filter);
 }
