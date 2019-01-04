@@ -485,15 +485,58 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $this->any($isHundred)->shouldReturn(false);
     }
 
-    function it_finds_first_item_that_matches_condition()
+    function it_allows_to_check_if_every_element_satisfies_filter_condition()
+    {
+        $this->beConstructedWith([2, 4, 6, 8, 10, 12, 14, 16]);
+
+        $isEven = function (int $value): bool {
+            return ($value % 2) === 0;
+        };
+        $isOdd = Filters::not($isEven);
+        $isTwo = Filters::equal(2);
+        $isHundred = Filters::equal(100);
+
+        $this->every($isEven)->shouldReturn(true);
+
+        $this->every($isTwo)->shouldReturn(false);
+        $this->every($isOdd)->shouldReturn(false);
+        $this->every($isHundred)->shouldReturn(false);
+    }
+
+    function it_returns_first_and_last_item()
+    {
+        $this->beConstructedWith(['item 1', 'item 2', 'item 3']);
+
+        $this->first()->shouldReturn('item 1');
+        $this->last()->shouldReturn('item 3');
+    }
+
+    function it_finds_last_item_that_matches_condition()
     {
         $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 11', 'item 22', 'item 33']);
 
         $this
-            ->find(function (string $item): bool {
+            ->findLast(function (string $item): bool {
                 return strpos($item, '2') !== false;
             })
-            ->shouldReturn('item 2');
+            ->shouldReturn('item 22');
+    }
+
+    function it_finds_null_when_no_item_matches_condition()
+    {
+        $this->beConstructedWith(['item 1', 'item 2', 'item 3']);
+
+        $this
+            ->find(function (string $item): bool {
+                return strpos($item, 'x') !== false;
+            })
+            ->shouldReturn(null);
+
+        $this
+            ->findLast(function (string $item): bool {
+                return strpos($item, 'x') !== false;
+            })
+            ->shouldReturn(null);
     }
 
     private function entityComparator(): \Closure

@@ -279,6 +279,23 @@ final class InfiniteIterableValue implements IterableValue
         return null;
     }
 
+    /**
+     * @param callable $filter function(mixed $value): bool
+     * @return mixed
+     */
+    public function findLast(callable $filter)
+    {
+        $last = null;
+
+        foreach ($this->stack->iterate() as $item) {
+            if ($filter($item)) {
+                $last = $item;
+            }
+        }
+
+        return $last;
+    }
+
     public function any(callable $filter): bool
     {
         foreach ($this->stack->iterate() as $value) {
@@ -288,6 +305,17 @@ final class InfiniteIterableValue implements IterableValue
         }
 
         return false;
+    }
+
+    public function every(callable $filter): bool
+    {
+        foreach ($this->stack->iterate() as $value) {
+            if (!$filter($value)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -319,7 +347,7 @@ final class InfiniteIterableValue implements IterableValue
     /**
      * @return IterableValue
      */
-    public function flatten()
+    public function flatten(): IterableValue
     {
         $clone = clone $this;
         $clone->stack = $this->stack->push(function (iterable $iterable) {
@@ -349,6 +377,17 @@ final class InfiniteIterableValue implements IterableValue
         }
 
         return null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function last()
+    {
+        $value = null;
+        foreach ($this->stack->iterate() as $value) {}
+
+        return $value;
     }
 
     public function getIterator(): \Traversable
