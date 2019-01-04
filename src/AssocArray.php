@@ -104,19 +104,12 @@ final class AssocArray implements AssocValue
             return new self(array_unique($this->items));
         }
 
-        $result = [];
-        foreach ($this->items as $keyA => $valueA) {
-            foreach ($result as $valueB) {
-                if ($comparator($valueA, $valueB) === 0) {
-                    // item already in result
-                    continue 2;
-                }
-            }
-
-            $result[$keyA] = $valueA;
-        }
-
-        return new self($result);
+        return $this->reduce(
+            function (self $unique, $item, string $key) use ($comparator): self {
+                return $unique->hasComparable($item, $comparator) ? $unique : $unique->with($key, $item);
+            },
+            new self([])
+        );
     }
 
     /**
@@ -274,5 +267,12 @@ final class AssocArray implements AssocValue
     public function offsetUnset($offset): void
     {
         throw new \BadMethodCallException('AssocArray is immutable');
+    }
+
+    private function hasComparable($other, callable $comparator): bool
+    {
+        return $this->any(function ($item) use ($other, $comparator): bool {
+            return $comparator($item, $other) === 0;
+        });
     }
 }

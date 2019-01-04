@@ -123,20 +123,12 @@ final class PlainArray implements ArrayValue
             return new self(array_unique($this->items));
         }
 
-        $result = [];
-
-        foreach ($this->items as $valueA) {
-            foreach ($result as $valueB) {
-                if ($comparator($valueA, $valueB) === 0) {
-                    // item already in result
-                    continue 2;
-                }
-            }
-
-            $result[] = $valueA;
-        }
-
-        return new self($result);
+        return $this->reduce(
+            function (PlainArray $unique, $newItem) use ($comparator): PlainArray {
+                return $unique->hasComparable($newItem, $comparator) ? $unique : $unique->push($newItem);
+            },
+            new self([])
+        );
     }
 
     /**
@@ -377,5 +369,12 @@ final class PlainArray implements ArrayValue
     public function toStringsArray(): StringsArray
     {
         return Wrap::stringsArray($this->items);
+    }
+
+    private function hasComparable($other, callable $comparator): bool
+    {
+        return $this->any(function ($item) use ($other, $comparator): bool {
+            return $comparator($item, $other) === 0;
+        });
     }
 }
