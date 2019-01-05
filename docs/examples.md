@@ -472,7 +472,7 @@ echo $words->shuffle()->implode(' ')->toString();
 ```
 
 ```
-no there not is try do or do
+no do or there not do try is
 ```
 
 ### ArrayValue::reverse
@@ -3326,5 +3326,527 @@ public function toString(): string;
 public function __toString(): string;
 ```
 
+
+## IterableValue
+
+### IterableValue::each
+
+```php
+<?php
+/**
+ * @param callable $callback function(mixed $value): void
+ * @return IterableValue
+ */
+public function each(callable $callback);
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$array = Wrap::iterable(['a', 'b', 'c']);
+$mapped = $array->each(function (string $letter): void {
+    echo $letter;
+});
+```
+
+```
+abc
+```
+
+### IterableValue::filter
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool { ... }
+ * @return IterableValue
+ */
+public function filter(callable $filter);
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$range = function (int $start, int $end) {
+    for ($i = $start; $i <= $end; $i++) {
+        yield $i;
+    }
+};
+
+$array = Wrap::iterable($range(1, 4));
+$even = $array->filter(function (int $number): bool {
+    return $number % 2 === 0;
+});
+
+var_export($even->toArray());
+```
+
+```
+array (
+  0 => 2,
+  1 => 4,
+)
+```
+
+### IterableValue::filterEmpty
+
+```php
+<?php
+/**
+ * @return IterableValue
+ */
+public function filterEmpty();
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$array = Wrap::iterable(['a', '', 'b', 'c']);
+$notEmpty = $array->filterEmpty();
+
+var_export($notEmpty->toArray());
+```
+
+```
+array (
+  0 => 'a',
+  1 => 'b',
+  2 => 'c',
+)
+```
+
+### IterableValue::map
+
+```php
+<?php
+/**
+ * @param callable $transformer function(mixed $value): mixed { ... }
+ * @return IterableValue
+ */
+public function map(callable $transformer);
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$array = Wrap::iterable(['a', 'b', 'c']);
+$mapped = $array->map(function (string $letter): string {
+    return 'new ' . $letter;
+});
+
+var_export($mapped->toArray());
+```
+
+```
+array (
+  0 => 'new a',
+  1 => 'new b',
+  2 => 'new c',
+)
+```
+
+### IterableValue::flatMap
+
+```php
+<?php
+/**
+ * @param callable $transformer function(mixed $value): iterable { ... }
+ * @return IterableValue
+ */
+public function flatMap(callable $transformer);
+```
+
+### IterableValue::join
+
+```php
+<?php
+/**
+ * @return IterableValue
+ */
+public function join(IterableValue $other);
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$range = function (int $start, int $end) {
+    for ($i = $start; $i <= $end; $i++) {
+        yield $i;
+    }
+};
+
+$one = Wrap::iterable($range(1, 3));
+$two = Wrap::iterable($range(8, 10));
+
+var_export($one->join($two)->toArray());
+```
+
+```
+array (
+  0 => 1,
+  1 => 2,
+  2 => 3,
+  3 => 8,
+  4 => 9,
+  5 => 10,
+)
+```
+
+### IterableValue::slice
+
+```php
+<?php
+/**
+ * @return IterableValue
+ */
+public function slice(int $offset, int $length);
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$range = function (int $start, int $end) {
+    for ($i = $start; $i <= $end; $i++) {
+        yield $i;
+    }
+};
+
+var_export(Wrap::iterable($range(0, PHP_INT_MAX))->slice(2, 4)->toArray());
+echo PHP_EOL;
+
+var_export(Wrap::iterable($range(0, PHP_INT_MAX))->slice(-1, 1)->toArray());
+echo PHP_EOL;
+
+var_export(Wrap::iterable($range(0, PHP_INT_MAX))->slice(0, 3)->toArray());
+echo PHP_EOL;
+
+var_export(Wrap::iterable($range(0, PHP_INT_MAX))->slice(5000, 2)->toArray());
+echo PHP_EOL;
+```
+
+```
+array (
+  0 => 2,
+  1 => 3,
+  2 => 4,
+  3 => 5,
+)
+array (
+  0 => 0,
+)
+array (
+  0 => 0,
+  1 => 1,
+  2 => 2,
+)
+array (
+  0 => 5000,
+  1 => 5001,
+)
+```
+
+### IterableValue::unique
+
+```php
+<?php
+/**
+ * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
+ * @return IterableValue
+ */
+public function unique(?callable $comparator = null);
+```
+
+### IterableValue::reduce
+
+```php
+<?php
+/**
+ * @param callable $transformer function(mixed $reduced, mixed $value): mixed
+ * @param mixed $start
+ * @return mixed
+ */
+public function reduce(callable $transformer, $start);
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$prices = Wrap::iterable([10, 20, 50, 120]);
+
+$summarize = function(int $sum, int $price): int {
+    return $sum + $price;
+};
+
+echo 'Sum: ' . $prices->reduce($summarize, 0);
+echo PHP_EOL;
+
+$list = function(string $list, int $price): string {
+    return $list . " €{$price},-";
+};
+
+echo 'Prices: ' . $prices->reduce($list, '');
+echo PHP_EOL;
+```
+
+```
+Sum: 200
+Prices:  €10,- €20,- €50,- €120,-
+```
+
+### IterableValue::notEmpty
+
+```php
+<?php
+/**
+ * @return IterableValue
+ */
+public function notEmpty();
+```
+
+### IterableValue::unshift
+
+```php
+<?php
+/**
+ * @param mixed $value
+ * @return IterableValue
+ */
+public function unshift($value);
+```
+
+### IterableValue::push
+
+```php
+<?php
+/**
+ * @param mixed $value
+ * @return IterableValue
+ */
+public function push($value);
+```
+
+### IterableValue::diff
+
+```php
+<?php
+/**
+ * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
+ * @return IterableValue
+ */
+public function diff(ArrayValue $other, ?callable $comparator = null);
+```
+
+### IterableValue::intersect
+
+```php
+<?php
+/**
+ * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
+ * @return IterableValue
+ */
+public function intersect(ArrayValue $other, ?callable $comparator = null);
+```
+
+### IterableValue::first
+
+```php
+<?php
+/**
+ * @return mixed
+ */
+public function first();
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$range = function (int $start, int $end) {
+    for ($i = $start; $i <= $end; $i++) {
+        yield $i;
+    }
+};
+
+$array = Wrap::iterable($range(1, PHP_INT_MAX));
+
+echo 'first: ' . $array->first();
+```
+
+```
+first: 1
+```
+
+### IterableValue::last
+
+```php
+<?php
+/**
+ * @return mixed
+ */
+public function last();
+```
+
+### IterableValue::toArrayValue
+
+```php
+<?php
+
+public function toArrayValue(): ArrayValue;
+```
+
+### IterableValue::toArray
+
+```php
+<?php
+/**
+ * @return mixed[]
+ */
+public function toArray(): array;
+```
+
+### IterableValue::use
+
+```php
+<?php
+
+public function use(iterable $iterable): IterableValue;
+```
+
+### IterableValue::chunk
+
+```php
+<?php
+/**
+ * @return IterableValue
+ */
+public function chunk(int $size);
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$array = Wrap::iterable([1, 2, 3, 4, 3, 4, 5, 6, 7, 8, 9]);
+
+var_export($array->chunk(3)->toArray());
+```
+
+```
+array (
+  0 => 
+  array (
+    0 => 1,
+    1 => 2,
+    2 => 3,
+  ),
+  1 => 
+  array (
+    0 => 4,
+    1 => 3,
+    2 => 4,
+  ),
+  2 => 
+  array (
+    0 => 5,
+    1 => 6,
+    2 => 7,
+  ),
+  3 => 
+  array (
+    0 => 8,
+    1 => 9,
+  ),
+)
+```
+
+### IterableValue::flatten
+
+```php
+<?php
+/**
+ * @return IterableValue
+ */
+public function flatten();
+```
+
+### IterableValue::any
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool
+ */
+public function any(callable $filter): bool;
+```
+
+### IterableValue::every
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool
+ */
+public function every(callable $filter): bool;
+```
+
+### IterableValue::find
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool
+ * @return mixed
+ */
+public function find(callable $filter);
+```
+
+### IterableValue::findLast
+
+```php
+<?php
+/**
+ * @param callable $filter function(mixed $value): bool
+ * @return mixed
+ */
+public function findLast(callable $filter);
+```
+
+### IterableValue::getIterator
+
+*(definition not available)*
 
 
