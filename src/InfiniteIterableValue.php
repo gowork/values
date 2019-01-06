@@ -160,7 +160,7 @@ final class InfiniteIterableValue implements IterableValue
     /**
      * @return IterableValue
      */
-    public function join(IterableValue $other)
+    public function join(iterable $other)
     {
         $clone = clone $this;
         $clone->stack = $clone->stack->push(function (iterable $iterable) use ($other) {
