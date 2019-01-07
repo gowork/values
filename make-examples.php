@@ -3,6 +3,7 @@
 use doc\GW\Value\ReadmeWriter;
 use GW\Value\ArrayValue;
 use GW\Value\AssocValue;
+use GW\Value\IterableValue;
 use GW\Value\StringsArray;
 use GW\Value\StringValue;
 
@@ -13,6 +14,7 @@ $markdown = (new ReadmeWriter())->describeClasses([
     AssocValue::class,
     StringValue::class,
     StringsArray::class,
+    IterableValue::class,
 ]);
 
 file_put_contents('docs/examples.md', $markdown->toString());

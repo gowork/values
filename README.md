@@ -180,6 +180,35 @@ $stringsArray = Wrap::stringsArray(['one', '  two ', '<b>three</b>'])
     });
 ```
 
+### `IterableValue`
+
+Object wrapping iterable. 
+
+```php
+<?php
+
+use \GW\Value\Wrap;
+
+$range = function (int $start, int $end) {
+    for ($i = $start; $i <= $end; $i++) {
+        yield $i;
+    }
+};
+
+$stringsArray = Wrap::iterable($range(0, 10))
+    ->join(Wrap::iterable($range(400, 440000)))
+    ->slice(10, 20)
+    ->filter(function (int $value): bool {
+        return $value % 2 === 0;
+    })
+    ->map(function (int $value): int {
+        return $value + 2;
+    })
+    ->each(function (int $value): void {
+        echo $value . "\n";
+    });
+```
+
 ## Documentation
 
 For full methods reference and more examples see [here](./docs/examples.md).
