@@ -160,7 +160,17 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $callable->__invoke('item 3')->shouldHaveBeenCalled();
     }
 
-    function it_joins_with_other_array()
+    function it_joins_with_other_iterable()
+    {
+        $this->beConstructedWith(['a 1', 'a 2', 'a 3']);
+
+        $joined = $this->join(['b 1', 'b 2', 'b 3']);
+
+        $joined->shouldNotBe($this);
+        $joined->toArray()->shouldBeLike(['a 1', 'a 2', 'a 3', 'b 1', 'b 2', 'b 3']);
+    }
+
+    function it_joins_with_other_IterableValue()
     {
         $this->beConstructedWith(['a 1', 'a 2', 'a 3']);
 

@@ -38,7 +38,7 @@ interface IterableValue extends \IteratorAggregate
     /**
      * @return IterableValue
      */
-    public function join(IterableValue $other);
+    public function join(iterable $other);
 
     /**
      * @return IterableValue

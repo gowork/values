@@ -3479,7 +3479,7 @@ public function flatMap(callable $transformer);
 /**
  * @return IterableValue
  */
-public function join(IterableValue $other);
+public function join(iterable $other);
 ```
 
 #### Examples
@@ -3498,7 +3498,7 @@ $range = function (int $start, int $end) {
 $one = Wrap::iterable($range(1, 3));
 $two = Wrap::iterable($range(8, 10));
 
-var_export($one->join($two)->toArray());
+var_export($one->join($two)->join($range(11, 14))->toArray());
 ```
 
 ```
@@ -3509,6 +3509,10 @@ array (
   3 => 8,
   4 => 9,
   5 => 10,
+  6 => 11,
+  7 => 12,
+  8 => 13,
+  9 => 14,
 )
 ```
 
