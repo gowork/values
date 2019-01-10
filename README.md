@@ -12,7 +12,7 @@
 It works on PHP >=7.1. This library is available on Composer/Packagist as `gowork/values`. To install it execute:
 
 ```shell
-composer require gowork/values ^0.1
+composer require gowork/values ^0.2
 ```
 
 or manually update your `composer.json` with:
