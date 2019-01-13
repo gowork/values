@@ -378,4 +378,9 @@ final class PlainArray implements ArrayValue
     {
         return Wrap::stringsArray($this->items);
     }
+
+    public function toIntsArray(): IntsArray
+    {
+        return Wrap::intsArray($this->items);
+    }
 }

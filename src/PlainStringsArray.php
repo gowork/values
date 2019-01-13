@@ -431,4 +431,14 @@ final class PlainStringsArray implements StringsArray
     {
         return $this;
     }
+
+    public function toIntsArray(): IntsArray
+    {
+        return $this
+            ->toArrayValue()
+            ->map(function (StringValue $value): IntValue {
+                return Wrap::int((int)$value->toString());
+            })
+            ->toIntsArray();
+    }
 }

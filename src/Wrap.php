@@ -37,6 +37,19 @@ final class Wrap
         return new PlainStringsArray(self::array($strings));
     }
 
+    public static function int(int $value): IntValue
+    {
+        return new PlainInt($value);
+    }
+
+    /**
+     * @param int[]|IntValue[] $ints
+     */
+    public static function intsArray(array $ints = []): IntsArray
+    {
+        return new PlainIntsArray(self::array($ints));
+    }
+
     private function __construct()
     {
         // prohibits creation objects of this class
