@@ -622,6 +622,7 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
 
         $this->toArray()->shouldEqual([0, 0]);
         $this->slice(999, 9999)->toArray()->shouldEqual([999, 9999]);
+        $this->slice(999, 9999)->map(function (int $n): int { return $n + 1; })->toArray()->shouldEqual([1000, 10000]);
     }
 
     private function entityComparator(): \Closure
