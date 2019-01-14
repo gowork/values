@@ -2,7 +2,7 @@
 
 namespace GW\Value;
 
-interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \ArrayAccess
+interface ArrayValue extends Value, Collection, Stack, Slicable, \IteratorAggregate, \ArrayAccess
 {
     // Collection
 

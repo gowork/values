@@ -5,10 +5,12 @@ namespace spec\GW\Value;
 use GW\Value\Filters;
 use GW\Value\InfiniteIterableValue;
 use GW\Value\PlainArray;
+use GW\Value\Slicable;
 use GW\Value\Sorts;
 use GW\Value\Wrap;
 use PhpSpec\Exception\Example\FailureException;
 use PhpSpec\ObjectBehavior;
+use Traversable;
 
 final class InfiniteIterableValueSpec extends ObjectBehavior
 {
@@ -30,9 +32,11 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
     {
         $this->beConstructedWith(['item 1', 'item 2', 'item 3']);
 
-        $mapped = $this->map(function (string $item): string {
-            return $item . ' mapped';
-        });
+        $mapped = $this->map(
+            function (string $item): string {
+                return $item . ' mapped';
+            }
+        );
 
         $mapped->shouldNotBe($this);
         $mapped->toArray()->shouldBeLike(['item 1 mapped', 'item 2 mapped', 'item 3 mapped']);
@@ -79,20 +83,22 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
 
     private function shouldFlatMapBandMembersWith(callable $mapper): void
     {
-        $this->beConstructedWith([
+        $this->beConstructedWith(
             [
-                'band' => 'The Beatles',
-                'members' => ['John', 'Paul', 'George', 'Ringo'],
-            ],
-            [
-                'band' => 'Rolling Stones',
-                'members' => ['Mick', 'Keith', 'Ron', 'Charlie'],
-            ],
-            [
-                'band' => 'Led Zeppelin',
-                'members' => ['Robert', 'Jimmy', 'John Paul', 'John'],
-            ],
-        ]);
+                [
+                    'band' => 'The Beatles',
+                    'members' => ['John', 'Paul', 'George', 'Ringo'],
+                ],
+                [
+                    'band' => 'Rolling Stones',
+                    'members' => ['Mick', 'Keith', 'Ron', 'Charlie'],
+                ],
+                [
+                    'band' => 'Led Zeppelin',
+                    'members' => ['Robert', 'Jimmy', 'John Paul', 'John'],
+                ],
+            ]
+        );
 
         $legends = $this->flatMap($mapper);
         $legends->shouldNotBe($this);
@@ -113,21 +119,25 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
             ]
         );
     }
-    
+
     function it_filters_items_with_closure()
     {
-        $this->beConstructedWith([
-            'Because I`m bad',
-            'You know I`m bad',
-            'And the whole world has to',
-            'Answer right now',
-            'Just to tell you once again',
-            'Who`s bad',
-        ]);
+        $this->beConstructedWith(
+            [
+                'Because I`m bad',
+                'You know I`m bad',
+                'And the whole world has to',
+                'Answer right now',
+                'Just to tell you once again',
+                'Who`s bad',
+            ]
+        );
 
-        $notBad = $this->filter(function (string $line): bool {
-            return strpos($line, 'bad') === false;
-        });
+        $notBad = $this->filter(
+            function (string $line): bool {
+                return strpos($line, 'bad') === false;
+            }
+        );
 
         $notBad->shouldNotBe($this);
         $notBad->toArray()->shouldBeLike(
@@ -210,15 +220,17 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
 
     function it_can_return_clone_with_unique_values_comparing_them_using_comparator()
     {
-        $this->beConstructedWith([
-            new DummyEntity(1, 'Joe'),
-            new DummyEntity(1, 'Joey'),
-            new DummyEntity(2, 'William'),
-            new DummyEntity(2, 'Will'),
-            new DummyEntity(3, 'Jack'),
-            new DummyEntity(4, 'Averell'),
-            new DummyEntity(4, 'Goofy'),
-        ]);
+        $this->beConstructedWith(
+            [
+                new DummyEntity(1, 'Joe'),
+                new DummyEntity(1, 'Joey'),
+                new DummyEntity(2, 'William'),
+                new DummyEntity(2, 'Will'),
+                new DummyEntity(3, 'Jack'),
+                new DummyEntity(4, 'Averell'),
+                new DummyEntity(4, 'Goofy'),
+            ]
+        );
 
         $comparator = $this->entityComparator();
 
@@ -291,7 +303,9 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $comparator = $this->entityComparator();
 
         $this->intersect(new PlainArray([]), $comparator)->toArray()->shouldBeLike([]);
-        $this->intersect(new PlainArray([$joe, $william, $jack, $averell]), $comparator)->toArray()->shouldBeLike([$joe, $william, $jack, $averell]);
+        $this->intersect(new PlainArray([$joe, $william, $jack, $averell]), $comparator)->toArray()->shouldBeLike(
+            [$joe, $william, $jack, $averell]
+        );
         $this->intersect(new PlainArray([new DummyEntity(5, 'Ma')]), $comparator)
             ->toArray()->shouldBeLike([]);
         $this->intersect(new PlainArray([$joe]), $comparator)->toArray()->shouldBeLike([$joe]);
@@ -359,33 +373,43 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
 
     function it_can_be_used_with_new_iterable()
     {
-        $this->beConstructedThrough(function () {
-            $value = new InfiniteIterableValue([1, 2, 3]);
-            $value->toArray();
+        $this->beConstructedThrough(
+            function () {
+                $value = new InfiniteIterableValue([1, 2, 3]);
+                $value->toArray();
 
-            return $value->map(function (int $v): int {
-                    return $v + 1;
-                })
-                ->use([10, 11, 12]);
-        });
+                return $value->map(
+                    function (int $v): int {
+                        return $v + 1;
+                    }
+                )
+                    ->use([10, 11, 12]);
+            }
+        );
 
         $this->toArray()->shouldEqual([11, 12, 13]);
     }
 
     function it_can_be_used_after_iteration_break()
     {
-        $this->beConstructedThrough(function () {
-            $value = new InfiniteIterableValue([1, 2, 3, 4]);
-            $value = $value->map(function (int $v): int {return $v+1;});
+        $this->beConstructedThrough(
+            function () {
+                $value = new InfiniteIterableValue([1, 2, 3, 4]);
+                $value = $value->map(
+                    function (int $v): int {
+                        return $v + 1;
+                    }
+                );
 
-            foreach ($value as $k => $v) {
-                if ($k === 1) {
-                    break;
+                foreach ($value as $k => $v) {
+                    if ($k === 1) {
+                        break;
+                    }
                 }
-            }
 
-            return $value;
-        });
+                return $value;
+            }
+        );
 
         $this->toArray()->shouldEqual([2, 3, 4, 5]);
     }
@@ -399,7 +423,11 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
 
     function it_cannot_be_used_twice_if_generator()
     {
-        $this->beConstructedWith((function () {yield from [2, 2, 5];})());
+        $this->beConstructedWith(
+            (function () {
+                yield from [2, 2, 5];
+            })()
+        );
         $this->toArray()->shouldEqual([2, 2, 5]);
         $this->shouldThrow()->during('toArray');
     }
@@ -408,15 +436,27 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
     {
         $this->beConstructedWith([1, 2, 3]);
         $modified = $this
-            ->filter(function (int $i): bool {return $i === 2;})
-            ->map(function (int $i): int {return $i*2;});
+            ->filter(
+                function (int $i): bool {
+                    return $i === 2;
+                }
+            )
+            ->map(
+                function (int $i): int {
+                    return $i * 2;
+                }
+            );
 
         $modified
             ->toArray()
             ->shouldEqual([4]);
 
         $modified
-            ->map(function (int $i): int {return $i*2;})
+            ->map(
+                function (int $i): int {
+                    return $i * 2;
+                }
+            )
             ->toArray()
             ->shouldEqual([8]);
 
@@ -426,7 +466,11 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
 
         $modified
             ->use([2, 2, 5])
-            ->map(function (int $i): int {return $i*2;})
+            ->map(
+                function (int $i): int {
+                    return $i * 2;
+                }
+            )
             ->toArray()
             ->shouldEqual([8, 8]);
 
@@ -448,7 +492,11 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
             ->shouldEqual([1, 2, 3]);
 
         $modified
-            ->use((function () {yield from [2, 2, 5];})())
+            ->use(
+                (function () {
+                    yield from [2, 2, 5];
+                })()
+            )
             ->toArray()
             ->shouldEqual([4, 4]);
     }
@@ -516,9 +564,11 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 11', 'item 22', 'item 33']);
 
         $this
-            ->findLast(function (string $item): bool {
-                return strpos($item, '2') !== false;
-            })
+            ->findLast(
+                function (string $item): bool {
+                    return strpos($item, '2') !== false;
+                }
+            )
             ->shouldReturn('item 22');
     }
 
@@ -527,16 +577,51 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $this->beConstructedWith(['item 1', 'item 2', 'item 3']);
 
         $this
-            ->find(function (string $item): bool {
-                return strpos($item, 'x') !== false;
-            })
+            ->find(
+                function (string $item): bool {
+                    return strpos($item, 'x') !== false;
+                }
+            )
             ->shouldReturn(null);
 
         $this
-            ->findLast(function (string $item): bool {
-                return strpos($item, 'x') !== false;
-            })
+            ->findLast(
+                function (string $item): bool {
+                    return strpos($item, 'x') !== false;
+                }
+            )
             ->shouldReturn(null);
+    }
+
+    function it_accepts_Slicable()
+    {
+        $this->beConstructedWith(
+            new class implements Slicable, \IteratorAggregate
+            {
+                private $offset = 0;
+                private $length = 0;
+
+                public function getIterator()
+                {
+                    yield from [$this->offset, $this->length];
+                }
+
+                /**
+                 * @return Slicable
+                 */
+                public function slice(int $offset, int $length)
+                {
+                    $clone = clone $this;
+                    $clone->offset = $offset;
+                    $clone->length = $length;
+
+                    return $clone;
+                }
+            }
+        );
+
+        $this->toArray()->shouldEqual([0, 0]);
+        $this->slice(999, 9999)->toArray()->shouldEqual([999, 9999]);
     }
 
     private function entityComparator(): \Closure

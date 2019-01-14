@@ -18,10 +18,9 @@ final class IterableValueIterator
         $this->iterable = $iterable;
     }
 
-    public function replaceIterable($iterable): void
+    public function iterable(): iterable
     {
-        $this->iterable = $iterable;
-        $this->used = false;
+        return $this->iterable;
     }
 
     public function __invoke(): iterable
@@ -30,7 +29,8 @@ final class IterableValueIterator
             throw new \RuntimeException('IterableValue is already used.');
         }
 
-        yield from $this->iterable;
         $this->used = $this->iterable instanceof \Generator;
+
+        return $this->iterable;
     }
 }

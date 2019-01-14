@@ -9,7 +9,7 @@ final class InfiniteIterableValue implements IterableValue
 
     public function __construct(iterable $iterable)
     {
-        $this->stack = new IterableValueStack(new IterableValueIterator($iterable));
+        $this->stack = new IterableValueStack($iterable);
     }
 
     /**
@@ -177,18 +177,25 @@ final class InfiniteIterableValue implements IterableValue
     public function slice(int $offset, int $length)
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($offset, $length) {
-            foreach ($iterable as $value) {
-                if ($offset-- > 0) {
-                    continue;
-                }
 
-                yield $value;
-
-                if (--$length <= 0) {
-                    break;
-                }
+        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($offset, $length): iterable {
+            if ($iterable instanceof Slicable) {
+                return $iterable->slice($offset, $length);
             }
+
+            return (function () use ($length, $offset, $iterable) {
+                foreach ($iterable as $value) {
+                    if ($offset-- > 0) {
+                        continue;
+                    }
+
+                    yield $value;
+
+                    if (--$length <= 0) {
+                        break;
+                    }
+                }
+            })();
         });
 
         return $clone;
@@ -398,7 +405,7 @@ final class InfiniteIterableValue implements IterableValue
     public function use(iterable $iterable): IterableValue
     {
         $clone = clone $this;
-        $clone->stack = $this->stack->replaceIterator(new IterableValueIterator($iterable));
+        $clone->stack = $this->stack->replaceSource($iterable);
 
         return $clone;
     }

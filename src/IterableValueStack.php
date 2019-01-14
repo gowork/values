@@ -13,19 +13,22 @@ final class IterableValueStack
     /** @var callable[] */
     private $modifiers = [];
 
-    public function __construct(IterableValueIterator $iterable)
+    public function __construct(iterable $iterable)
     {
-        $this->iterable = $iterable;
+        $this->iterable = new IterableValueIterator($iterable);
     }
 
-    public function replaceIterator(IterableValueIterator $iterable): self
+    public function replaceSource(iterable $iterable): self
     {
         $clone = clone $this;
-        $clone->iterable = $iterable;
+        $clone->iterable = new IterableValueIterator($iterable);
 
         return $clone;
     }
 
+    /**
+     * @param callable $modifier function (iterable): iterable
+     */
     public function push(callable $modifier): self
     {
         $clone = clone $this;
@@ -34,18 +37,22 @@ final class IterableValueStack
         return $clone;
     }
 
+    public function source(): iterable
+    {
+        return $this->iterable->iterable();
+    }
+
     public function iterate(): iterable
     {
         $values = ($this->iterable)();
         $i = \count($this->modifiers) - 1;
 
-        $next = function () use (&$values, &$i, &$next) {
+        $next = function () use (&$values, &$i, &$next): iterable {
             if (!isset($this->modifiers[$i])) {
-                yield from $values;
-                return;
+                return $values;
             }
 
-            yield from $this->modifiers[$i--]($next());
+            return $this->modifiers[$i--]($next());
         };
 
         yield from $next();
