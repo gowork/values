@@ -2,7 +2,7 @@
 
 namespace GW\Value;
 
-interface Slicable
+interface Slicable extends \IteratorAggregate
 {
     /**
      * @return Slicable
