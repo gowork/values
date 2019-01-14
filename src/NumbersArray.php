@@ -67,6 +67,17 @@ interface NumbersArray extends ArrayValue
     public function flatMap(callable $transformer);
 
     /**
+     * @param callable $reducer function(NumberValue $value): string|int|bool
+     * @return AssocValue AssocValue<ArrayValue<NumberValue>>
+     */
+    public function groupBy(callable $reducer): AssocValue;
+
+    /**
+     * @return ArrayValue ArrayValue<array<NumberValue>>
+     */
+    public function chunk(int $size);
+
+    /**
      * @param callable $comparator function(NumberValue $valueA, NumberValue $valueB): int{-1, 0, 1}
      * @return NumbersArray
      */
@@ -177,4 +188,38 @@ interface NumbersArray extends ArrayValue
     public function toAssocValue(): AssocValue;
 
     public function toStringsArray(): StringsArray;
+
+    // Collection
+
+    /**
+     * @return NumberValue|null
+     */
+    public function first();
+
+    /**
+     * @return NumberValue|null
+     */
+    public function last();
+
+    /**
+     * @param callable $filter function(NumberValue $value): bool
+     * @return NumberValue|null
+     */
+    public function find(callable $filter);
+
+    /**
+     * @param callable $filter function(NumberValue $value): bool
+     * @return NumberValue|null
+     */
+    public function findLast(callable $filter);
+
+    /**
+     * @param callable $filter function(NumberValue $value): bool
+     */
+    public function any(callable $filter): bool;
+
+    /**
+     * @param callable $filter function(NumberValue $value): bool
+     */
+    public function every(callable $filter): bool;
 }

@@ -9,10 +9,7 @@ final class PlainNumbersArray implements NumbersArray
 
     public function __construct(ArrayValue $numbers)
     {
-        $this->numbers = $numbers
-            ->map(function($number): NumberValue {
-                return Wrap::number($number);
-            });
+        $this->numbers = $this->mapArrayValueNumbers($numbers);
     }
 
     public static function fromNumbers(array $numbers): self
@@ -98,7 +95,7 @@ final class PlainNumbersArray implements NumbersArray
      */
     public function unique(?callable $comparator = null): PlainNumbersArray
     {
-        return $this->withRearrangedNumbers(__FUNCTION__, $comparator);
+        return new self($this->numbers->unique($comparator));
     }
 
     /**
@@ -114,12 +111,12 @@ final class PlainNumbersArray implements NumbersArray
      */
     public function filter(callable $filter): PlainNumbersArray
     {
-        return $this->withRearrangedNumbers(__FUNCTION__, $filter);
+        return new self($this->numbers->filter($filter));
     }
 
     public function filterEmpty(): PlainNumbersArray
     {
-        return $this->withRearrangedNumbers(__FUNCTION__);
+        return new self($this->numbers->filterEmpty());
     }
 
     /**
@@ -127,7 +124,7 @@ final class PlainNumbersArray implements NumbersArray
      */
     public function map(callable $transformer): PlainNumbersArray
     {
-        return $this->withTransformedNumbers(__FUNCTION__, $transformer);
+        return new self($this->numbers->map($transformer));
     }
 
     /**
@@ -135,7 +132,7 @@ final class PlainNumbersArray implements NumbersArray
      */
     public function flatMap(callable $transformer): PlainNumbersArray
     {
-        return $this->withTransformedNumbers(__FUNCTION__, $transformer);
+        return new self($this->numbers->flatMap($transformer));
     }
 
     /**
@@ -143,54 +140,47 @@ final class PlainNumbersArray implements NumbersArray
      */
     public function sort(callable $comparator): PlainNumbersArray
     {
-        return $this->withRearrangedNumbers(__FUNCTION__, $comparator);
+        return new self($this->numbers->sort($comparator));
     }
 
-    /**
-     * @return NumbersArray
-     */
     public function shuffle(): PlainNumbersArray
     {
-        return $this->withRearrangedNumbers(__FUNCTION__);
+        return new self($this->numbers->shuffle());
     }
 
     public function reverse(): PlainNumbersArray
     {
-        return $this->withRearrangedNumbers(__FUNCTION__);
+        return new self($this->numbers->reverse());
     }
 
     /**
      * @param NumberValue|number $value
-     * @return NumbersArray
      */
-    public function unshift($value)
+    public function unshift($value): PlainNumbersArray
     {
         return new self($this->numbers->unshift($value));
     }
 
     /**
      * @param NumberValue $value
-     * @return NumbersArray
      */
-    public function shift(&$value = null)
+    public function shift(&$value = null): PlainNumbersArray
     {
         return new self($this->numbers->shift($value));
     }
 
     /**
      * @param NumberValue|number $value
-     * @return NumbersArray
      */
-    public function push($value)
+    public function push($value): PlainNumbersArray
     {
         return new self($this->numbers->push($value));
     }
 
     /**
      * @param NumberValue $value
-     * @return NumbersArray
      */
-    public function pop(&$value = null)
+    public function pop(&$value = null): PlainNumbersArray
     {
         return new self($this->numbers->pop($value));
     }
@@ -224,12 +214,12 @@ final class PlainNumbersArray implements NumbersArray
 
     public function join(ArrayValue $other): PlainNumbersArray
     {
-        return $this->withTransformedNumbers(__FUNCTION__, $other);
+        return new self($this->numbers->join($other));
     }
 
     public function slice(int $offset, int $length): PlainNumbersArray
     {
-        return $this->withRearrangedNumbers(__FUNCTION__, $offset, $length);
+        return new self($this->numbers->slice($offset, $length));
     }
 
     /**
@@ -237,7 +227,7 @@ final class PlainNumbersArray implements NumbersArray
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): PlainNumbersArray
     {
-        return $this->withRearrangedNumbers(__FUNCTION__, $other, $comparator);
+        return new self($this->numbers->diff($this->mapArrayValueNumbers($other), $comparator));
     }
 
     /**
@@ -245,7 +235,7 @@ final class PlainNumbersArray implements NumbersArray
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): PlainNumbersArray
     {
-        return $this->withRearrangedNumbers(__FUNCTION__, $other, $comparator);
+        return new self($this->numbers->intersect($this->mapArrayValueNumbers($other), $comparator));
     }
 
     /**
@@ -265,7 +255,7 @@ final class PlainNumbersArray implements NumbersArray
 
     public function notEmpty(): PlainNumbersArray
     {
-        return $this->withRearrangedNumbers(__FUNCTION__);
+        return new self($this->numbers->notEmpty());
     }
 
     public function toAssocValue(): AssocValue
@@ -283,17 +273,67 @@ final class PlainNumbersArray implements NumbersArray
         return $this->numbers->isEmpty();
     }
 
-    private function withRearrangedNumbers(string $method, ...$args): PlainNumbersArray
+    /**
+     * @param callable $reducer function(NumberValue $value): string|int|bool
+     * @return AssocValue AssocValue<ArrayValue>
+     */
+    public function groupBy(callable $reducer): AssocValue
     {
-        $clone = clone $this;
-        $clone->numbers = $this->numbers->{$method}(...$args);
-
-        return $clone;
+        return $this->numbers->groupBy($reducer);
     }
 
-    private function withTransformedNumbers(string $method, ...$args): PlainNumbersArray
+    /**
+     * @return ArrayValue
+     */
+    public function chunk(int $size): ArrayValue
     {
-        return new self($this->numbers->{$method}(...$args));
+        return $this->numbers->chunk($size);
+    }
+
+    public function splice(int $offset, int $length, ?ArrayValue $replacement = null): PlainNumbersArray
+    {
+        return new self($this->numbers->splice($offset, $length, $replacement));
+    }
+
+    /**
+     * @param callable $filter function(Number $value): bool
+     */
+    public function find(callable $filter): ?NumberValue
+    {
+        return $this->numbers->find($filter);
+    }
+
+    /**
+     * @param callable $filter function(NumberValue $value): bool
+     */
+    public function findLast(callable $filter): ?NumberValue
+    {
+        return $this->numbers->findLast($filter);
+    }
+
+    /**
+     * @param callable $filter function(NumberValue $value): bool
+     */
+    public function any(callable $filter): bool
+    {
+        return $this->numbers->any($filter);
+    }
+
+    /**
+     * @param callable $filter function(NumberValue $value): bool
+     */
+    public function every(callable $filter): bool
+    {
+        return $this->numbers->every($filter);
+    }
+
+    /**
+     * @param ArrayValue $numbers ArrayValue<NumberValue|int|float|string>
+     * @return ArrayValue ArrayValue<NumberValue>
+     */
+    private function mapArrayValueNumbers(ArrayValue $numbers): ArrayValue
+    {
+        return $numbers->map([Wrap::class, 'number']);
     }
 
     private function reduceBy(callable $reducer, ?NumberValue $default = null): NumberValue

@@ -135,15 +135,15 @@ final class FixedNumber implements NumberValue
 
     public function toString(): string
     {
-        $int = $this->toInt();
-
-        if ($this->scale <= 0) {
-            return (string)$int;
+        if ($this->scale === 0) {
+            return (string)$this->digits;
         }
 
-        $rest = \abs($this->digits) % $this->pointShift();
+        if ($this->scale < 0) {
+            return (string)(int)($this->digits / $this->pointShift());
+        }
 
-        return \sprintf('%d.%s', $int, \str_pad($rest, $this->scale, '0', STR_PAD_LEFT));
+        return \number_format($this->toFloat(), $this->scale, '.', '');
     }
 
     public function toStringValue(): StringValue
@@ -271,6 +271,9 @@ final class FixedNumber implements NumberValue
         return $this->withDigits(self::roundDigits($value, $this->scale, $this->roundMode));
     }
 
+    /**
+     * @return int|float
+     */
     private function pointShift()
     {
         return 10 ** $this->scale;
