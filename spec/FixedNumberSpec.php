@@ -98,13 +98,13 @@ final class FixedNumberSpec extends ObjectBehavior
 
     function it_can_have_negative_scale_which_gives_integer_rounded_to_order_of_magnitude()
     {
-        $this->beConstructedFromString('1234.5001', -2);
+        $this->beConstructedFromString('12345.666', -2);
 
-        $this->toInt()->shouldReturn(1200);
-        $this->toString()->shouldReturn('1200');
-        $this->add(FixedNumber::fromInt(811))->toString()->shouldBe('2000');
-        $this->divide(FixedNumber::fromInt(3))->toString()->shouldBe('400');
-        $this->subtract(FixedNumber::fromInt(1311))->toString()->shouldBe('-100');
+        $this->toInt()->shouldReturn(12300);
+        $this->toString()->shouldReturn('12300');
+        $this->add(FixedNumber::fromInt(811))->toString()->shouldBe('13100');
+        $this->divide(FixedNumber::fromInt(100))->toString()->shouldBe('100');
+        $this->subtract(FixedNumber::fromInt(12400))->toString()->shouldBe('-100');
     }
 
     function it_returns_self_when_desired_scale_is_same_as_current()
@@ -239,9 +239,11 @@ final class FixedNumberSpec extends ObjectBehavior
     {
         $this->beConstructedFromString('100.04');
 
-        $sum = $this->multiply(Wrap::fixedNumber('0.0150'));
+        $sum = $this->multiply(Wrap::number(0.0150));
         $sum->shouldNotBe($this);
-        $sum->toString()->shouldBe('1.50');
+
+        // 100.04 * 0.02 = 2.00 (rounded from 2.0008)
+        $sum->toString()->shouldBe('2.00');
     }
 
     function it_divides_numbers_keeping_left_number_scale()
