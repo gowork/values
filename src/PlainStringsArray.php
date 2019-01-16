@@ -339,9 +339,9 @@ final class PlainStringsArray implements StringsArray
         return $this->withMapByMethod(__FUNCTION__, $length, $postfix);
     }
 
-    public function substring(int $start, ?int $length = null): StringValue
+    public function substring(int $start, ?int $length = null): StringsArray
     {
-        return $this->toStringValue()->substring($start, $length);
+        return $this->withMapByMethod(__FUNCTION__, $start, $length);
     }
 
     /**

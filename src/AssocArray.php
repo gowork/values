@@ -38,7 +38,13 @@ final class AssocArray implements AssocValue
      */
     public function mapKeys(callable $transformer): AssocArray
     {
-        return new self(array_combine(array_map($transformer, array_keys($this->items), $this->items), $this->items));
+        $combined = array_combine(array_map($transformer, array_keys($this->items), $this->items), $this->items);
+
+        if ($combined === false) {
+            throw new \RuntimeException('Cannot map keys - combined array is broken.');
+        }
+
+        return new self($combined);
     }
 
     public function filterEmpty(): AssocArray
