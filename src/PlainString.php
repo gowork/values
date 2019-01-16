@@ -61,7 +61,7 @@ final class PlainString implements StringValue
      */
     public function trimRight($characterMask = self::TRIM_MASK): PlainString
     {
-        return new self(rtrim($this->value, $characterMask));
+        return new self(rtrim($this->value, $this->castToString($characterMask)));
     }
 
     /**
@@ -141,7 +141,13 @@ final class PlainString implements StringValue
      */
     public function replacePattern($pattern, $replacement): PlainString
     {
-        return new self(preg_replace($this->castToString($pattern), $this->castToString($replacement), $this->value));
+        $value = preg_replace($this->castToString($pattern), $this->castToString($replacement), $this->value);
+
+        if ($value === null) {
+            throw new \RuntimeException("Failed to replace using regexp: {$pattern}");
+        }
+
+        return new self($value);
     }
 
     /**
@@ -149,7 +155,13 @@ final class PlainString implements StringValue
      */
     public function replacePatternCallback($pattern, callable $callback): PlainString
     {
-        return new self(preg_replace_callback($this->castToString($pattern), $callback, $this->value));
+        $value = preg_replace_callback($this->castToString($pattern), $callback, $this->value);
+
+        if ($value === null) {
+            throw new \RuntimeException("Failed to replace using regexp: {$pattern}");
+        }
+
+        return new self($value);
     }
 
     /**
@@ -204,7 +216,13 @@ final class PlainString implements StringValue
      */
     public function splitByPattern($pattern): StringsArray
     {
-        return Wrap::stringsArray(preg_split($this->castToString($pattern), $this->value));
+        $strings = preg_split($this->castToString($pattern), $this->value);
+
+        if ($strings === false) {
+            throw new \RuntimeException("Failed to split using regexp: {$pattern}");
+        }
+
+        return Wrap::stringsArray($strings);
     }
 
     /**
@@ -212,7 +230,13 @@ final class PlainString implements StringValue
      */
     public function explode($delimiter): StringsArray
     {
-        return Wrap::stringsArray(explode($this->castToString($delimiter), $this->value));
+        $strings = explode($this->castToString($delimiter), $this->value);
+
+        if ($strings === false) {
+            throw new \RuntimeException("Cannot explode using delimiter: {$delimiter}");
+        }
+
+        return Wrap::stringsArray($strings);
     }
 
     /**
