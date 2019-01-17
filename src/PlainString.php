@@ -129,6 +129,14 @@ final class PlainString implements StringValue
         return $this->matchAllPatterns($pattern)->count() > 0;
     }
 
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function isStartingWith($pattern): bool
+    {
+        return \mb_strpos($this->value, $this->castToString($pattern)) === 0;
+    }
+
     public function matchAllPatterns(string $pattern): ArrayValue
     {
         preg_match_all($pattern, $this->value, $matches, PREG_SET_ORDER);
@@ -188,5 +196,25 @@ final class PlainString implements StringValue
     public function isEmpty(): bool
     {
         return $this->value === '';
+    }
+
+    /**
+     * @param mixed $value
+     */
+    private function castToString($value): string
+    {
+        if (\is_string($value)) {
+            return $value;
+        }
+
+        if ($value instanceof StringValue) {
+            return $value->toString();
+        }
+
+        if (\is_scalar($value)) {
+            return (string)$value;
+        }
+
+        throw new \TypeError('Value cannot be casted to string.');
     }
 }
