@@ -334,4 +334,13 @@ final class PlainStringSpec extends ObjectBehavior
         $matches->shouldNotBe($this);
         $matches->shouldBeLike(new PlainArray([['<b>Lorem</b>', 'Lorem'], ['<i>amet</i>', 'amet']]));
     }
+
+    function it_can_check_if_starting_with()
+    {
+        $this->beConstructedWith('lorem ipsum');
+        $this->isStartingWith('lorem')->shouldBe(true);
+        $this->isStartingWith('l')->shouldBe(true);
+        $this->isStartingWith(' lorem')->shouldBe(false);
+        $this->isStartingWith('ipsum')->shouldBe(false);
+    }
 }

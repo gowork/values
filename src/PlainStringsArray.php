@@ -352,6 +352,14 @@ final class PlainStringsArray implements StringsArray
         return $this->toStringValue()->isMatching($pattern);
     }
 
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function isStartingWith($pattern): bool
+    {
+        return $this->toStringValue()->isStartingWith($pattern);
+    }
+
     public function splitByPattern(string $pattern): ArrayValue
     {
         return $this->toStringValue()->splitByPattern($pattern);

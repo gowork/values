@@ -126,6 +126,11 @@ interface StringValue extends Value
     public function isMatching(string $pattern): bool;
 
     /**
+     * @param string|StringValue $pattern
+     */
+    public function isStartingWith($pattern): bool;
+
+    /**
      * @return StringsArray
      */
     public function splitByPattern(string $pattern);
