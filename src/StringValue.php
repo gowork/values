@@ -128,7 +128,7 @@ interface StringValue extends Value
     /**
      * @param string|StringValue $pattern
      */
-    public function isStartingWith($pattern): bool;
+    public function startsWith($pattern): bool;
 
     /**
      * @return StringsArray

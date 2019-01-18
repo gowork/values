@@ -132,7 +132,7 @@ final class PlainString implements StringValue
     /**
      * @param string|StringValue $pattern
      */
-    public function isStartingWith($pattern): bool
+    public function startsWith($pattern): bool
     {
         return \mb_strpos($this->value, $this->castToString($pattern)) === 0;
     }
