@@ -338,9 +338,9 @@ final class PlainStringSpec extends ObjectBehavior
     function it_can_check_if_starting_with()
     {
         $this->beConstructedWith('lorem ipsum');
-        $this->isStartingWith('lorem')->shouldBe(true);
-        $this->isStartingWith('l')->shouldBe(true);
-        $this->isStartingWith(' lorem')->shouldBe(false);
-        $this->isStartingWith('ipsum')->shouldBe(false);
+        $this->startsWith('lorem')->shouldBe(true);
+        $this->startsWith('l')->shouldBe(true);
+        $this->startsWith(' lorem')->shouldBe(false);
+        $this->startsWith('ipsum')->shouldBe(false);
     }
 }
