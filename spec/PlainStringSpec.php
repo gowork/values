@@ -343,4 +343,13 @@ final class PlainStringSpec extends ObjectBehavior
         $this->startsWith(' lorem')->shouldBe(false);
         $this->startsWith('ipsum')->shouldBe(false);
     }
+
+    function it_can_check_if_ends_with()
+    {
+        $this->beConstructedWith('lorem ipsum');
+        $this->endsWith('lorem')->shouldBe(false);
+        $this->endsWith('ipsum')->shouldBe(true);
+        $this->endsWith(' ipsum')->shouldBe(true);
+        $this->endsWith('m')->shouldBe(true);
+    }
 }

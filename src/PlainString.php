@@ -137,6 +137,17 @@ final class PlainString implements StringValue
         return \mb_strpos($this->value, $this->castToString($pattern)) === 0;
     }
 
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function endsWith($pattern): bool
+    {
+        $string = $this->castToString($pattern);
+        $length = \mb_strlen($string);
+
+        return $this->substring(-$length)->toString() === $string;
+    }
+
     public function matchAllPatterns(string $pattern): ArrayValue
     {
         preg_match_all($pattern, $this->value, $matches, PREG_SET_ORDER);

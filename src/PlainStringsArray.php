@@ -360,6 +360,14 @@ final class PlainStringsArray implements StringsArray
         return $this->toStringValue()->startsWith($pattern);
     }
 
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function endsWith($pattern): bool
+    {
+        return $this->toStringValue()->endsWith($pattern);
+    }
+
     public function splitByPattern(string $pattern): ArrayValue
     {
         return $this->toStringValue()->splitByPattern($pattern);

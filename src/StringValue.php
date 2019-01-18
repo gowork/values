@@ -131,6 +131,11 @@ interface StringValue extends Value
     public function startsWith($pattern): bool;
 
     /**
+     * @param string|StringValue $pattern
+     */
+    public function endsWith($pattern): bool;
+
+    /**
      * @return StringsArray
      */
     public function splitByPattern(string $pattern);
