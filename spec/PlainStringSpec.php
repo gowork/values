@@ -360,5 +360,14 @@ final class PlainStringSpec extends ObjectBehavior
         $this->endsWith(' ipsum')->shouldBe(true);
         $this->endsWith('m')->shouldBe(true);
         $this->endsWith(Wrap::string('m'))->shouldBe(true);
+        $this->endsWith(
+            new class
+            {
+                function __toString()
+                {
+                    return 'm';
+                }
+            }
+        )->shouldBe(true);
     }
 }
