@@ -4,6 +4,7 @@ namespace spec\GW\Value;
 
 use GW\Value\PlainArray;
 use GW\Value\PlainString;
+use GW\Value\Wrap;
 use PhpSpec\ObjectBehavior;
 
 final class PlainStringSpec extends ObjectBehavior 
@@ -295,6 +296,8 @@ final class PlainStringSpec extends ObjectBehavior
 
         $this->position('are')->shouldReturn(4);
         $this->positionLast('are')->shouldReturn(23);
+        $this->position(Wrap::string('are'))->shouldReturn(4);
+        $this->positionLast(Wrap::string('are'))->shouldReturn(23);
     }
 
     function it_gets_substring_position_with_national_characters()
@@ -303,6 +306,8 @@ final class PlainStringSpec extends ObjectBehavior
 
         $this->position('gęś')->shouldReturn(7);
         $this->positionLast('gęś')->shouldReturn(26);
+        $this->position(Wrap::string('gęś'))->shouldReturn(7);
+        $this->positionLast(Wrap::string('gęś'))->shouldReturn(26);
     }
 
     function it_returns_null_position_when_substring_not_found()
@@ -311,6 +316,8 @@ final class PlainStringSpec extends ObjectBehavior
 
         $this->position('zonk')->shouldReturn(null);
         $this->positionLast('zonk')->shouldReturn(null);
+        $this->position(Wrap::string('zonk'))->shouldReturn(null);
+        $this->positionLast(Wrap::string('zonk'))->shouldReturn(null);
     }
 
     function it_accepts_custom_transformer_working_on_primitive_string()
@@ -342,6 +349,7 @@ final class PlainStringSpec extends ObjectBehavior
         $this->startsWith('l')->shouldBe(true);
         $this->startsWith(' lorem')->shouldBe(false);
         $this->startsWith('ipsum')->shouldBe(false);
+        $this->startsWith(Wrap::string('ipsum'))->shouldBe(false);
     }
 
     function it_can_check_if_ends_with()
@@ -351,5 +359,6 @@ final class PlainStringSpec extends ObjectBehavior
         $this->endsWith('ipsum')->shouldBe(true);
         $this->endsWith(' ipsum')->shouldBe(true);
         $this->endsWith('m')->shouldBe(true);
+        $this->endsWith(Wrap::string('m'))->shouldBe(true);
     }
 }

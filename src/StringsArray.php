@@ -189,18 +189,21 @@ interface StringsArray extends ArrayValue, StringValue
 
     /**
      * @return StringsArray
+     * @param string|StringValue $characterMask
      */
-    public function trim(string $characterMask = self::TRIM_MASK);
+    public function trim($characterMask = self::TRIM_MASK);
 
     /**
      * @return StringsArray
+     * @param string|StringValue $characterMask
      */
-    public function trimRight(string $characterMask = self::TRIM_MASK);
+    public function trimRight($characterMask = self::TRIM_MASK);
 
     /**
      * @return StringsArray
+     * @param string|StringValue $characterMask
      */
-    public function trimLeft(string $characterMask = self::TRIM_MASK);
+    public function trimLeft($characterMask = self::TRIM_MASK);
 
     /**
      * @return StringsArray
@@ -229,38 +232,47 @@ interface StringsArray extends ArrayValue, StringValue
 
     /**
      * @return StringsArray
+     * @param string|StringValue $string
      */
-    public function padRight(int $length, string $string = ' ');
+    public function padRight(int $length, $string = ' ');
 
     /**
      * @return StringsArray
+     * @param string|StringValue $string
      */
-    public function padLeft(int $length, string $string = ' ');
+    public function padLeft(int $length, $string = ' ');
 
     /**
      * @return StringsArray
+     * @param string|StringValue $string
      */
-    public function padBoth(int $length, string $string = ' ');
+    public function padBoth(int $length, $string = ' ');
 
     /**
      * @return StringsArray
+     * @param string|StringValue $search
+     * @param string|StringValue $replace
      */
-    public function replace(string $search, string $replace);
+    public function replace($search, $replace);
 
     /**
      * @return StringsArray
+     * @param string|StringValue $pattern
+     * @param string|StringValue $replacement
      */
-    public function replacePattern(string $pattern, string $replacement);
+    public function replacePattern($pattern, $replacement);
 
     /**
      * @return StringsArray
+     * @param string|StringValue $pattern
      */
-    public function replacePatternCallback(string $pattern, callable $callback);
+    public function replacePatternCallback($pattern, callable $callback);
 
     /**
      * @return StringsArray
+     * @param string|StringValue $postfix
      */
-    public function truncate(int $length, string $postfix = '...');
+    public function truncate(int $length, $postfix = '...');
 
     /**
      * @return StringsArray
@@ -269,13 +281,15 @@ interface StringsArray extends ArrayValue, StringValue
 
     /**
      * @return StringsArray
+     * @param string|StringValue $other
      */
-    public function postfix(StringValue $other);
+    public function postfix($other);
 
     /**
      * @return StringsArray
+     * @param string|StringValue $other
      */
-    public function prefix(StringValue $other);
+    public function prefix($other);
 
     /**
      * @return ArrayValue ArrayValue<StringValue>

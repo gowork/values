@@ -22,14 +22,20 @@ final class PlainString implements StringValue
         return new self(mb_substr($this->value, $start, $length));
     }
 
-    public function postfix(StringValue $other): PlainString
+    /**
+     * @param string|StringValue $other
+     */
+    public function postfix($other): PlainString
     {
-        return new self($this->value . $other->toString());
+        return new self($this->value . $this->castToString($other));
     }
 
-    public function prefix(StringValue $other): PlainString
+    /**
+     * @param string|StringValue $other
+     */
+    public function prefix($other): PlainString
     {
-        return new self($other->toString() . $this->value);
+        return new self($this->castToString($other) . $this->value);
     }
 
     public function transform(callable $transformer): PlainString
@@ -42,19 +48,28 @@ final class PlainString implements StringValue
         return new self(strip_tags($this->value));
     }
 
-    public function trim(string $characterMask = self::TRIM_MASK): PlainString
+    /**
+     * @param string|StringValue $characterMask
+     */
+    public function trim($characterMask = self::TRIM_MASK): PlainString
     {
-        return new self(trim($this->value, $characterMask));
+        return new self(trim($this->value, $this->castToString($characterMask)));
     }
 
-    public function trimRight(string $characterMask = self::TRIM_MASK): PlainString
+    /**
+     * @param string|StringValue $characterMask
+     */
+    public function trimRight($characterMask = self::TRIM_MASK): PlainString
     {
         return new self(rtrim($this->value, $characterMask));
     }
 
-    public function trimLeft(string $characterMask = self::TRIM_MASK): PlainString
+    /**
+     * @param string|StringValue $characterMask
+     */
+    public function trimLeft($characterMask = self::TRIM_MASK): PlainString
     {
-        return new self(ltrim($this->value, $characterMask));
+        return new self(ltrim($this->value, $this->castToString($characterMask)));
     }
 
     public function lower(): PlainString
@@ -87,46 +102,72 @@ final class PlainString implements StringValue
             ->implode(' ');
     }
 
-    public function padRight(int $length, string $string = ' '): PlainString
+    /**
+     * @param string|StringValue $string
+     */
+    public function padRight(int $length, $string = ' '): PlainString
     {
-        return new self(str_pad($this->value, $length, $string, STR_PAD_RIGHT));
+        return new self(str_pad($this->value, $length, $this->castToString($string), STR_PAD_RIGHT));
     }
 
-    public function padLeft(int $length, string $string = ' '): PlainString
+    /**
+     * @param string|StringValue $string
+     */
+    public function padLeft(int $length, $string = ' '): PlainString
     {
-        return new self(str_pad($this->value, $length, $string, STR_PAD_LEFT));
+        return new self(str_pad($this->value, $length, $this->castToString($string), STR_PAD_LEFT));
     }
 
-    public function padBoth(int $length, string $string = ' '): PlainString
+    /**
+     * @param string|StringValue $string
+     */
+    public function padBoth(int $length, $string = ' '): PlainString
     {
-        return new self(str_pad($this->value, $length, $string, STR_PAD_BOTH));
+        return new self(str_pad($this->value, $length, $this->castToString($string), STR_PAD_BOTH));
     }
 
-    public function replace(string $search, string $replace): PlainString
+    /**
+     * @param string|StringValue $search
+     * @param string|StringValue $replace
+     */
+    public function replace($search, $replace): PlainString
     {
-        return new self(str_replace($search, $replace, $this->value));
+        return new self(str_replace($this->castToString($search), $this->castToString($replace), $this->value));
     }
 
-    public function replacePattern(string $pattern, string $replacement): PlainString
+    /**
+     * @param string|StringValue $pattern
+     * @param string|StringValue $replacement
+     */
+    public function replacePattern($pattern, $replacement): PlainString
     {
-        return new self(preg_replace($pattern, $replacement, $this->value));
+        return new self(preg_replace($this->castToString($pattern), $this->castToString($replacement), $this->value));
     }
 
-    public function replacePatternCallback(string $pattern, callable $callback): PlainString
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function replacePatternCallback($pattern, callable $callback): PlainString
     {
-        return new self(preg_replace_callback($pattern, $callback, $this->value));
+        return new self(preg_replace_callback($this->castToString($pattern), $callback, $this->value));
     }
 
-    public function matchPatterns(string $pattern): StringsArray
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function matchPatterns($pattern): StringsArray
     {
-        preg_match($pattern, $this->value, $matches);
+        preg_match($this->castToString($pattern), $this->value, $matches);
 
         return Wrap::stringsArray($matches);
     }
 
-    public function isMatching(string $pattern): bool
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function isMatching($pattern): bool
     {
-        return $this->matchAllPatterns($pattern)->count() > 0;
+        return $this->matchAllPatterns($this->castToString($pattern))->count() > 0;
     }
 
     /**
@@ -148,30 +189,42 @@ final class PlainString implements StringValue
         return $this->substring(-$length)->toString() === $string;
     }
 
-    public function matchAllPatterns(string $pattern): ArrayValue
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function matchAllPatterns($pattern): ArrayValue
     {
-        preg_match_all($pattern, $this->value, $matches, PREG_SET_ORDER);
+        preg_match_all($this->castToString($pattern), $this->value, $matches, PREG_SET_ORDER);
 
         return Wrap::array($matches);
     }
 
-    public function splitByPattern(string $pattern): StringsArray
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function splitByPattern($pattern): StringsArray
     {
-        return Wrap::stringsArray(preg_split($pattern, $this->value));
+        return Wrap::stringsArray(preg_split($this->castToString($pattern), $this->value));
     }
 
-    public function explode(string $delimiter): StringsArray
+    /**
+     * @param string|StringValue $delimiter
+     */
+    public function explode($delimiter): StringsArray
     {
-        return Wrap::stringsArray(explode($delimiter, $this->value));
+        return Wrap::stringsArray(explode($this->castToString($delimiter), $this->value));
     }
 
-    public function truncate(int $length, string $postfix = '...'): PlainString
+    /**
+     * @param string|StringValue $postfix
+     */
+    public function truncate(int $length, $postfix = '...'): PlainString
     {
         if ($this->length() <= $length) {
             return $this;
         }
 
-        return new self(mb_substr($this->value, 0, $length) . $postfix);
+        return new self(mb_substr($this->value, 0, $length) . $this->castToString($postfix));
     }
 
     public function length(): int
@@ -179,19 +232,28 @@ final class PlainString implements StringValue
         return mb_strlen($this->value);
     }
 
-    public function contains(string $substring): bool
+    /**
+     * @param string|StringValue $substring
+     */
+    public function contains($substring): bool
     {
-        return $this->position($substring) !== null;
+        return $this->position($this->castToString($substring)) !== null;
     }
 
-    public function position(string $needle): ?int
+    /**
+     * @param string|StringValue $needle
+     */
+    public function position($needle): ?int
     {
-        return ($pos = mb_strpos($this->value, $needle)) !== false ? $pos : null;
+        return ($pos = mb_strpos($this->value, $this->castToString($needle))) !== false ? $pos : null;
     }
 
-    public function positionLast(string $needle): ?int
+    /**
+     * @param string|StringValue $needle
+     */
+    public function positionLast($needle): ?int
     {
-        return ($pos = mb_strrpos($this->value, $needle)) !== false ? $pos : null;
+        return ($pos = mb_strrpos($this->value, $this->castToString($needle))) !== false ? $pos : null;
     }
 
     public function toString(): string
@@ -224,6 +286,10 @@ final class PlainString implements StringValue
 
         if (\is_scalar($value)) {
             return (string)$value;
+        }
+
+        if (\is_object($value) && \method_exists($value, '__toString')) {
+            return $value->__toString();
         }
 
         throw new \TypeError('Value cannot be casted to string.');

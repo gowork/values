@@ -19,18 +19,21 @@ interface StringValue extends Value
 
     /**
      * @return StringValue
+     * @param string|StringValue $characterMask
      */
-    public function trim(string $characterMask = self::TRIM_MASK);
+    public function trim($characterMask = self::TRIM_MASK);
 
     /**
      * @return StringValue
+     * @param string|StringValue $characterMask
      */
-    public function trimRight(string $characterMask = self::TRIM_MASK);
+    public function trimRight($characterMask = self::TRIM_MASK);
 
     /**
      * @return StringValue
+     * @param string|StringValue $characterMask
      */
-    public function trimLeft(string $characterMask = self::TRIM_MASK);
+    public function trimLeft($characterMask = self::TRIM_MASK);
 
     /**
      * @return StringValue
@@ -59,38 +62,47 @@ interface StringValue extends Value
 
     /**
      * @return StringValue
+     * @param string|StringValue $string
      */
-    public function padRight(int $length, string $string = ' ');
+    public function padRight(int $length, $string = ' ');
 
     /**
      * @return StringValue
+     * @param string|StringValue $string
      */
-    public function padLeft(int $length, string $string = ' ');
+    public function padLeft(int $length, $string = ' ');
 
     /**
      * @return StringValue
+     * @param string|StringValue $string
      */
-    public function padBoth(int $length, string $string = ' ');
+    public function padBoth(int $length, $string = ' ');
 
     /**
      * @return StringValue
+     * @param string|StringValue $search
+     * @param string|StringValue $replace
      */
-    public function replace(string $search, string $replace);
+    public function replace($search, $replace);
 
     /**
      * @return StringValue
+     * @param string|StringValue $pattern
+     * @param string|StringValue $replacement
      */
-    public function replacePattern(string $pattern, string $replacement);
+    public function replacePattern($pattern, $replacement);
 
     /**
      * @return StringValue
+     * @param string|StringValue $pattern
      */
-    public function replacePatternCallback(string $pattern, callable $callback);
+    public function replacePatternCallback($pattern, callable $callback);
 
     /**
      * @return StringValue
+     * @param string|StringValue $postfix
      */
-    public function truncate(int $length, string $postfix = '...');
+    public function truncate(int $length, $postfix = '...');
 
     /**
      * @return StringValue
@@ -99,31 +111,44 @@ interface StringValue extends Value
 
     /**
      * @return StringValue
+     * @param string|StringValue $other
      */
-    public function postfix(StringValue $other);
+    public function postfix($other);
 
     /**
      * @return StringValue
+     * @param string|StringValue $other
      */
-    public function prefix(StringValue $other);
+    public function prefix($other);
 
     public function length(): int;
 
-    public function position(string $needle): ?int;
+    /**
+     * @param string|StringValue $needle
+     */
+    public function position($needle): ?int;
 
-    public function positionLast(string $needle): ?int;
+    /**
+     * @param string|StringValue $needle
+     */
+    public function positionLast($needle): ?int;
 
     /**
      * @return ArrayValue
+     * @param string|StringValue $pattern
      */
-    public function matchAllPatterns(string $pattern);
+    public function matchAllPatterns($pattern);
 
     /**
      * @return StringsArray
+     * @param string|StringValue $pattern
      */
-    public function matchPatterns(string $pattern);
+    public function matchPatterns($pattern);
 
-    public function isMatching(string $pattern): bool;
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function isMatching($pattern): bool;
 
     /**
      * @param string|StringValue $pattern
@@ -137,15 +162,20 @@ interface StringValue extends Value
 
     /**
      * @return StringsArray
+     * @param string|StringValue $pattern
      */
-    public function splitByPattern(string $pattern);
+    public function splitByPattern($pattern);
 
     /**
      * @return StringsArray
+     * @param string|StringValue $delimiter
      */
-    public function explode(string $delimiter);
+    public function explode($delimiter);
 
-    public function contains(string $substring): bool;
+    /**
+     * @param string|StringValue $substring
+     */
+    public function contains($substring): bool;
 
     public function toString(): string;
 

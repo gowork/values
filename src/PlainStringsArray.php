@@ -232,17 +232,26 @@ final class PlainStringsArray implements StringsArray
         return $this->withMapByMethod(__FUNCTION__);
     }
 
-    public function trim(string $characterMask = self::TRIM_MASK): PlainStringsArray
+    /**
+     * @param string|StringValue $characterMask
+     */
+    public function trim($characterMask = self::TRIM_MASK): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $characterMask);
     }
 
-    public function trimRight(string $characterMask = self::TRIM_MASK): PlainStringsArray
+    /**
+     * @param string|StringValue $characterMask
+     */
+    public function trimRight($characterMask = self::TRIM_MASK): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $characterMask);
     }
 
-    public function trimLeft(string $characterMask = self::TRIM_MASK): PlainStringsArray
+    /**
+     * @param string|StringValue $characterMask
+     */
+    public function trimLeft($characterMask = self::TRIM_MASK): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $characterMask);
     }
@@ -272,37 +281,60 @@ final class PlainStringsArray implements StringsArray
         return $this->withMapByMethod(__FUNCTION__);
     }
 
-    public function padRight(int $length, string $string = ' '): PlainStringsArray
+    /**
+     * @param string|StringValue $string
+     */
+    public function padRight(int $length, $string = ' '): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $length, $string);
     }
 
-    public function padLeft(int $length, string $string = ' '): PlainStringsArray
+    /**
+     * @param string|StringValue $string
+     */
+    public function padLeft(int $length, $string = ' '): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $length, $string);
     }
 
-    public function padBoth(int $length, string $string = ' '): PlainStringsArray
+    /**
+     * @param string|StringValue $string
+     */
+    public function padBoth(int $length, $string = ' '): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $length, $string);
     }
 
-    public function replace(string $search, string $replace): PlainStringsArray
+    /**
+     * @param string|StringValue $search
+     * @param string|StringValue $replace
+     */
+    public function replace($search, $replace): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $search, $replace);
     }
 
-    public function replacePattern(string $pattern, string $replacement): PlainStringsArray
+    /**
+     * @param string|StringValue $pattern
+     * @param string|StringValue $replacement
+     */
+    public function replacePattern($pattern, $replacement): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $pattern, $replacement);
     }
 
-    public function replacePatternCallback(string $pattern, callable $callback): PlainStringsArray
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function replacePatternCallback($pattern, callable $callback): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $pattern, $callback);
     }
 
-    public function truncate(int $length, string $postfix = '...'): StringsArray
+    /**
+     * @param string|StringValue $postfix
+     */
+    public function truncate(int $length, $postfix = '...'): StringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $length, $postfix);
     }
@@ -312,12 +344,18 @@ final class PlainStringsArray implements StringsArray
         return $this->toStringValue()->substring($start, $length);
     }
 
-    public function postfix(StringValue $other): PlainStringsArray
+    /**
+     * @param string|StringValue $other
+     */
+    public function postfix($other): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $other);
     }
 
-    public function prefix(StringValue $other): PlainStringsArray
+    /**
+     * @param string|StringValue $other
+     */
+    public function prefix($other): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $other);
     }
@@ -327,27 +365,42 @@ final class PlainStringsArray implements StringsArray
         return $this->toStringValue()->length();
     }
 
-    public function position(string $needle): ?int
+    /**
+     * @param string|StringValue $needle
+     */
+    public function position($needle): ?int
     {
         return $this->toStringValue()->position($needle);
     }
 
-    public function positionLast(string $needle): ?int
+    /**
+     * @param string|StringValue $needle
+     */
+    public function positionLast($needle): ?int
     {
         return $this->toStringValue()->positionLast($needle);
     }
 
-    public function matchAllPatterns(string $pattern): ArrayValue
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function matchAllPatterns($pattern): ArrayValue
     {
         return $this->toStringValue()->matchAllPatterns($pattern);
     }
 
-    public function matchPatterns(string $pattern): ArrayValue
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function matchPatterns($pattern): ArrayValue
     {
         return $this->toStringValue()->matchPatterns($pattern);
     }
 
-    public function isMatching(string $pattern): bool
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function isMatching($pattern): bool
     {
         return $this->toStringValue()->isMatching($pattern);
     }
@@ -368,17 +421,26 @@ final class PlainStringsArray implements StringsArray
         return $this->toStringValue()->endsWith($pattern);
     }
 
-    public function splitByPattern(string $pattern): ArrayValue
+    /**
+     * @param string|StringValue $pattern
+     */
+    public function splitByPattern($pattern): ArrayValue
     {
         return $this->toStringValue()->splitByPattern($pattern);
     }
 
-    public function explode(string $delimiter): StringsArray
+    /**
+     * @param string|StringValue $delimiter
+     */
+    public function explode($delimiter): StringsArray
     {
         return $this->toStringValue()->explode($delimiter);
     }
 
-    public function contains(string $substring): bool
+    /**
+     * @param string|StringValue $substring
+     */
+    public function contains($substring): bool
     {
         return $this->toStringValue()->contains($substring);
     }
