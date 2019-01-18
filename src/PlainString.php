@@ -289,7 +289,7 @@ final class PlainString implements StringValue
         }
 
         if (\is_object($value) && \method_exists($value, '__toString')) {
-            return $value->__toString();
+            return (string)$value;
         }
 
         throw new \TypeError('Value cannot be casted to string.');
