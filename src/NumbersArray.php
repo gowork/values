@@ -44,7 +44,7 @@ interface NumbersArray extends ArrayValue
     public function toArray(): array;
 
     /**
-     * @param callable $filter function(NumberValue $value): bool 
+     * @param callable $filter function(NumberValue $value): bool
      * @return NumbersArray
      */
     public function filter(callable $filter);
@@ -55,13 +55,13 @@ interface NumbersArray extends ArrayValue
     public function filterEmpty();
 
     /**
-     * @param callable $transformer function(NumberValue $value): NumberValue 
+     * @param callable $transformer function(NumberValue $value): NumberValue
      * @return NumbersArray
      */
     public function map(callable $transformer);
 
     /**
-     * @param callable $transformer function(NumberValue $value): iterable|NumberValue[] 
+     * @param callable $transformer function(NumberValue $value): iterable|NumberValue[]
      * @return NumbersArray
      */
     public function flatMap(callable $transformer);

@@ -7,11 +7,17 @@ final class PlainNumbersArray implements NumbersArray
     /** @var ArrayValue */
     private $numbers;
 
+    /**
+     * @param ArrayValue ArrayValue<int|float|NumberValue>
+     */
     public function __construct(ArrayValue $numbers)
     {
         $this->numbers = $this->mapArrayValueNumbers($numbers);
     }
 
+    /**
+     * @param int[]|float[]|NumberValue[] $numbers
+     */
     public static function fromNumbers(array $numbers): self
     {
         return new self(Wrap::array($numbers));
@@ -28,7 +34,7 @@ final class PlainNumbersArray implements NumbersArray
     }
 
     /**
-     * @param NumberValue|number|string $element
+     * @param NumberValue|int|float|string $element
      */
     public function hasElement($element): bool
     {
@@ -59,6 +65,10 @@ final class PlainNumbersArray implements NumbersArray
 
     public function avg(): NumberValue
     {
+        if ($this->count() === 0) {
+            throw new \LogicException('Cannot calculate average from empty set');
+        }
+
         return $this->sum()->divide(Wrap::number($this->count()));
     }
 
@@ -95,7 +105,7 @@ final class PlainNumbersArray implements NumbersArray
      */
     public function unique(?callable $comparator = null): PlainNumbersArray
     {
-        return new self($this->numbers->unique($comparator));
+        return new self($this->numbers->unique($comparator ?? Comparators::numbers()));
     }
 
     /**
@@ -154,7 +164,7 @@ final class PlainNumbersArray implements NumbersArray
     }
 
     /**
-     * @param NumberValue|number $value
+     * @param NumberValue|int|float|string $value
      */
     public function unshift($value): PlainNumbersArray
     {
@@ -227,7 +237,9 @@ final class PlainNumbersArray implements NumbersArray
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): PlainNumbersArray
     {
-        return new self($this->numbers->diff($this->mapArrayValueNumbers($other), $comparator));
+        return new self(
+            $this->numbers->diff($this->mapArrayValueNumbers($other), $comparator ?? Comparators::numbers())
+        );
     }
 
     /**
@@ -333,21 +345,21 @@ final class PlainNumbersArray implements NumbersArray
      */
     private function mapArrayValueNumbers(ArrayValue $numbers): ArrayValue
     {
-        return $numbers->map([Wrap::class, 'number']);
+        return $numbers->map(function ($number): NumberValue {
+            return $number instanceof NumberValue ? $number : Wrap::number($number);
+        });
     }
 
     private function reduceBy(callable $reducer, ?NumberValue $default = null): NumberValue
     {
         if ($this->count() > 0) {
-            $numbers = $this->numbers->shift($first);
-
-            return $numbers->reduce($reducer, $first);
+            return $this->numbers->shift($first)->reduce($reducer, $first);
         }
 
         if ($default !== null) {
             return $default;
         }
 
-        throw new \LogicException('Cannot calculate number from empty array');
+        throw new \LogicException('Cannot calculate number from empty set');
     }
 }

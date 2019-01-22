@@ -4,7 +4,7 @@ namespace GW\Value;
 
 interface NumberValue extends Value
 {
-    public const ROUND_DEFAULT = PHP_ROUND_HALF_UP;
+    public const DEFAULT_ROUND_MODE = PHP_ROUND_HALF_UP;
 
     // getters
 
@@ -59,6 +59,7 @@ interface NumberValue extends Value
 
     /**
      * @return NumberValue
+     * @throws \DivisionByZeroError
      */
     public function divide(NumberValue $other);
 
@@ -72,7 +73,7 @@ interface NumberValue extends Value
     /**
      * @return NumberValue
      */
-    public function round(int $scale = 0, ?int $roundMethod = null);
+    public function round(int $scale = 0, ?int $roundMode = null);
 
     /**
      * @return NumberValue

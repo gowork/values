@@ -19,7 +19,7 @@ final class FixedNumber implements NumberValue
     {
         $this->digits = $digits;
         $this->scale = $scale;
-        $this->roundMode = $roundMode ?? PHP_ROUND_HALF_UP;
+        $this->roundMode = $roundMode ?? self::DEFAULT_ROUND_MODE;
     }
 
     public static function fromDigits(int $digits, int $scale, ?int $roundMode = null)
@@ -55,10 +55,9 @@ final class FixedNumber implements NumberValue
         return new self($digits, $scale, $roundMode);
     }
 
-    public static function fromFloat(float $number, ?int $scale = null, ?int $roundMode = null): self
+    public static function fromFloat(float $number, int $scale, ?int $roundMode = null): self
     {
-        $scale = $scale ?? self::DEFAULT_SCALE;
-        $roundMode = $roundMode ?? PHP_ROUND_HALF_UP;
+        $roundMode = $roundMode ?? self::DEFAULT_ROUND_MODE;
         $digits = self::roundDigits($number, $scale, $roundMode);
 
         return new self($digits, $scale, $roundMode);
@@ -75,23 +74,11 @@ final class FixedNumber implements NumberValue
         // guess scale
         $dotPosition = $number->position('.');
         $realScale = $dotPosition !== null ? $number->length() - ($dotPosition + 1) : 0;
-        $scale = $scale ?? $realScale;
 
-        return self::fromFloat((float)$number->toString(), $scale ?? $realScale, $roundMode);
+        return self::fromDigits((int)$number->replace('.', '')->toString(), $realScale, $roundMode)
+            ->withScale($scale ?? $realScale);
     }
 
-    public function withRoundMode(int $roundMode): self
-    {
-        if ($roundMode === $this->roundMode) {
-            return $this;
-        }
-
-        return new self($this->digits, $this->scale, $roundMode);
-    }
-
-    /**
-     * @return int Number of decimal places, ie. 1234.12 has scale = 2
-     */
     public function scale(): int
     {
         return $this->scale;
@@ -160,35 +147,31 @@ final class FixedNumber implements NumberValue
 
     public function add(NumberValue $other): self
     {
-        return $this->withDigits($this->digits + $this->alignNumber($other)->digits);
+        return $this->newFromDigits($this->digits + $this->alignNumber($other)->digits);
     }
 
     public function subtract(NumberValue $other): self
     {
-        return $this->withDigits($this->digits - $this->alignNumber($other)->digits);
+        return $this->newFromDigits($this->digits - $this->alignNumber($other)->digits);
     }
 
     public function multiply(NumberValue $other): self
     {
-        $otherFixed = $this->alignNumber($other);
-
-        if ($otherFixed->digits === 1) {
-            return $this;
-        }
-
-        return $this->withDigits($this->digits * $otherFixed->digits, 2 * $this->scale)->withScale($this->scale);
+        return $this->newFromFloat($this->toFloat() * $other->toFloat());
     }
 
     public function divide(NumberValue $other): self
     {
-        $otherFixed = $this->alignNumber($other);
+        if ($other->toFloat() === 0.0) {
+            throw new \DivisionByZeroError('Cannot divide by 0');
+        }
 
-        return $this->withFloatValue($this->digits / $otherFixed->digits);
+        return $this->newFromFloat($this->toFloat() / $other->toFloat());
     }
 
     public function abs(): self
     {
-        return $this->withDigits(\abs($this->digits));
+        return $this->newFromDigits(\abs($this->digits));
     }
 
     public function round(int $scale = 0, ?int $roundMode = null): self
@@ -199,7 +182,7 @@ final class FixedNumber implements NumberValue
 
         $float = \round($this->toFloat(), $scale, $this->roundMode);
 
-        return $this->withFloatValue($float);
+        return $this->newFromFloat($float);
     }
 
     public function floor(int $scale = 0): self
@@ -211,7 +194,7 @@ final class FixedNumber implements NumberValue
         $shift = 10 ** $scale;
         $float = \floor($this->toFloat() * $shift) / $shift;
 
-        return $this->withFloatValue($float);
+        return $this->newFromFloat($float);
     }
 
     public function ceil(int $scale = 0): self
@@ -223,7 +206,7 @@ final class FixedNumber implements NumberValue
         $shift = 10 ** $scale;
         $float = \ceil($this->toFloat() * $shift) / $shift;
 
-        return $this->withFloatValue($float);
+        return $this->newFromFloat($float);
     }
 
     /**
@@ -278,7 +261,7 @@ final class FixedNumber implements NumberValue
         return self::fromFloat($other->toFloat(), $this->scale, $this->roundMode);
     }
 
-    private function withDigits(int $digits, ?int $scale = null): self
+    private function newFromDigits(int $digits, ?int $scale = null): self
     {
         if ($digits === $this->digits) {
             return $this;
@@ -287,8 +270,8 @@ final class FixedNumber implements NumberValue
         return new self($digits, $scale ?? $this->scale, $this->roundMode);
     }
 
-    private function withFloatValue(float $value): self
+    private function newFromFloat(float $value): self
     {
-        return $this->withDigits(self::roundDigits($value, $this->scale, $this->roundMode));
+        return $this->newFromDigits(self::roundDigits($value, $this->scale, $this->roundMode));
     }
 }

@@ -243,7 +243,7 @@ final class FixedNumberSpec extends ObjectBehavior
         $sum->shouldNotBe($this);
 
         // 100.04 * 0.02 = 2.00 (rounded from 2.0008)
-        $sum->toString()->shouldBe('2.00');
+        $sum->toString()->shouldBe('1.50');
     }
 
     function it_divides_numbers_keeping_left_number_scale()

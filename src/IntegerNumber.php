@@ -17,6 +17,11 @@ final class IntegerNumber implements NumberValue
         return new self(0);
     }
 
+    public static function one(): self
+    {
+        return new self(1);
+    }
+
     /**
      * @return int Number of decimal places, ie. 1234.12 has scale = 2
      */
@@ -83,68 +88,55 @@ final class IntegerNumber implements NumberValue
         return $this->compare($other) === -1;
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function add(NumberValue $other)
+    public function add(NumberValue $other): NumberValue
     {
         return $other->isInteger()
             ? $this->withValue($this->value + $other->toInt())
             : Wrap::number($this->toFloat() + $other->toFloat());
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function subtract(NumberValue $other)
+    public function subtract(NumberValue $other): NumberValue
     {
         return $other->isInteger()
             ? $this->withValue($this->value - $other->toInt())
             : Wrap::number($this->toFloat() - $other->toFloat());
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function multiply(NumberValue $other)
+    public function multiply(NumberValue $other): NumberValue
     {
         return $other->isInteger()
             ? $this->withValue($this->value * $other->toInt())
             : Wrap::number($this->toFloat() * $other->toFloat());
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function divide(NumberValue $other)
+    public function divide(NumberValue $other): NumberValue
     {
+        if ($other->toFloat() === 0.0) {
+            throw new \DivisionByZeroError('Cannot divide by 0');
+        }
+
+        if ($other->equals(self::one())) {
+            return $this;
+        }
+
         return Wrap::number($this->value / $other->toFloat());
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function abs()
+    public function abs(): IntegerNumber
     {
-        return $this->withValue(\abs($this->value));
+        return $this->withValue((int)\abs($this->value));
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function round(int $scale = 0, ?int $roundMethod = null)
+    public function round(int $scale = 0, ?int $roundMode = null): NumberValue
     {
         if ($scale === 0) {
             return $this;
         }
 
-        return Wrap::number(\round($this->value, $scale, $roundMethod ?? self::ROUND_DEFAULT));
+        return $this->withScaledValue(\round($this->value, $scale, $roundMode ?? self::DEFAULT_ROUND_MODE), $scale);
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function floor(int $scale = 0)
+    public function floor(int $scale = 0): NumberValue
     {
         if ($scale === 0) {
             return $this;
@@ -152,13 +144,10 @@ final class IntegerNumber implements NumberValue
 
         $shift = 10 ** $scale;
 
-        return Wrap::number(\floor($this->value * $shift) / $shift);
+        return $this->withScaledValue(\floor($this->value * $shift) / $shift, $scale);
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function ceil(int $scale = 0)
+    public function ceil(int $scale = 0): NumberValue
     {
         if ($scale === 0) {
             return $this;
@@ -166,7 +155,7 @@ final class IntegerNumber implements NumberValue
 
         $shift = 10 ** $scale;
 
-        return Wrap::number(\floor($this->value * $shift) / $shift);
+        return $this->withScaledValue(\ceil($this->value * $shift) / $shift, $scale);
     }
 
     /**
@@ -180,5 +169,10 @@ final class IntegerNumber implements NumberValue
     private function withValue(int $value): self
     {
         return $value === $this->value ? $this : new self($value);
+    }
+
+    private function withScaledValue(float $value, int $scale): NumberValue
+    {
+        return $scale <= 0 ? $this->withValue((int)$value) : new FloatNumber($value);
     }
 }

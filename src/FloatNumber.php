@@ -22,9 +22,9 @@ final class FloatNumber implements NumberValue
      */
     public function scale(): int
     {
-        $string = \rtrim(\number_format($this->value, 128, '.', ''), '0');
+        $string = $this->toStringValue();
 
-        return \strlen($string) - \strpos($string, '.') - 1;
+        return $string->length() - $string->position('.') - 1;
     }
 
     public function isInteger(): bool
@@ -49,7 +49,12 @@ final class FloatNumber implements NumberValue
 
     public function toString(): string
     {
-        return (string)$this->value;
+        $string = (string)$this->value;
+        if (\stripos($string, 'e') !== false) {
+            $string = \rtrim(\number_format($this->value, 128, '.', ''), '0');
+        }
+
+        return $string;
     }
 
     public function toStringValue(): StringValue
@@ -85,80 +90,54 @@ final class FloatNumber implements NumberValue
         return $this->compare($other) === -1;
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function add(NumberValue $other)
+    public function add(NumberValue $other): FloatNumber
     {
         return $this->withValue($this->value + $other->toFloat());
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function subtract(NumberValue $other)
+    public function subtract(NumberValue $other): FloatNumber
     {
         return $this->withValue($this->value - $other->toFloat());
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function multiply(NumberValue $other)
+    public function multiply(NumberValue $other): FloatNumber
     {
         return $this->withValue($this->value * $other->toFloat());
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function divide(NumberValue $other)
+    public function divide(NumberValue $other): FloatNumber
     {
-        return $this->withValue($this->value / $other->toFloat());;
+        if ($other->toFloat() === 0.0) {
+            throw new \DivisionByZeroError('Cannot divide by 0');
+        }
+
+        return $this->withValue($this->value / $other->toFloat());
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function abs()
+    public function abs(): FloatNumber
     {
         return $this->withValue(\abs($this->value));
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function round(int $scale = 0, ?int $roundMethod = null)
+    public function round(int $scale = 0, ?int $roundMode = null): NumberValue
     {
-        return Wrap::number(\round($this->value, $scale, $roundMethod ?? self::ROUND_DEFAULT));
+        $value = \round($this->value, $scale, $roundMode ?? self::DEFAULT_ROUND_MODE);
+
+        return $this->withScaledValue($value, $scale);
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function floor(int $scale = 0)
+    public function floor(int $scale = 0): NumberValue
     {
-        if ($scale === 0) {
-            return $this;
-        }
-
         $shift = 10 ** $scale;
 
-        return Wrap::number(\floor($this->value * $shift) / $shift);
+        return $this->withScaledValue(\floor($this->value * $shift) / $shift, $scale);
     }
 
-    /**
-     * @return NumberValue
-     */
-    public function ceil(int $scale = 0)
+    public function ceil(int $scale = 0): NumberValue
     {
-        if ($scale === 0) {
-            return $this;
-        }
-
         $shift = 10 ** $scale;
 
-        return Wrap::number(\floor($this->value * $shift) / $shift);
+        return $this->withScaledValue(\ceil($this->value * $shift) / $shift, $scale);
     }
 
     public function isEmpty(): bool
@@ -169,5 +148,14 @@ final class FloatNumber implements NumberValue
     private function withValue(float $value): self
     {
         return $value === $this->value ? $this : new self($value);
+    }
+
+    private function withScaledValue(float $value, int $scale): NumberValue
+    {
+        if ($this->value === $value) {
+            return $this;
+        }
+
+        return  $scale === null || $scale > 0 ? new self($value) : new IntegerNumber((int)$value);
     }
 }
