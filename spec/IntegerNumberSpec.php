@@ -26,8 +26,6 @@ final class IntegerNumberSpec extends ObjectBehavior
     function it_is_integer()
     {
         $this->beConstructedWith(1);
-        $this->isInteger()->shouldBe(true);
-        $this->isDecimal()->shouldBe(false);
         $this->toInt()->shouldBe(1);
         $this->toFloat()->shouldBe(1.0);
         $this->toString()->shouldBe('1');

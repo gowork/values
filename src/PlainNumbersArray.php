@@ -8,7 +8,7 @@ final class PlainNumbersArray implements NumbersArray
     private $numbers;
 
     /**
-     * @param ArrayValue ArrayValue<int|float|NumberValue>
+     * @param ArrayValue ArrayValue<int|float|string|NumberValue>
      */
     public function __construct(ArrayValue $numbers)
     {
@@ -16,7 +16,7 @@ final class PlainNumbersArray implements NumbersArray
     }
 
     /**
-     * @param int[]|float[]|NumberValue[] $numbers
+     * @param int[]|float[]|string[]|NumberValue[] $numbers
      */
     public static function fromNumbers(array $numbers): self
     {
@@ -180,7 +180,7 @@ final class PlainNumbersArray implements NumbersArray
     }
 
     /**
-     * @param NumberValue|number $value
+     * @param NumberValue|int|float|string $value
      */
     public function push($value): PlainNumbersArray
     {
@@ -247,7 +247,9 @@ final class PlainNumbersArray implements NumbersArray
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): PlainNumbersArray
     {
-        return new self($this->numbers->intersect($this->mapArrayValueNumbers($other), $comparator));
+        return new self(
+            $this->numbers->intersect($this->mapArrayValueNumbers($other), $comparator ?? Comparators::numbers())
+        );
     }
 
     /**
@@ -287,15 +289,19 @@ final class PlainNumbersArray implements NumbersArray
 
     /**
      * @param callable $reducer function(NumberValue $value): string|int|bool
-     * @return AssocValue AssocValue<ArrayValue>
+     * @return AssocValue AssocValue<NumbersArray>
      */
     public function groupBy(callable $reducer): AssocValue
     {
-        return $this->numbers->groupBy($reducer);
+        return $this->numbers
+            ->groupBy($reducer)
+            ->map(function (ArrayValue $numbers): NumbersArray {
+                return new self($numbers);
+            });
     }
 
     /**
-     * @return ArrayValue
+     * @return ArrayValue ArrayValue<array<NumberValue>>
      */
     public function chunk(int $size): ArrayValue
     {

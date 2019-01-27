@@ -13,15 +13,13 @@ interface NumberValue extends Value
      */
     public function scale(): int;
 
-    public function isInteger(): bool;
-
-    public function isDecimal(): bool;
-
     public function toInt(): int;
 
     public function toFloat(): float;
 
     public function toString(): string;
+
+    public function __toString(): string;
 
     public function toStringValue(): StringValue;
 

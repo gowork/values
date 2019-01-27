@@ -28,18 +28,6 @@ final class FloatNumberSpec extends ObjectBehavior
         $this->scale()->shouldBe(54);
     }
 
-    function it_is_not_integer()
-    {
-        $this->beConstructedWith(1.0);
-        $this->isInteger()->shouldBe(false);
-    }
-
-    function it_is_decimal()
-    {
-        $this->beConstructedWith(1.0);
-        $this->isDecimal()->shouldBe(true);
-    }
-
     function it_can_be_casted_to_int()
     {
         $this->beConstructedWith(1.9);

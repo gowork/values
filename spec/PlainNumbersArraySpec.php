@@ -430,6 +430,231 @@ final class PlainNumbersArraySpec extends ObjectBehavior
         $this->slice(-1, 1)->shouldBeLike(PlainNumbersArray::fromNumbers([$numbers[2]]));
     }
 
+    function it_returns_diff_with_other_numbers_set()
+    {
+        $this->beConstructedWithNumbers([
+            new IntegerNumber(10),
+            new FloatNumber(11.1),
+            FixedNumber::fromString('12.2'),
+            FixedNumber::fromString('13.3')
+        ]);
+
+        $this
+            ->diff(
+                PlainNumbersArray::fromNumbers([
+                    new FloatNumber(10.0),
+                    new FloatNumber(12.2),
+                ])
+            )
+            ->shouldBeLike(
+                PlainNumbersArray::fromNumbers([
+                    new FloatNumber(11.1),
+                    FixedNumber::fromString('13.3')
+                ])
+            );
+    }
+
+    function it_returns_diff_with_other_numbers_using_custom_comparator()
+    {
+        $this->beConstructedWithNumbers([
+            new IntegerNumber(10), // int 10
+            new FloatNumber(10.5), // int 10
+            FixedNumber::fromString('12.2'), // int 12
+            FixedNumber::fromString('13.0'), // int 13
+        ]);
+
+        $otherNumbers = PlainNumbersArray::fromNumbers([new FloatNumber(10.1), new FloatNumber(12.2)]);
+        $compareIntValue = function (NumberValue $a, NumberValue $b): int {
+            return $a->toInt() <=> $b->toInt();
+        };
+
+        $this->diff($otherNumbers, $compareIntValue)
+            ->shouldBeLike(PlainNumbersArray::fromNumbers([FixedNumber::fromString('13.0')]));
+    }
+
+    function it_returns_intersection_with_other_number_set()
+    {
+        $this->beConstructedWithNumbers([
+            new IntegerNumber(10),
+            new FloatNumber(11.1),
+            FixedNumber::fromString('12.2'),
+            FixedNumber::fromString('13.3')
+        ]);
+
+        $this
+            ->intersect(
+                PlainNumbersArray::fromNumbers([
+                    new FloatNumber(10.0),
+                    new FloatNumber(12.2),
+                ])
+            )
+            ->shouldBeLike(
+                PlainNumbersArray::fromNumbers([
+                    new IntegerNumber(10),
+                    FixedNumber::fromString('12.2'),
+                ])
+            );
+    }
+
+    function it_returns_intersection_with_other_numbers_using_custom_comparator()
+    {
+        $numbers = [
+            new IntegerNumber(10), // int 10
+            new FloatNumber(10.5), // int 10
+            FixedNumber::fromString('12.2'), // int 12
+            FixedNumber::fromString('13.0'), // int 13
+        ];
+
+        $this->beConstructedWithNumbers($numbers);
+
+        $otherNumbers = PlainNumbersArray::fromNumbers([new FloatNumber(10.1), new FloatNumber(12.2)]);
+        $compareIntValue = function (NumberValue $a, NumberValue $b): int {
+            return $a->toInt() <=> $b->toInt();
+        };
+
+        $this->intersect($otherNumbers, $compareIntValue)
+            ->shouldBeLike(PlainNumbersArray::fromNumbers([$numbers[0], $numbers[1], $numbers[2]]));
+    }
+
+    function it_implodes_numbers_to_string_value()
+    {
+        $this->beConstructedWithNumbers([10, 10.25, FixedNumber::from('10.5'), FixedNumber::from('10.750')]);
+        $this->implode(' / ')->shouldBeLike(Wrap::string('10 / 10.25 / 10.5 / 10.750'));
+    }
+
+    function it_is_not_empty_when_has_at_least_one_number()
+    {
+        $this->beConstructedWithNumbers([0]);
+        $this->isEmpty()->shouldBe(false);
+    }
+
+    function it_is_empty_when_has_no_number()
+    {
+        $this->beConstructedWithNumbers([]);
+        $this->isEmpty()->shouldBe(true);
+    }
+
+    function it_groups_numbers_returning_association_of_NumbersArray()
+    {
+        $numbers = [
+            new IntegerNumber(1),
+            new FloatNumber(1.5),
+            FixedNumber::from('1.8'),
+            new IntegerNumber(2),
+            new FloatNumber(2.5),
+            FixedNumber::from('2.8'),
+            new IntegerNumber(3),
+            new FloatNumber(3.5),
+            FixedNumber::from('3.8'),
+        ];
+
+        $this->beConstructedWithNumbers($numbers);
+
+        $this
+            ->groupBy(function (NumberValue $number): int {
+                return $number->floor()->toInt();
+            })
+            ->shouldBeLike(
+                Wrap::assocArray([
+                    1 => PlainNumbersArray::fromNumbers(\array_slice($numbers, 0, 3)),
+                    2 => PlainNumbersArray::fromNumbers(\array_slice($numbers, 3, 3)),
+                    3 => PlainNumbersArray::fromNumbers(\array_slice($numbers, 6, 3)),
+                ])
+            );
+    }
+
+    function it_chunks_number_returning_ArrayValue()
+    {
+        $numbers = [
+            new IntegerNumber(1),
+            new IntegerNumber(2),
+            new IntegerNumber(3),
+            new IntegerNumber(4),
+            new IntegerNumber(5),
+            new IntegerNumber(6)
+        ];
+
+        $this->beConstructedWithNumbers($numbers);
+
+        $this->chunk(2)
+            ->shouldBeLike(
+                Wrap::array([
+                    \array_slice($numbers, 0, 2),
+                    \array_slice($numbers, 2, 2),
+                    \array_slice($numbers, 4, 2),
+                ])
+            );
+    }
+
+    function it_removes_slice_with_splice()
+    {
+        $this->beConstructedWithNumbers([0, 1, 2, 3, 4]);
+        $this->splice(2, 2)->shouldBeLike(PlainNumbersArray::fromNumbers([0, 1, 4]));
+    }
+
+    function it_replaces_slice_with_splice()
+    {
+        $this->beConstructedWithNumbers([0, 1, 2, 3, 4]);
+        $this->splice(2, 2, PlainNumbersArray::fromNumbers([5, 6]))
+            ->shouldBeLike(PlainNumbersArray::fromNumbers([0, 1, 5, 6, 4]));
+    }
+
+    function it_finds_value_with_filter()
+    {
+        $this->beConstructedWithNumbers([1, 1.5, 2, 2.5, 3, 3.5]);
+
+        $this
+            ->find(function (NumberValue $number): bool {
+                return $number->round()->toInt() === 3;
+            })
+            ->shouldBeLike(new FloatNumber(2.5));
+    }
+
+    function it_finds_last_value_with_filter()
+    {
+        $this->beConstructedWithNumbers([1, 1.5, 2, 2.5, 3, 3.5]);
+
+        $this
+            ->findLast(function (NumberValue $number): bool {
+                return $number->round()->toInt() === 3;
+            })
+            ->shouldBeLike(new IntegerNumber(3));
+    }
+
+    function it_checks_if_any_number_matches_filter()
+    {
+        $this->beConstructedWithNumbers([1, 1.5, 2, 2.5, 3, 3.5]);
+
+        $this
+            ->any(function (NumberValue $number): bool {
+                return $number->greaterThan(IntegerNumber::zero());
+            })
+            ->shouldBe(true);
+
+        $this
+            ->any(function (NumberValue $number): bool {
+                return $number->lesserThan(IntegerNumber::zero());
+            })
+            ->shouldBe(false);
+    }
+
+    function it_checks_if_every_number_matches_filter()
+    {
+        $this->beConstructedWithNumbers([1, 1.5, 2, 2.5, 3, 3.5]);
+
+        $this
+            ->every(function (NumberValue $number): bool {
+                return $number->greaterThan(IntegerNumber::zero());
+            })
+            ->shouldBe(true);
+
+        $this
+            ->every(function (NumberValue $number): bool {
+                return $number->greaterThan(IntegerNumber::one());
+            })
+            ->shouldBe(false);
+    }
+
     private function beConstructedWithNumbers(array $numbers): void
     {
         $this->beConstructedThrough('fromNumbers', [$numbers]);

@@ -40,16 +40,12 @@ final class Wrap
     /**
      * @param int|float|string|NumberValue $value
      */
-    public static function fixedNumber($value, ?int $scale = null): NumberValue
-    {
-        return FixedNumber::from($value, $scale);
-    }
-
-    /**
-     * @param int|float|string $value
-     */
     public static function number($value): NumberValue
     {
+        if ($value instanceof NumberValue) {
+            return $value;
+        }
+
         if (\is_string($value) && \is_numeric($value)) {
             $value = (float)$value;
         }
@@ -63,6 +59,29 @@ final class Wrap
         }
 
         throw new \InvalidArgumentException('Provided value is not a number');
+    }
+
+    public static function int(int $number): NumberValue
+    {
+        return new IntegerNumber($number);
+    }
+
+    public static function float(float $number): NumberValue
+    {
+        return new FloatNumber($number);
+    }
+
+    /**
+     * @param int|float|string|NumberValue $value
+     */
+    public static function fixedNumber($value, ?int $scale = null): NumberValue
+    {
+        return FixedNumber::from($value, $scale);
+    }
+
+    public static function numbersArray(array $numbers): NumbersArray
+    {
+        return PlainNumbersArray::fromNumbers($numbers);
     }
 
     private function __construct()

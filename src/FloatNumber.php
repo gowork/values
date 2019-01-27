@@ -27,16 +27,6 @@ final class FloatNumber implements NumberValue
         return $string->length() - $string->position('.') - 1;
     }
 
-    public function isInteger(): bool
-    {
-        return false;
-    }
-
-    public function isDecimal(): bool
-    {
-        return true;
-    }
-
     public function toInt(): int
     {
         return (int)$this->value;
@@ -55,6 +45,11 @@ final class FloatNumber implements NumberValue
         }
 
         return $string;
+    }
+
+    public function __toString(): string
+    {
+        return $this->toString();
     }
 
     public function toStringValue(): StringValue

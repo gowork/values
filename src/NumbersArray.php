@@ -96,7 +96,7 @@ interface NumbersArray extends ArrayValue
     // Stack
 
     /**
-     * @param NumberValue|number $value
+     * @param NumberValue|int|float|string $value
      * @return NumbersArray
      */
     public function unshift($value);
@@ -108,7 +108,7 @@ interface NumbersArray extends ArrayValue
     public function shift(&$value = null);
 
     /**
-     * @param NumberValue|number $value
+     * @param NumberValue|int|float|string $value
      * @return NumbersArray
      */
     public function push($value);

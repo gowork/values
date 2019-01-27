@@ -30,16 +30,6 @@ final class IntegerNumber implements NumberValue
         return 0;
     }
 
-    public function isInteger(): bool
-    {
-        return true;
-    }
-
-    public function isDecimal(): bool
-    {
-        return false;
-    }
-
     public function toInt(): int
     {
         return $this->value;
@@ -53,6 +43,11 @@ final class IntegerNumber implements NumberValue
     public function toString(): string
     {
         return (string)$this->value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->toString();
     }
 
     public function toStringValue(): StringValue
@@ -70,7 +65,7 @@ final class IntegerNumber implements NumberValue
      */
     public function compare(NumberValue $other): int
     {
-        return $other->isInteger() ? $this->toInt() <=> $other->toInt() : $this->toFloat() <=> $other->toFloat();
+        return $other->scale() < 1 ? $this->toInt() <=> $other->toInt() : $this->toFloat() <=> $other->toFloat();
     }
 
     public function equals(NumberValue $other): bool
@@ -90,21 +85,21 @@ final class IntegerNumber implements NumberValue
 
     public function add(NumberValue $other): NumberValue
     {
-        return $other->isInteger()
+        return $other->scale() < 1
             ? $this->withValue($this->value + $other->toInt())
             : Wrap::number($this->toFloat() + $other->toFloat());
     }
 
     public function subtract(NumberValue $other): NumberValue
     {
-        return $other->isInteger()
+        return $other->scale() < 1
             ? $this->withValue($this->value - $other->toInt())
             : Wrap::number($this->toFloat() - $other->toFloat());
     }
 
     public function multiply(NumberValue $other): NumberValue
     {
-        return $other->isInteger()
+        return $other->scale() < 1
             ? $this->withValue($this->value * $other->toInt())
             : Wrap::number($this->toFloat() * $other->toFloat());
     }
