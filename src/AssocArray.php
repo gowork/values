@@ -135,7 +135,7 @@ final class AssocArray implements AssocValue
 
     public function merge(AssocValue $other): AssocArray
     {
-        return new self(array_merge($this->items, $other->toAssocArray()));
+        return new self(array_replace($this->items, $other->toAssocArray()));
     }
 
     public function without(string ...$keys): AssocArray
