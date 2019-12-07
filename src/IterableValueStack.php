@@ -7,11 +7,10 @@ namespace GW\Value;
  */
 final class IterableValueStack
 {
-    /** @var IterableValueIterator */
-    private $iterable;
+    private IterableValueIterator $iterable;
 
     /** @var callable[] */
-    private $modifiers = [];
+    private array $modifiers = [];
 
     public function __construct(IterableValueIterator $iterable)
     {

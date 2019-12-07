@@ -45,13 +45,13 @@ interface Collection extends Filterable, Mappable, Sortable, Countable, Reversib
      * @param callable $callback function(mixed $value): void
      * @return Collection
      */
-    public function each(callable $callback);
+    public function each(callable $callback): Collection;
 
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      * @return Collection
      */
-    public function unique(?callable $comparator = null);
+    public function unique(?callable $comparator = null): Collection;
 
     /**
      * @return mixed[]
@@ -62,32 +62,32 @@ interface Collection extends Filterable, Mappable, Sortable, Countable, Reversib
      * @param callable $filter function(mixed $value): bool
      * @return Collection
      */
-    public function filter(callable $filter);
+    public function filter(callable $filter): Collection;
 
     /**
      * @return Collection
      */
-    public function filterEmpty();
+    public function filterEmpty(): Collection;
 
     /**
      * @param callable $transformer function(mixed $value): mixed
      * @return Collection
      */
-    public function map(callable $transformer);
+    public function map(callable $transformer): Collection;
 
     /**
      * @param callable $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      * @return Collection
      */
-    public function sort(callable $comparator);
+    public function sort(callable $comparator): Collection;
 
     /**
      * @return Collection
      */
-    public function shuffle();
+    public function shuffle(): Collection;
 
     /**
      * @return Collection
      */
-    public function reverse();
+    public function reverse(): Collection;
 }

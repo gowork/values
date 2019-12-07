@@ -2,10 +2,12 @@
 
 namespace GW\Value;
 
+use ArrayIterator;
+use BadMethodCallException;
 final class PlainArray implements ArrayValue
 {
     /** @var array */
-    private $items;
+    private array $items;
 
     public function __construct(array $items)
     {
@@ -23,7 +25,7 @@ final class PlainArray implements ArrayValue
     /**
      * @param callable $transformer function(mixed $value): iterable
      */
-    public function flatMap(callable $transformer): PlainArray
+    public function flatMap(callable $transformer): ArrayValue
     {
         $elements = [];
 
@@ -50,7 +52,7 @@ final class PlainArray implements ArrayValue
         return Wrap::assocArray($groups);
     }
 
-    public function chunk(int $size): PlainArray
+    public function chunk(int $size): ArrayValue
     {
         return new self(\array_chunk($this->items, $size, false));
     }
@@ -96,17 +98,17 @@ final class PlainArray implements ArrayValue
         return new self(array_reverse($this->items, false));
     }
 
-    public function join(ArrayValue $other): PlainArray
+    public function join(ArrayValue $other): ArrayValue
     {
         return new self(array_merge($this->items, $other->toArray()));
     }
 
-    public function slice(int $offset, int $length): PlainArray
+    public function slice(int $offset, int $length): ArrayValue
     {
         return new self(\array_slice($this->items, $offset, $length));
     }
 
-    public function splice(int $offset, int $length, ?ArrayValue $replacement = null): PlainArray
+    public function splice(int $offset, int $length, ?ArrayValue $replacement = null): ArrayValue
     {
         $items = $this->items;
         \array_splice($items, $offset, $length, $replacement !== null ? $replacement->toArray() : []);
@@ -142,7 +144,7 @@ final class PlainArray implements ArrayValue
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      */
-    public function diff(ArrayValue $other, ?callable $comparator = null): PlainArray
+    public function diff(ArrayValue $other, ?callable $comparator = null): ArrayValue
     {
         if ($other->count() === 0) {
             return $this;
@@ -158,7 +160,7 @@ final class PlainArray implements ArrayValue
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      */
-    public function intersect(ArrayValue $other, ?callable $comparator = null): PlainArray
+    public function intersect(ArrayValue $other, ?callable $comparator = null): ArrayValue
     {
         if ($this->items === $other->toArray()) {
             return $this;
@@ -325,9 +327,9 @@ final class PlainArray implements ArrayValue
         return $this->items;
     }
 
-    public function getIterator(): \Iterator
+    public function getIterator(): ArrayIterator
     {
-        return new \ArrayIterator($this->items);
+        return new ArrayIterator($this->items);
     }
 
     public function offsetExists($offset): bool
@@ -346,12 +348,12 @@ final class PlainArray implements ArrayValue
 
     public function offsetSet($offset, $value): void
     {
-        throw new \BadMethodCallException('ArrayValue is immutable');
+        throw new BadMethodCallException('ArrayValue is immutable');
     }
 
     public function offsetUnset($offset): void
     {
-        throw new \BadMethodCallException('ArrayValue is immutable');
+        throw new BadMethodCallException('ArrayValue is immutable');
     }
 
     public function implode(string $glue): StringValue
@@ -359,7 +361,7 @@ final class PlainArray implements ArrayValue
         return Wrap::string(implode($glue, $this->toArray()));
     }
 
-    public function notEmpty(): PlainArray
+    public function notEmpty(): ArrayValue
     {
         return $this->filter(Filters::notEmpty());
     }

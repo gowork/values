@@ -2,7 +2,9 @@
 
 namespace GW\Value;
 
-interface AssocValue extends Value, Collection, \IteratorAggregate, \ArrayAccess
+use IteratorAggregate;
+use ArrayAccess;
+interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess
 {
     // Collection
 
@@ -10,46 +12,46 @@ interface AssocValue extends Value, Collection, \IteratorAggregate, \ArrayAccess
      * @param callable $callback function(mixed $value): void
      * @return AssocValue
      */
-    public function each(callable $callback);
+    public function each(callable $callback): AssocValue;
 
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      * @return AssocValue
      */
-    public function unique(?callable $comparator = null);
+    public function unique(?callable $comparator = null): AssocValue;
 
     /**
      * @param callable $filter function(mixed $value): bool
      * @return AssocValue
      */
-    public function filter(callable $filter);
+    public function filter(callable $filter): AssocValue;
 
     /**
      * @return AssocValue
      */
-    public function filterEmpty();
+    public function filterEmpty(): AssocValue;
 
     /**
      * @param callable $transformer function(mixed $value[, string $key]): mixed
      * @return AssocValue
      */
-    public function map(callable $transformer);
+    public function map(callable $transformer): AssocValue;
 
     /**
      * @param callable $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      * @return AssocValue
      */
-    public function sort(callable $comparator);
+    public function sort(callable $comparator): AssocValue;
 
     /**
      * @return AssocValue
      */
-    public function shuffle();
+    public function shuffle(): AssocValue;
 
     /**
      * @return AssocValue
      */
-    public function reverse();
+    public function reverse(): AssocValue;
 
     // ArrayAccess
 
@@ -70,14 +72,14 @@ interface AssocValue extends Value, Collection, \IteratorAggregate, \ArrayAccess
      * @return void
      * @throws \BadMethodCallException For immutable types.
      */
-    public function offsetSet($offset, $value);
+    public function offsetSet($offset, $value): void;
 
     /**
      * @param string $offset
      * @return void
      * @throws \BadMethodCallException For immutable types.
      */
-    public function offsetUnset($offset);
+    public function offsetUnset($offset): void;
 
     // AssocValue own
 
@@ -91,41 +93,41 @@ interface AssocValue extends Value, Collection, \IteratorAggregate, \ArrayAccess
      * @param callable $transformer function(string $key[, mixed $value]): string
      * @return AssocValue
      */
-    public function mapKeys(callable $transformer);
+    public function mapKeys(callable $transformer): AssocValue;
 
     /**
      * @param callable $comparator function(string $keyA, string $keyB): int{-1, 1}
      * @return AssocValue
      */
-    public function sortKeys(callable $comparator);
+    public function sortKeys(callable $comparator): AssocValue;
 
     /**
      * @param mixed $value
      * @return AssocValue
      */
-    public function with(string $key, $value);
+    public function with(string $key, $value): AssocValue;
 
     /**
      * @return AssocValue
      */
-    public function without(string ...$keys);
+    public function without(string ...$keys): AssocValue;
 
     /**
      * @return AssocValue
      */
-    public function only(string ...$keys);
+    public function only(string ...$keys): AssocValue;
 
     /**
      * @param mixed $value
      * @return AssocValue
      */
-    public function withoutElement($value);
+    public function withoutElement($value): AssocValue;
 
     /**
      * @param AssocValue $other
      * @return AssocValue
      */
-    public function merge(AssocValue $other);
+    public function merge(AssocValue $other): AssocValue;
 
     /**
      * @param callable $transformer function(mixed $reduced, mixed $value, string $key): mixed
