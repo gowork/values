@@ -4,9 +4,11 @@ namespace GW\Value;
 
 use Traversable;
 use InvalidArgumentException;
+use function in_array;
+
 final class PlainStringsArray implements StringsArray
 {
-    /** @var ArrayValue */
+    /** @var ArrayValue<StringValue> */
     private ArrayValue $strings;
 
     public function __construct(ArrayValue $strings)
@@ -19,12 +21,12 @@ final class PlainStringsArray implements StringsArray
         return new self(Wrap::array($strings));
     }
 
-    public function join(ArrayValue $other): StringsArray
+    public function join(ArrayValue $other): PlainStringsArray
     {
         return new self($this->strings->join($this->mapStringValues($other)));
     }
 
-    public function slice(int $offset, int $length): StringsArray
+    public function slice(int $offset, int $length): PlainStringsArray
     {
         return new self($this->strings->slice($offset, $length));
     }
@@ -32,17 +34,17 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param ArrayValue $replacement ArrayValue<string>|ArrayValue<StringValue>
      */
-    public function splice(int $offset, int $length, ?ArrayValue $replacement = null): StringsArray
+    public function splice(int $offset, int $length, ?ArrayValue $replacement = null): PlainStringsArray
     {
         return new self($this->strings->splice($offset, $length, $replacement));
     }
 
-    public function diff(ArrayValue $other, ?callable $comparator = null): StringsArray
+    public function diff(ArrayValue $other, ?callable $comparator = null): PlainStringsArray
     {
         return new self($this->strings->diff($this->mapStringValues($other), $comparator));
     }
 
-    public function intersect(ArrayValue $other, ?callable $comparator = null): StringsArray
+    public function intersect(ArrayValue $other, ?callable $comparator = null): PlainStringsArray
     {
         return new self($this->strings->intersect($this->mapStringValues($other), $comparator));
     }
@@ -52,16 +54,19 @@ final class PlainStringsArray implements StringsArray
         return $this->strings->reduce($transformer, $start);
     }
 
-    public function map(callable $transformer): StringsArray
+    public function map(callable $transformer): PlainStringsArray
     {
         return new self($this->strings->map($transformer));
     }
 
-    public function flatMap(callable $transformer): StringsArray
+    public function flatMap(callable $transformer): PlainStringsArray
     {
         return new self($this->strings->flatMap($transformer));
     }
 
+    /**
+     * @return AssocValue<StringsArray>
+     */
     public function groupBy(callable $reducer): AssocValue
     {
         return $this->strings
@@ -70,15 +75,14 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
-     * @param int $size
-     * @return ArrayValue ArrayValue<array<StringValue>>
+     * @return ArrayValue<array<StringValue>>
      */
     public function chunk(int $size): ArrayValue
     {
         return $this->strings->chunk($size);
     }
 
-    public function filter(callable $filter): StringsArray
+    public function filter(callable $filter): PlainStringsArray
     {
         return new self($this->strings->filter($filter));
     }
@@ -112,7 +116,7 @@ final class PlainStringsArray implements StringsArray
     {
         $stringValue = $element instanceof StringValue ? $element : Wrap::string($element);
 
-        return \in_array($stringValue, $this->strings->toArray(), false);
+        return in_array($stringValue, $this->strings->toArray(), false);
     }
 
     public function any(callable $filter): bool
@@ -125,7 +129,7 @@ final class PlainStringsArray implements StringsArray
         return $this->strings->every($filter);
     }
 
-    public function each(callable $callback): StringsArray
+    public function each(callable $callback): PlainStringsArray
     {
         $this->strings->each($callback);
 
@@ -135,7 +139,7 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      */
-    public function unique(?callable $comparator = null): StringsArray
+    public function unique(?callable $comparator = null): PlainStringsArray
     {
         return new self($this->strings->unique($comparator));
     }
@@ -150,22 +154,22 @@ final class PlainStringsArray implements StringsArray
             ->toArray();
     }
 
-    public function filterEmpty(): StringsArray
+    public function filterEmpty(): PlainStringsArray
     {
         return new self($this->strings->filterEmpty());
     }
 
-    public function sort(callable $comparator): StringsArray
+    public function sort(callable $comparator): PlainStringsArray
     {
         return new self($this->strings->sort($comparator));
     }
 
-    public function shuffle(): StringsArray
+    public function shuffle(): PlainStringsArray
     {
         return new self($this->strings->shuffle());
     }
 
-    public function reverse(): StringsArray
+    public function reverse(): PlainStringsArray
     {
         return new self($this->strings->reverse());
     }
@@ -200,32 +204,32 @@ final class PlainStringsArray implements StringsArray
         return $this->strings->count();
     }
 
-    public function unshift($value): StringsArray
+    public function unshift($value): PlainStringsArray
     {
         return new self($this->strings->unshift($value));
     }
 
-    public function shift(&$value = null): StringsArray
+    public function shift(&$value = null): PlainStringsArray
     {
         return new self($this->strings->shift($value));
     }
 
-    public function push($value): StringsArray
+    public function push($value): PlainStringsArray
     {
         return new self($this->strings->push($value));
     }
 
-    public function pop(&$value = null): StringsArray
+    public function pop(&$value = null): PlainStringsArray
     {
         return new self($this->strings->pop($value));
     }
 
-    public function transform(callable $transformer): StringsArray
+    public function transform(callable $transformer): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $transformer);
     }
 
-    public function stripTags(): StringsArray
+    public function stripTags(): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__);
     }
@@ -233,7 +237,7 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param string|StringValue $characterMask
      */
-    public function trim($characterMask = self::TRIM_MASK): StringsArray
+    public function trim($characterMask = self::TRIM_MASK): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $characterMask);
     }
@@ -241,7 +245,7 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param string|StringValue $characterMask
      */
-    public function trimRight($characterMask = self::TRIM_MASK): StringsArray
+    public function trimRight($characterMask = self::TRIM_MASK): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $characterMask);
     }
@@ -249,32 +253,32 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param string|StringValue $characterMask
      */
-    public function trimLeft($characterMask = self::TRIM_MASK): StringsArray
+    public function trimLeft($characterMask = self::TRIM_MASK): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $characterMask);
     }
 
-    public function lower(): StringsArray
+    public function lower(): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__);
     }
 
-    public function upper(): StringsArray
+    public function upper(): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__);
     }
 
-    public function lowerFirst(): StringsArray
+    public function lowerFirst(): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__);
     }
 
-    public function upperFirst(): StringsArray
+    public function upperFirst(): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__);
     }
 
-    public function upperWords(): StringsArray
+    public function upperWords(): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__);
     }
@@ -282,7 +286,7 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param string|StringValue $string
      */
-    public function padRight(int $length, $string = ' '): StringsArray
+    public function padRight(int $length, $string = ' '): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $length, $string);
     }
@@ -290,7 +294,7 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param string|StringValue $string
      */
-    public function padLeft(int $length, $string = ' '): StringsArray
+    public function padLeft(int $length, $string = ' '): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $length, $string);
     }
@@ -298,7 +302,7 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param string|StringValue $string
      */
-    public function padBoth(int $length, $string = ' '): StringsArray
+    public function padBoth(int $length, $string = ' '): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $length, $string);
     }
@@ -307,7 +311,7 @@ final class PlainStringsArray implements StringsArray
      * @param string|StringValue $search
      * @param string|StringValue $replace
      */
-    public function replace($search, $replace): StringsArray
+    public function replace($search, $replace): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $search, $replace);
     }
@@ -316,7 +320,7 @@ final class PlainStringsArray implements StringsArray
      * @param string|StringValue $pattern
      * @param string|StringValue $replacement
      */
-    public function replacePattern($pattern, $replacement): StringsArray
+    public function replacePattern($pattern, $replacement): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $pattern, $replacement);
     }
@@ -324,7 +328,7 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param string|StringValue $pattern
      */
-    public function replacePatternCallback($pattern, callable $callback): StringsArray
+    public function replacePatternCallback($pattern, callable $callback): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $pattern, $callback);
     }
@@ -332,12 +336,12 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param string|StringValue $postfix
      */
-    public function truncate(int $length, $postfix = '...'): StringsArray
+    public function truncate(int $length, $postfix = '...'): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $length, $postfix);
     }
 
-    public function substring(int $start, ?int $length = null): StringsArray
+    public function substring(int $start, ?int $length = null): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $start, $length);
     }
@@ -345,7 +349,7 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param string|StringValue $other
      */
-    public function postfix($other): StringsArray
+    public function postfix($other): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $other);
     }
@@ -353,7 +357,7 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param string|StringValue $other
      */
-    public function prefix($other): StringsArray
+    public function prefix($other): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $other);
     }
@@ -382,7 +386,7 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param string|StringValue $pattern
      */
-    public function matchAllPatterns($pattern): \GW\Value\ArrayValue
+    public function matchAllPatterns($pattern): ArrayValue
     {
         return $this->toStringValue()->matchAllPatterns($pattern);
     }
@@ -453,21 +457,25 @@ final class PlainStringsArray implements StringsArray
         return $this->toString();
     }
 
-    public function notEmpty(): StringsArray
+    public function notEmpty(): PlainStringsArray
     {
         return $this->filter(Filters::notEmpty());
     }
 
+    /**
+     * @return ArrayValue<StringValue>
+     */
     private function mapStringValues(ArrayValue $strings): ArrayValue
     {
         return $strings
             ->map(fn($string) => is_scalar($string) ? Wrap::string((string)$string) : $string)
-            ->each(function ($string): void {
-                if (!$string instanceof StringValue) {
-                    throw new InvalidArgumentException('StringsValue can contain only StringValue');
+            ->each(
+                static function ($string): void {
+                    if (!$string instanceof StringValue) {
+                        throw new InvalidArgumentException('StringsValue can contain only StringValue');
+                    }
                 }
-            }
-        );
+            );
     }
 
     private function withMapByMethod(string $method, ...$args): PlainStringsArray

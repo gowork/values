@@ -2,6 +2,8 @@
 
 namespace GW\Value;
 
+use BadMethodCallException;
+
 interface StringsArray extends ArrayValue, StringValue
 {
     // Array Value
@@ -99,7 +101,6 @@ interface StringsArray extends ArrayValue, StringValue
 
     /**
      * @param int $offset
-     * @return StringValue
      */
     public function offsetGet($offset): StringValue;
 
@@ -107,14 +108,14 @@ interface StringsArray extends ArrayValue, StringValue
      * @param int $offset
      * @param StringValue|string $value
      * @return void
-     * @throws \BadMethodCallException For immutable types.
+     * @throws BadMethodCallException For immutable types.
      */
     public function offsetSet($offset, $value): void;
 
     /**
      * @param int $offset
      * @return void
-     * @throws \BadMethodCallException For immutable types.
+     * @throws BadMethodCallException For immutable types.
      */
     public function offsetUnset($offset): void;
 

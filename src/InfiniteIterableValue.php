@@ -2,6 +2,8 @@
 
 namespace GW\Value;
 
+use function count;
+
 final class InfiniteIterableValue implements IterableValue
 {
     /** @var IterableValueStack */
@@ -16,7 +18,7 @@ final class InfiniteIterableValue implements IterableValue
      * @param callable $callback function(mixed $value): void
      * @return IterableValue
      */
-    public function each(callable $callback): IterableValue
+    public function each(callable $callback): InfiniteIterableValue
     {
         foreach ($this->stack->iterate() as $value) {
             $callback($value);
@@ -29,7 +31,7 @@ final class InfiniteIterableValue implements IterableValue
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      * @return IterableValue
      */
-    public function unique(?callable $comparator = null): IterableValue
+    public function unique(?callable $comparator = null): InfiniteIterableValue
     {
         if ($comparator === null) {
             $comparator = fn($a, $b) => $a <=> $b;
@@ -38,7 +40,7 @@ final class InfiniteIterableValue implements IterableValue
         $knownValues = [];
 
         return $this->filter(
-            function ($valueA) use (&$knownValues, $comparator) {
+            static function ($valueA) use (&$knownValues, $comparator) {
                 foreach ($knownValues as $valueB) {
                     if ($comparator($valueA, $valueB) === 0) {
                         return false;
@@ -69,21 +71,23 @@ final class InfiniteIterableValue implements IterableValue
     /**
      * @param callable $filter function(mixed $value): bool { ... }
      */
-    public function filter(callable $filter): IterableValue
+    public function filter(callable $filter): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($filter) {
-            foreach ($iterable as $value) {
-                if ($filter($value)) {
-                    yield $value;
+        $clone->stack = $clone->stack->push(
+            static function (iterable $iterable) use ($filter) {
+                foreach ($iterable as $value) {
+                    if ($filter($value)) {
+                        yield $value;
+                    }
                 }
             }
-        });
+        );
 
         return $clone;
     }
 
-    public function filterEmpty(): IterableValue
+    public function filterEmpty(): InfiniteIterableValue
     {
         return $this->filter(Filters::notEmpty());
     }
@@ -92,10 +96,10 @@ final class InfiniteIterableValue implements IterableValue
      * @param callable $transformer function(mixed $value): mixed { ... }
      * @return IterableValue
      */
-    public function map(callable $transformer): IterableValue
+    public function map(callable $transformer): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($transformer) {
+        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($transformer) {
             foreach ($iterable as $value) {
                 yield $transformer($value);
             }
@@ -108,10 +112,10 @@ final class InfiniteIterableValue implements IterableValue
      * @param callable $transformer function(mixed $value): iterable { ... }
      * @return IterableValue
      */
-    public function flatMap(callable $transformer): IterableValue
+    public function flatMap(callable $transformer): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($transformer) {
+        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($transformer) {
             foreach ($iterable as $value) {
                 yield from $transformer($value);
             }
@@ -129,10 +133,10 @@ final class InfiniteIterableValue implements IterableValue
      * @param mixed $value
      * @return IterableValue
      */
-    public function unshift($value): IterableValue
+    public function unshift($value): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($value) {
+        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($value) {
             yield $value;
             yield from $iterable;
         });
@@ -144,10 +148,10 @@ final class InfiniteIterableValue implements IterableValue
      * @param mixed $value
      * @return IterableValue
      */
-    public function push($value): IterableValue
+    public function push($value): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($value) {
+        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($value) {
             yield from $iterable;
             yield $value;
         });
@@ -158,10 +162,10 @@ final class InfiniteIterableValue implements IterableValue
     /**
      * @return IterableValue
      */
-    public function join(iterable $other): IterableValue
+    public function join(iterable $other): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($other) {
+        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($other) {
             yield from $iterable;
             yield from $other;
         });
@@ -172,10 +176,10 @@ final class InfiniteIterableValue implements IterableValue
     /**
      * @return IterableValue
      */
-    public function slice(int $offset, int $length): IterableValue
+    public function slice(int $offset, int $length): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($offset, $length) {
+        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($offset, $length) {
             foreach ($iterable as $value) {
                 if ($offset-- > 0) {
                     continue;
@@ -196,10 +200,10 @@ final class InfiniteIterableValue implements IterableValue
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      * @return IterableValue
      */
-    public function diff(ArrayValue $other, ?callable $comparator = null): IterableValue
+    public function diff(ArrayValue $other, ?callable $comparator = null): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($other, $comparator) {
+        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($other, $comparator) {
             foreach ($iterable as $value) {
                 if ($comparator === null) {
                     $found = $other->hasElement($value);
@@ -222,10 +226,10 @@ final class InfiniteIterableValue implements IterableValue
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      * @return IterableValue
      */
-    public function intersect(ArrayValue $other, ?callable $comparator = null): IterableValue
+    public function intersect(ArrayValue $other, ?callable $comparator = null): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(function (iterable $iterable) use ($other, $comparator) {
+        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($other, $comparator) {
             foreach ($iterable as $value) {
                 if ($comparator === null) {
                     $found = $other->hasElement($value);
@@ -315,16 +319,16 @@ final class InfiniteIterableValue implements IterableValue
     /**
      * @return IterableValue
      */
-    public function chunk(int $size): IterableValue
+    public function chunk(int $size): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $this->stack->push(function (iterable $iterable) use ($size) {
+        $clone->stack = $this->stack->push(static function (iterable $iterable) use ($size) {
             $buffer = [];
 
             foreach ($iterable as $item) {
                 $buffer[] = $item;
 
-                if (\count($buffer) === $size) {
+                if (count($buffer) === $size) {
                     yield $buffer;
                     $buffer = [];
                 }
@@ -341,10 +345,10 @@ final class InfiniteIterableValue implements IterableValue
     /**
      * @return IterableValue
      */
-    public function flatten(): IterableValue
+    public function flatten(): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $this->stack->push(function (iterable $iterable) {
+        $clone->stack = $this->stack->push(static function (iterable $iterable) {
             foreach ($iterable as $item) {
                 yield from $item;
             }
@@ -356,7 +360,7 @@ final class InfiniteIterableValue implements IterableValue
     /**
      * @return IterableValue
      */
-    public function notEmpty(): IterableValue
+    public function notEmpty(): InfiniteIterableValue
     {
         return $this->filter(Filters::notEmpty());
     }

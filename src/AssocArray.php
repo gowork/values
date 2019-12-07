@@ -5,9 +5,11 @@ namespace GW\Value;
 use RuntimeException;
 use ArrayIterator;
 use BadMethodCallException;
+use function in_array;
+use function count;
+
 final class AssocArray implements AssocValue
 {
-    /** @var array */
     private array $items;
 
     public function __construct(array $items)
@@ -18,7 +20,7 @@ final class AssocArray implements AssocValue
     /**
      * @param callable $transformer function(mixed $value[, string $key]): mixed
      */
-    public function map(callable $transformer): AssocValue
+    public function map(callable $transformer): AssocArray
     {
         $result = [];
         foreach ($this->items as $key => $value) {
@@ -39,28 +41,28 @@ final class AssocArray implements AssocValue
     /**
      * @param callable $transformer function(string $key[, mixed $value]): string
      */
-    public function mapKeys(callable $transformer): AssocValue
+    public function mapKeys(callable $transformer): AssocArray
     {
         $combined = array_combine(array_map($transformer, array_keys($this->items), $this->items), $this->items);
 
         if ($combined === false) {
-            throw new \RuntimeException('Cannot map keys - combined array is broken.');
+            throw new RuntimeException('Cannot map keys - combined array is broken.');
         }
 
         return new self($combined);
     }
 
-    public function filterEmpty(): AssocValue
+    public function filterEmpty(): AssocArray
     {
         return $this->filter(Filters::notEmpty());
     }
 
-    public function filter(callable $filter): AssocValue
+    public function filter(callable $filter): AssocArray
     {
         return new self(array_filter($this->items, $filter));
     }
 
-    public function sort(callable $comparator): AssocValue
+    public function sort(callable $comparator): AssocArray
     {
         $items = $this->items;
         uasort($items, $comparator);
@@ -68,12 +70,12 @@ final class AssocArray implements AssocValue
         return new self($items);
     }
 
-    public function reverse(): AssocValue
+    public function reverse(): AssocArray
     {
         return new self(array_reverse($this->items, true));
     }
 
-    public function shuffle(): AssocValue
+    public function shuffle(): AssocArray
     {
         $items = $this->items;
         shuffle($items);
@@ -84,7 +86,7 @@ final class AssocArray implements AssocValue
     /**
      * @param callable $comparator function(string $keyA, string $keyB): int{-1, 1}
      */
-    public function sortKeys(callable $comparator): AssocValue
+    public function sortKeys(callable $comparator): AssocArray
     {
         $items = $this->items;
         uksort($items, $comparator);
@@ -95,7 +97,7 @@ final class AssocArray implements AssocValue
     /**
      * @param callable $callback function(mixed $value, string $key): void
      */
-    public function each(callable $callback): AssocValue
+    public function each(callable $callback): AssocArray
     {
         foreach ($this->items as $key => $item) {
             $callback($item, $key);
@@ -107,7 +109,7 @@ final class AssocArray implements AssocValue
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      */
-    public function unique(?callable $comparator = null): AssocValue
+    public function unique(?callable $comparator = null): AssocArray
     {
         if ($comparator === null) {
             return new self(array_unique($this->items));
@@ -131,22 +133,22 @@ final class AssocArray implements AssocValue
     /**
      * @param mixed $value
      */
-    public function with(string $key, $value): AssocValue
+    public function with(string $key, $value): AssocArray
     {
         return $this->merge(new self([$key => $value]));
     }
 
-    public function merge(AssocValue $other): AssocValue
+    public function merge(AssocValue $other): AssocArray
     {
         return new self(array_merge($this->items, $other->toAssocArray()));
     }
 
-    public function without(string ...$keys): AssocValue
+    public function without(string ...$keys): AssocArray
     {
         return new self(array_diff_key($this->items, array_flip($keys)));
     }
 
-    public function only(string ...$keys): AssocValue
+    public function only(string ...$keys): AssocArray
     {
         return new self(array_intersect_key($this->items, array_flip($keys)));
     }
@@ -154,7 +156,7 @@ final class AssocArray implements AssocValue
     /**
      * @param mixed $value
      */
-    public function withoutElement($value): AssocValue
+    public function withoutElement($value): AssocArray
     {
         return $this->filter(Filters::notEqual($value));
     }
@@ -224,7 +226,7 @@ final class AssocArray implements AssocValue
 
     public function hasElement($element): bool
     {
-        return \in_array($element, $this->items, true);
+        return in_array($element, $this->items, true);
     }
 
     public function any(callable $filter): bool
@@ -257,7 +259,7 @@ final class AssocArray implements AssocValue
 
     public function count(): int
     {
-        return \count($this->items);
+        return count($this->items);
     }
 
     public function isEmpty(): bool

@@ -4,6 +4,13 @@ namespace GW\Value;
 
 use RuntimeException;
 use TypeError;
+use function is_object;
+use function is_scalar;
+use function is_string;
+use function mb_strlen;
+use function mb_strpos;
+use function method_exists;
+
 final class PlainString implements StringValue
 {
     /** @var string */
@@ -19,7 +26,7 @@ final class PlainString implements StringValue
         return $this->value;
     }
 
-    public function substring(int $start, ?int $length = null): StringValue
+    public function substring(int $start, ?int $length = null): PlainString
     {
         return new self(mb_substr($this->value, $start, $length));
     }
@@ -27,7 +34,7 @@ final class PlainString implements StringValue
     /**
      * @param string|StringValue $other
      */
-    public function postfix($other): StringValue
+    public function postfix($other): PlainString
     {
         return new self($this->value . $this->castToString($other));
     }
@@ -35,17 +42,17 @@ final class PlainString implements StringValue
     /**
      * @param string|StringValue $other
      */
-    public function prefix($other): StringValue
+    public function prefix($other): PlainString
     {
         return new self($this->castToString($other) . $this->value);
     }
 
-    public function transform(callable $transformer): StringValue
+    public function transform(callable $transformer): PlainString
     {
         return new self($transformer($this->value));
     }
 
-    public function stripTags(): StringValue
+    public function stripTags(): PlainString
     {
         return new self(strip_tags($this->value));
     }
@@ -53,7 +60,7 @@ final class PlainString implements StringValue
     /**
      * @param string|StringValue $characterMask
      */
-    public function trim($characterMask = self::TRIM_MASK): StringValue
+    public function trim($characterMask = self::TRIM_MASK): PlainString
     {
         return new self(trim($this->value, $this->castToString($characterMask)));
     }
@@ -61,7 +68,7 @@ final class PlainString implements StringValue
     /**
      * @param string|StringValue $characterMask
      */
-    public function trimRight($characterMask = self::TRIM_MASK): StringValue
+    public function trimRight($characterMask = self::TRIM_MASK): PlainString
     {
         return new self(rtrim($this->value, $this->castToString($characterMask)));
     }
@@ -69,32 +76,32 @@ final class PlainString implements StringValue
     /**
      * @param string|StringValue $characterMask
      */
-    public function trimLeft($characterMask = self::TRIM_MASK): StringValue
+    public function trimLeft($characterMask = self::TRIM_MASK): PlainString
     {
         return new self(ltrim($this->value, $this->castToString($characterMask)));
     }
 
-    public function lower(): StringValue
+    public function lower(): PlainString
     {
         return new self(mb_strtolower($this->value));
     }
 
-    public function upper(): StringValue
+    public function upper(): PlainString
     {
         return new self(mb_strtoupper($this->value));
     }
 
-    public function lowerFirst(): StringValue
+    public function lowerFirst(): PlainString
     {
         return $this->substring(0, 1)->lower()->postfix($this->substring(1));
     }
 
-    public function upperFirst(): StringValue
+    public function upperFirst(): PlainString
     {
         return $this->substring(0, 1)->upper()->postfix($this->substring(1));
     }
 
-    public function upperWords(): StringValue
+    public function upperWords(): PlainString
     {
         return $this
             ->explode(' ')
@@ -105,7 +112,7 @@ final class PlainString implements StringValue
     /**
      * @param string|StringValue $string
      */
-    public function padRight(int $length, $string = ' '): StringValue
+    public function padRight(int $length, $string = ' '): PlainString
     {
         return new self(str_pad($this->value, $length, $this->castToString($string), STR_PAD_RIGHT));
     }
@@ -113,7 +120,7 @@ final class PlainString implements StringValue
     /**
      * @param string|StringValue $string
      */
-    public function padLeft(int $length, $string = ' '): StringValue
+    public function padLeft(int $length, $string = ' '): PlainString
     {
         return new self(str_pad($this->value, $length, $this->castToString($string), STR_PAD_LEFT));
     }
@@ -121,7 +128,7 @@ final class PlainString implements StringValue
     /**
      * @param string|StringValue $string
      */
-    public function padBoth(int $length, $string = ' '): StringValue
+    public function padBoth(int $length, $string = ' '): PlainString
     {
         return new self(str_pad($this->value, $length, $this->castToString($string), STR_PAD_BOTH));
     }
@@ -130,7 +137,7 @@ final class PlainString implements StringValue
      * @param string|StringValue $search
      * @param string|StringValue $replace
      */
-    public function replace($search, $replace): StringValue
+    public function replace($search, $replace): PlainString
     {
         return new self(str_replace($this->castToString($search), $this->castToString($replace), $this->value));
     }
@@ -139,12 +146,12 @@ final class PlainString implements StringValue
      * @param string|StringValue $pattern
      * @param string|StringValue $replacement
      */
-    public function replacePattern($pattern, $replacement): StringValue
+    public function replacePattern($pattern, $replacement): PlainString
     {
         $value = preg_replace($this->castToString($pattern), $this->castToString($replacement), $this->value);
 
         if ($value === null) {
-            throw new \RuntimeException("Failed to replace using regexp: {$pattern}");
+            throw new RuntimeException("Failed to replace using regexp: {$pattern}");
         }
 
         return new self($value);
@@ -153,12 +160,12 @@ final class PlainString implements StringValue
     /**
      * @param string|StringValue $pattern
      */
-    public function replacePatternCallback($pattern, callable $callback): StringValue
+    public function replacePatternCallback($pattern, callable $callback): PlainString
     {
         $value = preg_replace_callback($this->castToString($pattern), $callback, $this->value);
 
         if ($value === null) {
-            throw new \RuntimeException("Failed to replace using regexp: {$pattern}");
+            throw new RuntimeException("Failed to replace using regexp: {$pattern}");
         }
 
         return new self($value);
@@ -187,7 +194,7 @@ final class PlainString implements StringValue
      */
     public function startsWith($pattern): bool
     {
-        return \mb_strpos($this->value, $this->castToString($pattern)) === 0;
+        return mb_strpos($this->value, $this->castToString($pattern)) === 0;
     }
 
     /**
@@ -196,7 +203,7 @@ final class PlainString implements StringValue
     public function endsWith($pattern): bool
     {
         $string = $this->castToString($pattern);
-        $length = \mb_strlen($string);
+        $length = mb_strlen($string);
 
         return $this->substring(-$length)->toString() === $string;
     }
@@ -219,7 +226,7 @@ final class PlainString implements StringValue
         $strings = preg_split($this->castToString($pattern), $this->value);
 
         if ($strings === false) {
-            throw new \RuntimeException("Failed to split using regexp: {$pattern}");
+            throw new RuntimeException("Failed to split using regexp: {$pattern}");
         }
 
         return Wrap::stringsArray($strings);
@@ -233,7 +240,7 @@ final class PlainString implements StringValue
         $strings = explode($this->castToString($delimiter), $this->value);
 
         if ($strings === false) {
-            throw new \RuntimeException("Cannot explode using delimiter: {$delimiter}");
+            throw new RuntimeException("Cannot explode using delimiter: {$delimiter}");
         }
 
         return Wrap::stringsArray($strings);
@@ -242,7 +249,7 @@ final class PlainString implements StringValue
     /**
      * @param string|StringValue $postfix
      */
-    public function truncate(int $length, $postfix = '...'): StringValue
+    public function truncate(int $length, $postfix = '...'): PlainString
     {
         if ($this->length() <= $length) {
             return $this;
@@ -300,7 +307,7 @@ final class PlainString implements StringValue
      */
     private function castToString($value): string
     {
-        if (\is_string($value)) {
+        if (is_string($value)) {
             return $value;
         }
 
@@ -308,11 +315,11 @@ final class PlainString implements StringValue
             return $value->toString();
         }
 
-        if (\is_scalar($value)) {
+        if (is_scalar($value)) {
             return (string)$value;
         }
 
-        if (\is_object($value) && \method_exists($value, '__toString')) {
+        if (is_object($value) && method_exists($value, '__toString')) {
             return (string)$value;
         }
 

@@ -4,6 +4,15 @@ namespace GW\Value;
 
 use ArrayIterator;
 use BadMethodCallException;
+use function array_chunk;
+use function array_reverse;
+use function array_slice;
+use function array_splice;
+use function count;
+use function in_array;
+use function is_array;
+use function is_bool;
+
 final class PlainArray implements ArrayValue
 {
     /** @var array */
@@ -25,13 +34,13 @@ final class PlainArray implements ArrayValue
     /**
      * @param callable $transformer function(mixed $value): iterable
      */
-    public function flatMap(callable $transformer): ArrayValue
+    public function flatMap(callable $transformer): PlainArray
     {
         $elements = [];
 
         foreach ($this->items as $item) {
             $transformed = $transformer($item);
-            $elements[] = \is_array($transformed) ? $transformed : iterator_to_array($transformed);
+            $elements[] = is_array($transformed) ? $transformed : iterator_to_array($transformed);
         }
 
         return new self(array_merge([], ...$elements));
@@ -44,7 +53,7 @@ final class PlainArray implements ArrayValue
 
         foreach ($this->items as $item) {
             $key = $reducer($item);
-            $key = \is_bool($key) ? (string)(int)$key : (string)$key;
+            $key = is_bool($key) ? (string)(int)$key : (string)$key;
             /** @var ArrayValue[] $groups */
             $groups[$key] = ($groups[$key] ?? $empty)->push($item);
         }
@@ -52,9 +61,9 @@ final class PlainArray implements ArrayValue
         return Wrap::assocArray($groups);
     }
 
-    public function chunk(int $size): ArrayValue
+    public function chunk(int $size): PlainArray
     {
-        return new self(\array_chunk($this->items, $size, false));
+        return new self(array_chunk($this->items, $size, false));
     }
 
     public function filterEmpty(): PlainArray
@@ -98,20 +107,20 @@ final class PlainArray implements ArrayValue
         return new self(array_reverse($this->items, false));
     }
 
-    public function join(ArrayValue $other): ArrayValue
+    public function join(ArrayValue $other): PlainArray
     {
         return new self(array_merge($this->items, $other->toArray()));
     }
 
-    public function slice(int $offset, int $length): ArrayValue
+    public function slice(int $offset, int $length): PlainArray
     {
-        return new self(\array_slice($this->items, $offset, $length));
+        return new self(array_slice($this->items, $offset, $length));
     }
 
-    public function splice(int $offset, int $length, ?ArrayValue $replacement = null): ArrayValue
+    public function splice(int $offset, int $length, ?ArrayValue $replacement = null): PlainArray
     {
         $items = $this->items;
-        \array_splice($items, $offset, $length, $replacement !== null ? $replacement->toArray() : []);
+        array_splice($items, $offset, $length, $replacement !== null ? $replacement->toArray() : []);
 
         return new self($items);
     }
@@ -144,7 +153,7 @@ final class PlainArray implements ArrayValue
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      */
-    public function diff(ArrayValue $other, ?callable $comparator = null): ArrayValue
+    public function diff(ArrayValue $other, ?callable $comparator = null): PlainArray
     {
         if ($other->count() === 0) {
             return $this;
@@ -160,7 +169,7 @@ final class PlainArray implements ArrayValue
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      */
-    public function intersect(ArrayValue $other, ?callable $comparator = null): ArrayValue
+    public function intersect(ArrayValue $other, ?callable $comparator = null): PlainArray
     {
         if ($this->items === $other->toArray()) {
             return $this;
@@ -278,7 +287,7 @@ final class PlainArray implements ArrayValue
      */
     public function findLast(callable $filter)
     {
-        foreach (\array_reverse($this->items) as $item) {
+        foreach (array_reverse($this->items) as $item) {
             if ($filter($item)) {
                 return $item;
             }
@@ -289,7 +298,7 @@ final class PlainArray implements ArrayValue
 
     public function hasElement($element): bool
     {
-        return \in_array($element, $this->items, true);
+        return in_array($element, $this->items, true);
     }
 
     public function any(callable $filter): bool
@@ -316,7 +325,7 @@ final class PlainArray implements ArrayValue
 
     public function count(): int
     {
-        return \count($this->items);
+        return count($this->items);
     }
 
     /**
@@ -361,7 +370,7 @@ final class PlainArray implements ArrayValue
         return Wrap::string(implode($glue, $this->toArray()));
     }
 
-    public function notEmpty(): ArrayValue
+    public function notEmpty(): PlainArray
     {
         return $this->filter(Filters::notEmpty());
     }
