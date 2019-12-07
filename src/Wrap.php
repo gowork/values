@@ -4,7 +4,7 @@ namespace GW\Value;
 
 final class Wrap
 {
-    public static function array(array $array = []): PlainArray
+    public static function array(array $array = []): ArrayValue
     {
         return new PlainArray($array);
     }
@@ -14,17 +14,17 @@ final class Wrap
         return new InfiniteIterableValue($iterator);
     }
 
-    public static function arrayFromValues(...$array): PlainArray
+    public static function arrayFromValues(...$array): ArrayValue
     {
         return new PlainArray($array);
     }
 
-    public static function assocArray(array $array = []): AssocArray
+    public static function assocArray(array $array = []): AssocValue
     {
         return new AssocArray($array);
     }
 
-    public static function string(string $value): PlainString
+    public static function string(string $value): StringValue
     {
         return new PlainString($value);
     }
@@ -32,7 +32,7 @@ final class Wrap
     /**
      * @param string[]|StringValue[] $strings
      */
-    public static function stringsArray(array $strings = []): PlainStringsArray
+    public static function stringsArray(array $strings = []): StringsArray
     {
         return new PlainStringsArray(self::array($strings));
     }
