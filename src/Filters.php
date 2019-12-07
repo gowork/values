@@ -49,12 +49,12 @@ final class Filters
         };
     }
 
-    public static function notType(string $type): Closure
+    public static function notType(string $type): callable
     {
         return self::not(self::type($type));
     }
 
-    public static function notTypes(string ...$types): Closure
+    public static function notTypes(string ...$types): callable
     {
         return self::not(self::types(...$types));
     }
