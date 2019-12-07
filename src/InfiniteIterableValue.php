@@ -16,7 +16,7 @@ final class InfiniteIterableValue implements IterableValue
 
     /**
      * @param callable $callback function(mixed $value): void
-     * @return IterableValue
+     * @return InfiniteIterableValue
      */
     public function each(callable $callback): InfiniteIterableValue
     {
@@ -29,7 +29,7 @@ final class InfiniteIterableValue implements IterableValue
 
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return IterableValue
+     * @return InfiniteIterableValue
      */
     public function unique(?callable $comparator = null): InfiniteIterableValue
     {
@@ -94,7 +94,7 @@ final class InfiniteIterableValue implements IterableValue
 
     /**
      * @param callable $transformer function(mixed $value): mixed { ... }
-     * @return IterableValue
+     * @return InfiniteIterableValue
      */
     public function map(callable $transformer): InfiniteIterableValue
     {
@@ -110,7 +110,7 @@ final class InfiniteIterableValue implements IterableValue
 
     /**
      * @param callable $transformer function(mixed $value): iterable { ... }
-     * @return IterableValue
+     * @return InfiniteIterableValue
      */
     public function flatMap(callable $transformer): InfiniteIterableValue
     {
@@ -131,7 +131,7 @@ final class InfiniteIterableValue implements IterableValue
 
     /**
      * @param mixed $value
-     * @return IterableValue
+     * @return InfiniteIterableValue
      */
     public function unshift($value): InfiniteIterableValue
     {
@@ -146,7 +146,7 @@ final class InfiniteIterableValue implements IterableValue
 
     /**
      * @param mixed $value
-     * @return IterableValue
+     * @return InfiniteIterableValue
      */
     public function push($value): InfiniteIterableValue
     {
@@ -160,7 +160,7 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @return IterableValue
+     * @return InfiniteIterableValue
      */
     public function join(iterable $other): InfiniteIterableValue
     {
@@ -174,7 +174,7 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @return IterableValue
+     * @return InfiniteIterableValue
      */
     public function slice(int $offset, int $length): InfiniteIterableValue
     {
@@ -198,7 +198,7 @@ final class InfiniteIterableValue implements IterableValue
 
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return IterableValue
+     * @return InfiniteIterableValue
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): InfiniteIterableValue
     {
@@ -224,7 +224,7 @@ final class InfiniteIterableValue implements IterableValue
 
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return IterableValue
+     * @return InfiniteIterableValue
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): InfiniteIterableValue
     {
@@ -317,7 +317,7 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @return IterableValue
+     * @return InfiniteIterableValue
      */
     public function chunk(int $size): InfiniteIterableValue
     {
@@ -343,7 +343,7 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @return IterableValue
+     * @return InfiniteIterableValue
      */
     public function flatten(): InfiniteIterableValue
     {
@@ -358,7 +358,7 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @return IterableValue
+     * @return InfiniteIterableValue
      */
     public function notEmpty(): InfiniteIterableValue
     {

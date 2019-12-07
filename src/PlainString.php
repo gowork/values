@@ -101,7 +101,7 @@ final class PlainString implements StringValue
         return $this->substring(0, 1)->upper()->postfix($this->substring(1));
     }
 
-    public function upperWords(): PlainString
+    public function upperWords(): StringValue
     {
         return $this
             ->explode(' ')
@@ -221,7 +221,7 @@ final class PlainString implements StringValue
     /**
      * @param string|StringValue $pattern
      */
-    public function splitByPattern($pattern): StringsArray
+    public function splitByPattern($pattern): PlainStringsArray
     {
         $strings = preg_split($this->castToString($pattern), $this->value);
 
@@ -229,13 +229,13 @@ final class PlainString implements StringValue
             throw new RuntimeException("Failed to split using regexp: {$pattern}");
         }
 
-        return Wrap::stringsArray($strings);
+        return new PlainStringsArray(Wrap::array($strings));
     }
 
     /**
      * @param string|StringValue $delimiter
      */
-    public function explode($delimiter): StringsArray
+    public function explode($delimiter): PlainStringsArray
     {
         $strings = explode($this->castToString($delimiter), $this->value);
 
@@ -243,7 +243,7 @@ final class PlainString implements StringValue
             throw new RuntimeException("Cannot explode using delimiter: {$delimiter}");
         }
 
-        return Wrap::stringsArray($strings);
+        return new PlainStringsArray(Wrap::array($strings));
     }
 
     /**
