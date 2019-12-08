@@ -23,7 +23,7 @@
     },
     "require-dev": {
         "phpspec/phpspec": "^6.1",
-        "phpstan/phpstan": "^0.11",
+        "phpstan/phpstan": "^0.12",
         "phpbench/phpbench": "@dev"
     },
     "autoload": {

@@ -4,26 +4,26 @@ namespace GW\Value;
 
 /**
  * @internal
+ * @template TKey
+ * @template TValue
  */
 final class IterableValueIterator
 {
-    /** @var iterable */
+    /** @var iterable<TKey, TValue> */
     private iterable $iterable;
-
-    /** @var bool */
     private bool $used = false;
 
+    /**
+     * @param iterable<TKey, TValue> $iterable
+     */
     public function __construct(iterable $iterable)
     {
         $this->iterable = $iterable;
     }
 
-    public function replaceIterable($iterable): void
-    {
-        $this->iterable = $iterable;
-        $this->used = false;
-    }
-
+    /**
+     * @return iterable<TKey, TValue>
+     */
     public function __invoke(): iterable
     {
         if ($this->used) {

@@ -4,19 +4,27 @@ namespace GW\Value;
 
 use function count;
 
+/**
+ * @template TKey
+ * @template TValue
+ * @implements IterableValue<TKey, TValue>
+ */
 final class InfiniteIterableValue implements IterableValue
 {
-    /** @var IterableValueStack */
+    /** @var IterableValueStack<TKey, TValue> */
     private IterableValueStack $stack;
 
+    /**
+     * @param iterable<TKey, TValue> $iterable
+     */
     public function __construct(iterable $iterable)
     {
         $this->stack = new IterableValueStack(new IterableValueIterator($iterable));
     }
 
     /**
-     * @param callable $callback function(mixed $value): void
-     * @return InfiniteIterableValue
+     * @param callable(TValue $value):void $callback
+     * @return InfiniteIterableValue<TKey, TValue>
      */
     public function each(callable $callback): InfiniteIterableValue
     {
@@ -28,8 +36,8 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return InfiniteIterableValue
+     * @param callable(TValue $valueA, TValue $valueB):int | null $comparator
+     * @return InfiniteIterableValue<TKey, TValue>
      */
     public function unique(?callable $comparator = null): InfiniteIterableValue
     {
@@ -55,7 +63,7 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @return mixed[]
+     * @return TValue[]
      */
     public function toArray(): array
     {
@@ -69,13 +77,18 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @param callable $filter function(mixed $value): bool { ... }
+     * @param callable(TValue $value):bool $filter
+     * @return InfiniteIterableValue<TKey, TValue>
      */
     public function filter(callable $filter): InfiniteIterableValue
     {
         $clone = clone $this;
         $clone->stack = $clone->stack->push(
-            static function (iterable $iterable) use ($filter) {
+            /**
+             * @param iterable<TKey, TValue> $iterable
+             * @return iterable<TKey, TValue>
+             */
+            static function (iterable $iterable) use ($filter): iterable {
                 foreach ($iterable as $value) {
                     if ($filter($value)) {
                         yield $value;
@@ -87,171 +100,231 @@ final class InfiniteIterableValue implements IterableValue
         return $clone;
     }
 
+    /**
+     * @return InfiniteIterableValue<TKey, TValue>
+     */
     public function filterEmpty(): InfiniteIterableValue
     {
         return $this->filter(Filters::notEmpty());
     }
 
     /**
-     * @param callable $transformer function(mixed $value): mixed { ... }
-     * @return InfiniteIterableValue
+     * @template TNewValue
+     * @param callable(TValue $value): TNewValue $transformer
+     * @return InfiniteIterableValue<TKey, TNewValue>
      */
     public function map(callable $transformer): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($transformer) {
-            foreach ($iterable as $value) {
-                yield $transformer($value);
+        $clone->stack = $clone->stack->push(
+            /**
+             * @param iterable<TKey, TValue> $iterable
+             * @return iterable<TKey, TNewValue>
+             */
+            static function (iterable $iterable) use ($transformer): iterable {
+                foreach ($iterable as $value) {
+                    yield $transformer($value);
+                }
             }
-        });
+        );
 
         return $clone;
     }
 
     /**
-     * @param callable $transformer function(mixed $value): iterable { ... }
-     * @return InfiniteIterableValue
+     * @template TNewValue
+     * @param callable(TValue $value): iterable<TNewValue> $transformer
+     * @return InfiniteIterableValue<TKey, TNewValue>
      */
     public function flatMap(callable $transformer): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($transformer) {
-            foreach ($iterable as $value) {
-                yield from $transformer($value);
+        $clone->stack = $clone->stack->push(
+            /**
+             * @param iterable<TKey, TValue> $iterable
+             * @return iterable<TKey, TNewValue>
+             */
+            static function (iterable $iterable) use ($transformer): iterable {
+                foreach ($iterable as $value) {
+                    yield from $transformer($value);
+                }
             }
-        });
+        );
 
         return $clone;
     }
 
+    /**
+     * @return ArrayValue<TValue>
+     */
     public function toArrayValue(): ArrayValue
     {
         return Wrap::array($this->toArray());
     }
 
     /**
-     * @param mixed $value
-     * @return InfiniteIterableValue
+     * @param TValue $value
+     * @return InfiniteIterableValue<TKey, TValue>
      */
     public function unshift($value): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($value) {
-            yield $value;
-            yield from $iterable;
-        });
+        $clone->stack = $clone->stack->push(
+            /**
+             * @param iterable<TKey, TValue> $iterable
+             * @return iterable<TKey, TValue>
+             */
+            static function (iterable $iterable) use ($value): iterable {
+                yield $value;
+                yield from $iterable;
+            }
+        );
 
         return $clone;
     }
 
     /**
-     * @param mixed $value
-     * @return InfiniteIterableValue
+     * @param TValue $value
+     * @return InfiniteIterableValue<TKey, TValue>
      */
     public function push($value): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($value) {
-            yield from $iterable;
-            yield $value;
-        });
+        $clone->stack = $clone->stack->push(
+            /**
+             * @param iterable<TKey, TValue> $iterable
+             * @return iterable<TKey, TValue>
+             */
+            static function (iterable $iterable) use ($value): iterable {
+                yield from $iterable;
+                yield $value;
+            }
+        );
 
         return $clone;
     }
 
     /**
-     * @return InfiniteIterableValue
+     * @param iterable<TKey, TValue> $other
+     * @return InfiniteIterableValue<TKey, TValue>
      */
     public function join(iterable $other): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($other) {
-            yield from $iterable;
-            yield from $other;
-        });
+        $clone->stack = $clone->stack->push(
+            /**
+             * @param iterable<TKey, TValue> $iterable
+             * @return iterable<TKey, TValue>
+             */
+            static function (iterable $iterable) use ($other): iterable {
+                yield from $iterable;
+                yield from $other;
+            }
+        );
 
         return $clone;
     }
 
     /**
-     * @return InfiniteIterableValue
+     * @return InfiniteIterableValue<TKey, TValue>
      */
     public function slice(int $offset, int $length): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($offset, $length) {
-            foreach ($iterable as $value) {
-                if ($offset-- > 0) {
-                    continue;
-                }
+        $clone->stack = $clone->stack->push(
+            /**
+             * @param iterable<TKey, TValue> $iterable
+             * @return iterable<TKey, TValue>
+             */
+            static function (iterable $iterable) use ($offset, $length): iterable {
+                foreach ($iterable as $value) {
+                    if ($offset-- > 0) {
+                        continue;
+                    }
 
-                yield $value;
+                    yield $value;
 
-                if (--$length <= 0) {
-                    break;
+                    if (--$length <= 0) {
+                        break;
+                    }
                 }
             }
-        });
+        );
 
         return $clone;
     }
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return InfiniteIterableValue
+     * @param ArrayValue<TValue> $other
+     * @param callable(TValue $valueA, TValue $valueB):int | null $comparator
+     * @return InfiniteIterableValue<TKey, TValue>
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($other, $comparator) {
-            foreach ($iterable as $value) {
-                if ($comparator === null) {
-                    $found = $other->hasElement($value);
-                } else {
-                    $found = $other->any(fn($otherValue): bool => $comparator($otherValue, $value) === 0);
-                }
+        $clone->stack = $clone->stack->push(
+            /**
+             * @param iterable<TKey, TValue> $iterable
+             * @return iterable<TKey, TValue>
+             */
+            static function (iterable $iterable) use ($other, $comparator): iterable {
+                foreach ($iterable as $value) {
+                    if ($comparator === null) {
+                        $found = $other->hasElement($value);
+                    } else {
+                        $found = $other->any(fn($otherValue): bool => $comparator($otherValue, $value) === 0);
+                    }
 
-                if ($found) {
-                    continue;
-                }
+                    if ($found) {
+                        continue;
+                    }
 
-                yield $value;
+                    yield $value;
+                }
             }
-        });
+        );
 
         return $clone;
     }
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return InfiniteIterableValue
+     * @param ArrayValue<TValue> $other
+     * @param callable(TValue $valueA, TValue $valueB):int | null $comparator
+     * @return InfiniteIterableValue<TKey, TValue>
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $clone->stack->push(static function (iterable $iterable) use ($other, $comparator) {
-            foreach ($iterable as $value) {
-                if ($comparator === null) {
-                    $found = $other->hasElement($value);
-                } else {
-                    $found = $other->any(fn($otherValue): bool => $comparator($otherValue, $value) === 0);
-                }
+        $clone->stack = $clone->stack->push(
+            /**
+             * @param iterable<TKey, TValue> $iterable
+             * @return iterable<TKey, TValue>
+             */
+            static function (iterable $iterable) use ($other, $comparator): iterable {
+                foreach ($iterable as $value) {
+                    if ($comparator === null) {
+                        $found = $other->hasElement($value);
+                    } else {
+                        $found = $other->any(fn($otherValue): bool => $comparator($otherValue, $value) === 0);
+                    }
 
-                if (!$found) {
-                    continue;
-                }
+                    if (!$found) {
+                        continue;
+                    }
 
-                yield $value;
+                    yield $value;
+                }
             }
-        });
+        );
 
         return $clone;
     }
 
     /**
-     * @param callable $transformer function(mixed $reduced, mixed $value): mixed
-     * @param mixed $start
-     * @return mixed
+     * @template TNewValue
+     * @param callable(TNewValue $reduced, TValue $value): TNewValue $transformer
+     * @param TNewValue $start
+     * @return TNewValue
      */
     public function reduce(callable $transformer, $start)
     {
@@ -263,8 +336,8 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @param callable $filter function(mixed $value): bool
-     * @return mixed
+     * @param callable(TValue $value):bool $filter
+     * @return ?TValue
      */
     public function find(callable $filter)
     {
@@ -278,8 +351,8 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @param callable $filter function(mixed $value): bool
-     * @return mixed
+     * @param callable(TValue $value):bool $filter
+     * @return ?TValue
      */
     public function findLast(callable $filter)
     {
@@ -294,6 +367,9 @@ final class InfiniteIterableValue implements IterableValue
         return $last;
     }
 
+    /**
+     * @param callable(TValue $value):bool $filter
+     */
     public function any(callable $filter): bool
     {
         foreach ($this->stack->iterate() as $value) {
@@ -305,6 +381,9 @@ final class InfiniteIterableValue implements IterableValue
         return false;
     }
 
+    /**
+     * @param callable(TValue $value):bool $filter
+     */
     public function every(callable $filter): bool
     {
         foreach ($this->stack->iterate() as $value) {
@@ -317,48 +396,60 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @return InfiniteIterableValue
+     * @return InfiniteIterableValue<TKey, TValue[]>
      */
     public function chunk(int $size): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $this->stack->push(static function (iterable $iterable) use ($size) {
-            $buffer = [];
+        $clone->stack = $this->stack->push(
+            /**
+             * @param iterable<TKey, TValue> $iterable
+             * @return iterable<TKey, TValue[]>
+             */
+            static function (iterable $iterable) use ($size): iterable {
+                $buffer = [];
 
-            foreach ($iterable as $item) {
-                $buffer[] = $item;
+                foreach ($iterable as $item) {
+                    $buffer[] = $item;
 
-                if (count($buffer) === $size) {
+                    if (count($buffer) === $size) {
+                        yield $buffer;
+                        $buffer = [];
+                    }
+                }
+
+                if ($buffer !== []) {
                     yield $buffer;
-                    $buffer = [];
                 }
             }
-
-            if ($buffer !== []) {
-                yield $buffer;
-            }
-        });
+        );
 
         return $clone;
     }
 
     /**
-     * @return InfiniteIterableValue
+     * @return InfiniteIterableValue<TKey, TValue>
      */
     public function flatten(): InfiniteIterableValue
     {
         $clone = clone $this;
-        $clone->stack = $this->stack->push(static function (iterable $iterable) {
-            foreach ($iterable as $item) {
-                yield from $item;
+        $clone->stack = $this->stack->push(
+            /**
+             * @param iterable<TKey, TValue> $iterable
+             * @return iterable<TKey, TValue>
+             */
+            static function (iterable $iterable): iterable {
+                foreach ($iterable as $item) {
+                    yield from $item;
+                }
             }
-        });
+        );
 
         return $clone;
     }
 
     /**
-     * @return InfiniteIterableValue
+     * @return InfiniteIterableValue<TKey, TValue>
      */
     public function notEmpty(): InfiniteIterableValue
     {
@@ -366,7 +457,7 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @return mixed
+     * @return ?TValue
      */
     public function first()
     {
@@ -378,7 +469,7 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @return mixed
+     * @return ?TValue
      */
     public function last()
     {
@@ -388,11 +479,18 @@ final class InfiniteIterableValue implements IterableValue
         return $value;
     }
 
+    /**
+     * @return iterable<TKey, TValue>
+     */
     public function getIterator(): iterable
     {
         yield from $this->stack->iterate();
     }
 
+    /**
+     * @param iterable<mixed, mixed> $iterable
+     * @return InfiniteIterableValue<TKey, TValue>
+     */
     public function use(iterable $iterable): self
     {
         $clone = clone $this;

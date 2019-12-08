@@ -7,7 +7,7 @@ interface StringValue extends Value
     public const TRIM_MASK = " \t\n\r\0\x0B";
 
     /**
-     * @param callable $transformer function(string $value): string
+     * @param callable(string $value): string $transformer
      * @return StringValue
      */
     public function transform(callable $transformer): StringValue;
@@ -134,14 +134,14 @@ interface StringValue extends Value
     public function positionLast($needle): ?int;
 
     /**
-     * @return ArrayValue
      * @param string|StringValue $pattern
+     * @return ArrayValue<string>
      */
     public function matchAllPatterns($pattern): ArrayValue;
 
     /**
-     * @return StringsArray
      * @param string|StringValue $pattern
+     * @return StringsArray
      */
     public function matchPatterns($pattern): StringsArray;
 

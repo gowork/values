@@ -2,102 +2,113 @@
 
 namespace GW\Value;
 
+use BadMethodCallException;
 use IteratorAggregate;
 use ArrayAccess;
+
+/**
+ * @template TValue
+ * @extends Collection<TValue>
+ * @extends IteratorAggregate<int, TValue>
+ * @extends ArrayAccess<int, TValue>
+ */
 interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayAccess
 {
     // Collection
 
     /**
-     * @param callable $callback function(mixed $value): void
-     * @return ArrayValue
+     * @param callable(TValue $value):void $callback
+     * @return ArrayValue<TValue>
      */
     public function each(callable $callback): ArrayValue;
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return ArrayValue
+     * @param callable(TValue $valueA, TValue $valueB): int|null $comparator
+     * @return ArrayValue<TValue>
      */
     public function unique(?callable $comparator = null): ArrayValue;
 
     /**
-     * @return mixed[]
+     * @return array<int, TValue>
      */
     public function toArray(): array;
 
     /**
-     * @param callable $filter function(mixed $value): bool
-     * @return ArrayValue
+     * @param callable(TValue $value):bool $filter
+     * @return ArrayValue<TValue>
      */
     public function filter(callable $filter): ArrayValue;
 
     /**
-     * @return ArrayValue
+     * @return ArrayValue<TValue>
      */
     public function filterEmpty(): ArrayValue;
 
     /**
-     * @param callable $transformer function(mixed $value): mixed
-     * @return ArrayValue
+     * @template TNewValue
+     * @param callable(TValue $value):TNewValue $transformer
+     * @return ArrayValue<TNewValue>
      */
     public function map(callable $transformer): ArrayValue;
 
     /**
-     * @param callable $transformer function(mixed $value): iterable
-     * @return ArrayValue
+     * @template TNewValue
+     * @param callable(TValue $value):iterable<TNewValue> $transformer
+     * @return ArrayValue<TNewValue>
      */
     public function flatMap(callable $transformer): ArrayValue;
 
     /**
-     * @param callable $reducer function(mixed $value): string|int|bool
-     * @return AssocValue AssocValue<ArrayValue>
+     * @template TNewKey
+     * @param callable(TValue $value):TNewKey $reducer
+     * @return AssocValue<TNewKey, ArrayValue<TValue>>
      */
     public function groupBy(callable $reducer): AssocValue;
 
     /**
-     * @return ArrayValue
+     * @return ArrayValue<TValue>
      */
     public function chunk(int $size): ArrayValue;
 
     /**
-     * @param callable $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return ArrayValue
+     * @param callable(TValue $valueA, TValue $valueB): int $comparator
+     * @return ArrayValue<TValue>
      */
     public function sort(callable $comparator): ArrayValue;
 
     /**
-     * @return ArrayValue
+     * @return ArrayValue<TValue>
      */
     public function shuffle(): ArrayValue;
 
     /**
-     * @return ArrayValue
+     * @return ArrayValue<TValue>
      */
     public function reverse(): ArrayValue;
 
     // Stack
 
     /**
-     * @param mixed $value
-     * @return ArrayValue
+     * @param TValue $value
+     * @return ArrayValue<TValue>
      */
     public function unshift($value): ArrayValue;
 
     /**
-     * @param mixed $value
-     * @return ArrayValue
+     * @param TValue|null $value
+     * @return ArrayValue<TValue>
      */
     public function shift(&$value = null): ArrayValue;
 
     /**
-     * @param mixed $value
-     * @return ArrayValue
+     * @param TValue $value
+     * @return ArrayValue<TValue>
      */
     public function push($value): ArrayValue;
 
     /**
-     * @param mixed $value
-     * @return ArrayValue
+     * @param TValue|null $value
+     * @return ArrayValue<TValue>
      */
     public function pop(&$value = null): ArrayValue;
 
@@ -110,68 +121,75 @@ interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayA
 
     /**
      * @param int $offset
-     * @return mixed
+     * @return TValue
      */
     public function offsetGet($offset);
 
     /**
      * @param int $offset
-     * @param mixed $value
-     * @return void
-     * @throws \BadMethodCallException For immutable types.
+     * @param TValue $value
+     * @throws BadMethodCallException For immutable types.
      */
     public function offsetSet($offset, $value): void;
 
     /**
      * @param int $offset
      * @return void
-     * @throws \BadMethodCallException For immutable types.
+     * @throws BadMethodCallException For immutable types.
      */
     public function offsetUnset($offset): void;
 
     // ArrayValue own
 
     /**
-     * @return ArrayValue
+     * @param ArrayValue<TValue> $other
+     * @return ArrayValue<TValue>
      */
     public function join(ArrayValue $other): ArrayValue;
 
     /**
-     * @return ArrayValue
+     * @return ArrayValue<TValue>
      */
     public function slice(int $offset, int $length): ArrayValue;
 
     /**
-     * @return ArrayValue
+     * @param ArrayValue<TValue> $replacement
+     * @return ArrayValue<TValue>
      */
     public function splice(int $offset, int $length, ?ArrayValue $replacement = null): ArrayValue;
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return ArrayValue
+     * @param ArrayValue<TValue> $other
+     * @param callable(TValue $valueA, TValue $valueB): int|null $comparator
+     * @return ArrayValue<TValue>
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): ArrayValue;
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return ArrayValue
+     * @param ArrayValue<TValue> $other
+     * @param callable(TValue $valueA, TValue $valueB): int|null $comparator
+     * @return ArrayValue<TValue>
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): ArrayValue;
 
     /**
-     * @param callable $transformer function(mixed $reduced, mixed $value): mixed
-     * @param mixed $start
-     * @return mixed
+     * @template TNewValue
+     * @param callable(TNewValue $reduced, TValue $value):TNewValue $transformer
+     * @param TNewValue $start
+     * @return TNewValue
      */
     public function reduce(callable $transformer, $start);
 
     public function implode(string $glue): StringValue;
 
     /**
-     * @return ArrayValue
+     * @return ArrayValue<TValue>
      */
     public function notEmpty(): ArrayValue;
 
+    /**
+     * @return AssocValue<int, TValue>
+     */
     public function toAssocValue(): AssocValue;
 
     public function toStringsArray(): StringsArray;
