@@ -2,6 +2,8 @@
 
 namespace GW\Value;
 
+use BadMethodCallException;
+
 interface StringsArray extends ArrayValue, StringValue
 {
     // Array Value
@@ -10,13 +12,13 @@ interface StringsArray extends ArrayValue, StringValue
      * @param callable $callback function(StringValue $value): void
      * @return StringsArray
      */
-    public function each(callable $callback);
+    public function each(callable $callback): StringsArray;
 
     /**
      * @param callable|null $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
      * @return StringsArray
      */
-    public function unique(?callable $comparator = null);
+    public function unique(?callable $comparator = null): StringsArray;
 
     /**
      * @return string[]
@@ -27,24 +29,24 @@ interface StringsArray extends ArrayValue, StringValue
      * @param callable $filter function(StringValue $value): bool
      * @return StringsArray
      */
-    public function filter(callable $filter);
+    public function filter(callable $filter): StringsArray;
 
     /**
      * @return StringsArray
      */
-    public function filterEmpty();
+    public function filterEmpty(): StringsArray;
 
     /**
      * @param callable $transformer function(StringValue $value): StringValue|string
      * @return StringsArray
      */
-    public function map(callable $transformer);
+    public function map(callable $transformer): StringsArray;
 
     /**
      * @param callable $transformer function(StringValue $value): iterable
      * @return StringsArray
      */
-    public function flatMap(callable $transformer);
+    public function flatMap(callable $transformer): StringsArray;
 
     /**
      * @param callable $reducer function(StringValue $value): string|int|bool
@@ -56,41 +58,41 @@ interface StringsArray extends ArrayValue, StringValue
      * @param callable $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
      * @return StringsArray
      */
-    public function sort(callable $comparator);
+    public function sort(callable $comparator): StringsArray;
 
     /**
      * @return StringsArray
      */
-    public function shuffle();
+    public function shuffle(): StringsArray;
 
     /**
      * @return StringsArray
      */
-    public function reverse();
-
-    /**
-     * @param StringValue|string $value
-     * @return StringsArray
-     */
-    public function unshift($value);
-
-    /**
-     * @param mixed $value
-     * @return StringsArray
-     */
-    public function shift(&$value = null);
+    public function reverse(): StringsArray;
 
     /**
      * @param StringValue|string $value
      * @return StringsArray
      */
-    public function push($value);
+    public function unshift($value): StringsArray;
 
     /**
      * @param mixed $value
      * @return StringsArray
      */
-    public function pop(&$value = null);
+    public function shift(&$value = null): StringsArray;
+
+    /**
+     * @param StringValue|string $value
+     * @return StringsArray
+     */
+    public function push($value): StringsArray;
+
+    /**
+     * @param mixed $value
+     * @return StringsArray
+     */
+    public function pop(&$value = null): StringsArray;
 
     /**
      * @param int $offset
@@ -99,52 +101,51 @@ interface StringsArray extends ArrayValue, StringValue
 
     /**
      * @param int $offset
-     * @return StringValue
      */
-    public function offsetGet($offset);
+    public function offsetGet($offset): StringValue;
 
     /**
      * @param int $offset
      * @param StringValue|string $value
      * @return void
-     * @throws \BadMethodCallException For immutable types.
+     * @throws BadMethodCallException For immutable types.
      */
-    public function offsetSet($offset, $value);
+    public function offsetSet($offset, $value): void;
 
     /**
      * @param int $offset
      * @return void
-     * @throws \BadMethodCallException For immutable types.
+     * @throws BadMethodCallException For immutable types.
      */
-    public function offsetUnset($offset);
+    public function offsetUnset($offset): void;
 
     /**
      * @return StringsArray
      */
-    public function join(ArrayValue $other);
+    public function join(ArrayValue $other): StringsArray;
 
     /**
      * @return StringsArray
      */
-    public function slice(int $offset, int $length);
+    public function slice(int $offset, int $length): StringsArray;
 
     /**
      * @param ArrayValue $replacement ArrayValue<string>|ArrayValue<StringValue>
      * @return StringsArray
      */
-    public function splice(int $offset, int $length, ?ArrayValue $replacement = null);
+    public function splice(int $offset, int $length, ?ArrayValue $replacement = null): StringsArray;
 
     /**
      * @param callable|null $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
      * @return StringsArray
      */
-    public function diff(ArrayValue $other, ?callable $comparator = null);
+    public function diff(ArrayValue $other, ?callable $comparator = null): StringsArray;
 
     /**
      * @param callable|null $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
      * @return StringsArray
      */
-    public function intersect(ArrayValue $other, ?callable $comparator = null);
+    public function intersect(ArrayValue $other, ?callable $comparator = null): StringsArray;
 
     /**
      * @param callable $transformer function(mixed $reduced, StringValue $value): mixed
@@ -158,17 +159,17 @@ interface StringsArray extends ArrayValue, StringValue
     /**
      * @return StringsArray
      */
-    public function notEmpty();
+    public function notEmpty(): StringsArray;
 
     /**
      * @return StringValue|null
      */
-    public function first();
+    public function first(): ?StringValue;
 
     /**
      * @return StringValue|null
      */
-    public function last();
+    public function last(): ?StringValue;
 
     public function find(callable $filter): ?StringValue;
 
@@ -180,116 +181,116 @@ interface StringsArray extends ArrayValue, StringValue
      * @param callable $transformer function(string $value): string
      * @return StringsArray
      */
-    public function transform(callable $transformer);
+    public function transform(callable $transformer): StringsArray;
 
     /**
      * @return StringsArray
      */
-    public function stripTags();
-
-    /**
-     * @return StringsArray
-     * @param string|StringValue $characterMask
-     */
-    public function trim($characterMask = self::TRIM_MASK);
+    public function stripTags(): StringsArray;
 
     /**
      * @return StringsArray
      * @param string|StringValue $characterMask
      */
-    public function trimRight($characterMask = self::TRIM_MASK);
+    public function trim($characterMask = self::TRIM_MASK): StringsArray;
 
     /**
      * @return StringsArray
      * @param string|StringValue $characterMask
      */
-    public function trimLeft($characterMask = self::TRIM_MASK);
+    public function trimRight($characterMask = self::TRIM_MASK): StringsArray;
+
+    /**
+     * @return StringsArray
+     * @param string|StringValue $characterMask
+     */
+    public function trimLeft($characterMask = self::TRIM_MASK): StringsArray;
 
     /**
      * @return StringsArray
      */
-    public function lower();
+    public function lower(): StringsArray;
 
     /**
      * @return StringsArray
      */
-    public function upper();
+    public function upper(): StringsArray;
 
     /**
      * @return StringsArray
      */
-    public function lowerFirst();
+    public function lowerFirst(): StringsArray;
 
     /**
      * @return StringsArray
      */
-    public function upperFirst();
+    public function upperFirst(): StringsArray;
 
     /**
      * @return StringsArray
      */
-    public function upperWords();
-
-    /**
-     * @return StringsArray
-     * @param string|StringValue $string
-     */
-    public function padRight(int $length, $string = ' ');
-
-    /**
-     * @return StringsArray
-     * @param string|StringValue $string
-     */
-    public function padLeft(int $length, $string = ' ');
+    public function upperWords(): StringsArray;
 
     /**
      * @return StringsArray
      * @param string|StringValue $string
      */
-    public function padBoth(int $length, $string = ' ');
+    public function padRight(int $length, $string = ' '): StringsArray;
+
+    /**
+     * @return StringsArray
+     * @param string|StringValue $string
+     */
+    public function padLeft(int $length, $string = ' '): StringsArray;
+
+    /**
+     * @return StringsArray
+     * @param string|StringValue $string
+     */
+    public function padBoth(int $length, $string = ' '): StringsArray;
 
     /**
      * @return StringsArray
      * @param string|StringValue $search
      * @param string|StringValue $replace
      */
-    public function replace($search, $replace);
+    public function replace($search, $replace): StringsArray;
 
     /**
      * @return StringsArray
      * @param string|StringValue $pattern
      * @param string|StringValue $replacement
      */
-    public function replacePattern($pattern, $replacement);
+    public function replacePattern($pattern, $replacement): StringsArray;
 
     /**
      * @return StringsArray
      * @param string|StringValue $pattern
      */
-    public function replacePatternCallback($pattern, callable $callback);
+    public function replacePatternCallback($pattern, callable $callback): StringsArray;
 
     /**
      * @return StringsArray
      * @param string|StringValue $postfix
      */
-    public function truncate(int $length, $postfix = '...');
+    public function truncate(int $length, $postfix = '...'): StringsArray;
 
     /**
      * @return StringsArray
      */
-    public function substring(int $start, ?int $length = null);
-
-    /**
-     * @return StringsArray
-     * @param string|StringValue $other
-     */
-    public function postfix($other);
+    public function substring(int $start, ?int $length = null): StringsArray;
 
     /**
      * @return StringsArray
      * @param string|StringValue $other
      */
-    public function prefix($other);
+    public function postfix($other): StringsArray;
+
+    /**
+     * @return StringsArray
+     * @param string|StringValue $other
+     */
+    public function prefix($other): StringsArray;
 
     /**
      * @return ArrayValue ArrayValue<StringValue>

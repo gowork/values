@@ -2,10 +2,14 @@
 
 namespace GW\Value;
 
+use Traversable;
+use InvalidArgumentException;
+use function in_array;
+
 final class PlainStringsArray implements StringsArray
 {
-    /** @var ArrayValue */
-    private $strings;
+    /** @var ArrayValue<StringValue> */
+    private ArrayValue $strings;
 
     public function __construct(ArrayValue $strings)
     {
@@ -60,18 +64,18 @@ final class PlainStringsArray implements StringsArray
         return new self($this->strings->flatMap($transformer));
     }
 
+    /**
+     * @return AssocValue<StringsArray>
+     */
     public function groupBy(callable $reducer): AssocValue
     {
         return $this->strings
             ->groupBy($reducer)
-            ->map(function (ArrayValue $value): StringsArray {
-                return $value->toStringsArray();
-            });
+            ->map(fn(ArrayValue $value): StringsArray => $value->toStringsArray());
     }
 
     /**
-     * @param int $size
-     * @return ArrayValue ArrayValue<array<StringValue>>
+     * @return ArrayValue<array<StringValue>>
      */
     public function chunk(int $size): ArrayValue
     {
@@ -112,7 +116,7 @@ final class PlainStringsArray implements StringsArray
     {
         $stringValue = $element instanceof StringValue ? $element : Wrap::string($element);
 
-        return \in_array($stringValue, $this->strings->toArray(), false);
+        return in_array($stringValue, $this->strings->toArray(), false);
     }
 
     public function any(callable $filter): bool
@@ -146,9 +150,7 @@ final class PlainStringsArray implements StringsArray
     public function toArray(): array
     {
         return $this->strings
-            ->map(function(StringValue $item): string {
-                return $item->toString();
-            })
+            ->map(fn(StringValue $item): string => $item->toString())
             ->toArray();
     }
 
@@ -172,7 +174,7 @@ final class PlainStringsArray implements StringsArray
         return new self($this->strings->reverse());
     }
 
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
         return $this->strings->getIterator();
     }
@@ -334,12 +336,12 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param string|StringValue $postfix
      */
-    public function truncate(int $length, $postfix = '...'): StringsArray
+    public function truncate(int $length, $postfix = '...'): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $length, $postfix);
     }
 
-    public function substring(int $start, ?int $length = null): StringsArray
+    public function substring(int $start, ?int $length = null): PlainStringsArray
     {
         return $this->withMapByMethod(__FUNCTION__, $start, $length);
     }
@@ -392,7 +394,7 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param string|StringValue $pattern
      */
-    public function matchPatterns($pattern): ArrayValue
+    public function matchPatterns($pattern): StringsArray
     {
         return $this->toStringValue()->matchPatterns($pattern);
     }
@@ -424,7 +426,7 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param string|StringValue $pattern
      */
-    public function splitByPattern($pattern): ArrayValue
+    public function splitByPattern($pattern): StringsArray
     {
         return $this->toStringValue()->splitByPattern($pattern);
     }
@@ -460,18 +462,20 @@ final class PlainStringsArray implements StringsArray
         return $this->filter(Filters::notEmpty());
     }
 
+    /**
+     * @return ArrayValue<StringValue>
+     */
     private function mapStringValues(ArrayValue $strings): ArrayValue
     {
         return $strings
-            ->map(function ($string) {
-                return is_scalar($string) ? Wrap::string((string)$string) : $string;
-            })
-            ->each(function ($string): void {
-                if (!$string instanceof StringValue) {
-                    throw new \InvalidArgumentException('StringsValue can contain only StringValue');
+            ->map(fn($string) => is_scalar($string) ? Wrap::string((string)$string) : $string)
+            ->each(
+                static function ($string): void {
+                    if (!$string instanceof StringValue) {
+                        throw new InvalidArgumentException('StringsValue can contain only StringValue');
+                    }
                 }
-            }
-        );
+            );
     }
 
     private function withMapByMethod(string $method, ...$args): PlainStringsArray
@@ -505,7 +509,7 @@ final class PlainStringsArray implements StringsArray
         return $this->strings->toAssocValue();
     }
 
-    public function toStringsArray(): StringsArray
+    public function toStringsArray(): self
     {
         return $this;
     }

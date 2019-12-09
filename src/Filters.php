@@ -2,6 +2,7 @@
 
 namespace GW\Value;
 
+use Closure;
 final class Filters
 {
     private const TYPE_FILTER_CALLABLE = [
@@ -16,7 +17,7 @@ final class Filters
         'boolean' => 'is_bool',
     ];
 
-    public static function type(string $type): \Closure
+    public static function type(string $type): callable
     {
         return function ($value) use ($type): bool {
             $callable = self::TYPE_FILTER_CALLABLE[$type] ?? null;
@@ -33,7 +34,7 @@ final class Filters
         };
     }
 
-    public static function types(string ...$types): \Closure
+    public static function types(string ...$types): callable
     {
         $callbacks = Wrap::array($types)->map([self::class, 'type'])->toArray();
 
@@ -48,48 +49,38 @@ final class Filters
         };
     }
 
-    public static function notType(string $type): \Closure
+    public static function notType(string $type): callable
     {
         return self::not(self::type($type));
     }
 
-    public static function notTypes(string ...$types): \Closure
+    public static function notTypes(string ...$types): callable
     {
         return self::not(self::types(...$types));
     }
 
-    public static function not(callable $filter): \Closure
+    public static function not(callable $filter): callable
     {
-        return function ($value) use ($filter): bool {
-            return !$filter($value);
-        };
+        return fn($value): bool => !$filter($value);
     }
 
-    public static function notEmpty(): \Closure
+    public static function notEmpty(): callable
     {
-        return function ($value): bool {
-            return !(($value instanceof Value && $value->isEmpty()) || empty($value));
-        };
+        return fn($value): bool => !(($value instanceof Value && $value->isEmpty()) || empty($value));
     }
 
-    public static function equal($other): \Closure
+    public static function equal($other): callable
     {
-        return function ($value) use ($other): bool {
-            return $value === $other;
-        };
+        return fn($value): bool => $value === $other;
     }
 
-    public static function notEqual($other): \Closure
+    public static function notEqual($other): callable
     {
-        return function ($value) use ($other): bool {
-            return $value !== $other;
-        };
+        return fn($value): bool => $value !== $other;
     }
 
-    public static function callMethod(string $method, ...$args): \Closure
+    public static function callMethod(string $method, ...$args): callable
     {
-        return function ($item) use ($method, $args): bool {
-            return $item->$method(...$args);
-        };
+        return fn($item): bool => $item->$method(...$args);
     }
 }

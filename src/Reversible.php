@@ -7,5 +7,5 @@ interface Reversible
     /**
      * @return Reversible
      */
-    public function reverse();
+    public function reverse(): Reversible;
 }

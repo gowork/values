@@ -8,10 +8,10 @@ interface Sortable
      * @param callable $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      * @return Sortable
      */
-    public function sort(callable $comparator);
+    public function sort(callable $comparator): Sortable;
 
     /**
      * @return Sortable
      */
-    public function shuffle();
+    public function shuffle(): Sortable;
 }

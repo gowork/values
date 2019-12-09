@@ -8,10 +8,10 @@ namespace GW\Value;
 final class IterableValueIterator
 {
     /** @var iterable */
-    private $iterable;
+    private iterable $iterable;
 
     /** @var bool */
-    private $used = false;
+    private bool $used = false;
 
     public function __construct(iterable $iterable)
     {

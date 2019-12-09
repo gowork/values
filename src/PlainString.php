@@ -2,10 +2,19 @@
 
 namespace GW\Value;
 
+use RuntimeException;
+use TypeError;
+use function is_object;
+use function is_scalar;
+use function is_string;
+use function mb_strlen;
+use function mb_strpos;
+use function method_exists;
+
 final class PlainString implements StringValue
 {
     /** @var string */
-    private $value;
+    private string $value;
 
     public function __construct(string $value)
     {
@@ -96,9 +105,7 @@ final class PlainString implements StringValue
     {
         return $this
             ->explode(' ')
-            ->map(function (StringValue $word): StringValue {
-                return $word->upperFirst();
-            })
+            ->map(fn(StringValue $word): StringValue => $word->upperFirst())
             ->implode(' ');
     }
 
@@ -144,7 +151,7 @@ final class PlainString implements StringValue
         $value = preg_replace($this->castToString($pattern), $this->castToString($replacement), $this->value);
 
         if ($value === null) {
-            throw new \RuntimeException("Failed to replace using regexp: {$pattern}");
+            throw new RuntimeException("Failed to replace using regexp: {$pattern}");
         }
 
         return new self($value);
@@ -158,7 +165,7 @@ final class PlainString implements StringValue
         $value = preg_replace_callback($this->castToString($pattern), $callback, $this->value);
 
         if ($value === null) {
-            throw new \RuntimeException("Failed to replace using regexp: {$pattern}");
+            throw new RuntimeException("Failed to replace using regexp: {$pattern}");
         }
 
         return new self($value);
@@ -187,7 +194,7 @@ final class PlainString implements StringValue
      */
     public function startsWith($pattern): bool
     {
-        return \mb_strpos($this->value, $this->castToString($pattern)) === 0;
+        return mb_strpos($this->value, $this->castToString($pattern)) === 0;
     }
 
     /**
@@ -196,7 +203,7 @@ final class PlainString implements StringValue
     public function endsWith($pattern): bool
     {
         $string = $this->castToString($pattern);
-        $length = \mb_strlen($string);
+        $length = mb_strlen($string);
 
         return $this->substring(-$length)->toString() === $string;
     }
@@ -214,29 +221,29 @@ final class PlainString implements StringValue
     /**
      * @param string|StringValue $pattern
      */
-    public function splitByPattern($pattern): StringsArray
+    public function splitByPattern($pattern): PlainStringsArray
     {
         $strings = preg_split($this->castToString($pattern), $this->value);
 
         if ($strings === false) {
-            throw new \RuntimeException("Failed to split using regexp: {$pattern}");
+            throw new RuntimeException("Failed to split using regexp: {$pattern}");
         }
 
-        return Wrap::stringsArray($strings);
+        return new PlainStringsArray(Wrap::array($strings));
     }
 
     /**
      * @param string|StringValue $delimiter
      */
-    public function explode($delimiter): StringsArray
+    public function explode($delimiter): PlainStringsArray
     {
         $strings = explode($this->castToString($delimiter), $this->value);
 
         if ($strings === false) {
-            throw new \RuntimeException("Cannot explode using delimiter: {$delimiter}");
+            throw new RuntimeException("Cannot explode using delimiter: {$delimiter}");
         }
 
-        return Wrap::stringsArray($strings);
+        return new PlainStringsArray(Wrap::array($strings));
     }
 
     /**
@@ -300,7 +307,7 @@ final class PlainString implements StringValue
      */
     private function castToString($value): string
     {
-        if (\is_string($value)) {
+        if (is_string($value)) {
             return $value;
         }
 
@@ -308,14 +315,14 @@ final class PlainString implements StringValue
             return $value->toString();
         }
 
-        if (\is_scalar($value)) {
+        if (is_scalar($value)) {
             return (string)$value;
         }
 
-        if (\is_object($value) && \method_exists($value, '__toString')) {
+        if (is_object($value) && method_exists($value, '__toString')) {
             return (string)$value;
         }
 
-        throw new \TypeError('Value cannot be casted to string.');
+        throw new TypeError('Value cannot be casted to string.');
     }
 }

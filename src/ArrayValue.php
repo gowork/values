@@ -2,7 +2,9 @@
 
 namespace GW\Value;
 
-interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \ArrayAccess
+use IteratorAggregate;
+use ArrayAccess;
+interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayAccess
 {
     // Collection
 
@@ -10,13 +12,13 @@ interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \Arra
      * @param callable $callback function(mixed $value): void
      * @return ArrayValue
      */
-    public function each(callable $callback);
+    public function each(callable $callback): ArrayValue;
 
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      * @return ArrayValue
      */
-    public function unique(?callable $comparator = null);
+    public function unique(?callable $comparator = null): ArrayValue;
 
     /**
      * @return mixed[]
@@ -27,24 +29,24 @@ interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \Arra
      * @param callable $filter function(mixed $value): bool
      * @return ArrayValue
      */
-    public function filter(callable $filter);
+    public function filter(callable $filter): ArrayValue;
 
     /**
      * @return ArrayValue
      */
-    public function filterEmpty();
+    public function filterEmpty(): ArrayValue;
 
     /**
      * @param callable $transformer function(mixed $value): mixed
      * @return ArrayValue
      */
-    public function map(callable $transformer);
+    public function map(callable $transformer): ArrayValue;
 
     /**
      * @param callable $transformer function(mixed $value): iterable
      * @return ArrayValue
      */
-    public function flatMap(callable $transformer);
+    public function flatMap(callable $transformer): ArrayValue;
 
     /**
      * @param callable $reducer function(mixed $value): string|int|bool
@@ -55,23 +57,23 @@ interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \Arra
     /**
      * @return ArrayValue
      */
-    public function chunk(int $size);
+    public function chunk(int $size): ArrayValue;
 
     /**
      * @param callable $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      * @return ArrayValue
      */
-    public function sort(callable $comparator);
+    public function sort(callable $comparator): ArrayValue;
 
     /**
      * @return ArrayValue
      */
-    public function shuffle();
+    public function shuffle(): ArrayValue;
 
     /**
      * @return ArrayValue
      */
-    public function reverse();
+    public function reverse(): ArrayValue;
 
     // Stack
 
@@ -79,25 +81,25 @@ interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \Arra
      * @param mixed $value
      * @return ArrayValue
      */
-    public function unshift($value);
+    public function unshift($value): ArrayValue;
 
     /**
      * @param mixed $value
      * @return ArrayValue
      */
-    public function shift(&$value = null);
+    public function shift(&$value = null): ArrayValue;
 
     /**
      * @param mixed $value
      * @return ArrayValue
      */
-    public function push($value);
+    public function push($value): ArrayValue;
 
     /**
      * @param mixed $value
      * @return ArrayValue
      */
-    public function pop(&$value = null);
+    public function pop(&$value = null): ArrayValue;
 
     // ArrayAccess
 
@@ -118,43 +120,43 @@ interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \Arra
      * @return void
      * @throws \BadMethodCallException For immutable types.
      */
-    public function offsetSet($offset, $value);
+    public function offsetSet($offset, $value): void;
 
     /**
      * @param int $offset
      * @return void
      * @throws \BadMethodCallException For immutable types.
      */
-    public function offsetUnset($offset);
+    public function offsetUnset($offset): void;
 
     // ArrayValue own
 
     /**
      * @return ArrayValue
      */
-    public function join(ArrayValue $other);
+    public function join(ArrayValue $other): ArrayValue;
 
     /**
      * @return ArrayValue
      */
-    public function slice(int $offset, int $length);
+    public function slice(int $offset, int $length): ArrayValue;
 
     /**
      * @return ArrayValue
      */
-    public function splice(int $offset, int $length, ?ArrayValue $replacement = null);
-
-    /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return ArrayValue
-     */
-    public function diff(ArrayValue $other, ?callable $comparator = null);
+    public function splice(int $offset, int $length, ?ArrayValue $replacement = null): ArrayValue;
 
     /**
      * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
      * @return ArrayValue
      */
-    public function intersect(ArrayValue $other, ?callable $comparator = null);
+    public function diff(ArrayValue $other, ?callable $comparator = null): ArrayValue;
+
+    /**
+     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
+     * @return ArrayValue
+     */
+    public function intersect(ArrayValue $other, ?callable $comparator = null): ArrayValue;
 
     /**
      * @param callable $transformer function(mixed $reduced, mixed $value): mixed
@@ -168,7 +170,7 @@ interface ArrayValue extends Value, Collection, Stack, \IteratorAggregate, \Arra
     /**
      * @return ArrayValue
      */
-    public function notEmpty();
+    public function notEmpty(): ArrayValue;
 
     public function toAssocValue(): AssocValue;
 

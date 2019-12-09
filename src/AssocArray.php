@@ -2,10 +2,15 @@
 
 namespace GW\Value;
 
+use RuntimeException;
+use ArrayIterator;
+use BadMethodCallException;
+use function in_array;
+use function count;
+
 final class AssocArray implements AssocValue
 {
-    /** @var array */
-    private $items;
+    private array $items;
 
     public function __construct(array $items)
     {
@@ -41,7 +46,7 @@ final class AssocArray implements AssocValue
         $combined = array_combine(array_map($transformer, array_keys($this->items), $this->items), $this->items);
 
         if ($combined === false) {
-            throw new \RuntimeException('Cannot map keys - combined array is broken.');
+            throw new RuntimeException('Cannot map keys - combined array is broken.');
         }
 
         return new self($combined);
@@ -221,7 +226,7 @@ final class AssocArray implements AssocValue
 
     public function hasElement($element): bool
     {
-        return \in_array($element, $this->items, true);
+        return in_array($element, $this->items, true);
     }
 
     public function any(callable $filter): bool
@@ -247,14 +252,14 @@ final class AssocArray implements AssocValue
         return $this->items;
     }
 
-    public function getIterator(): \Iterator
+    public function getIterator(): ArrayIterator
     {
-        return new \ArrayIterator($this->items);
+        return new ArrayIterator($this->items);
     }
 
     public function count(): int
     {
-        return \count($this->items);
+        return count($this->items);
     }
 
     public function isEmpty(): bool
@@ -274,11 +279,11 @@ final class AssocArray implements AssocValue
 
     public function offsetSet($offset, $value): void
     {
-        throw new \BadMethodCallException('AssocArray is immutable');
+        throw new BadMethodCallException('AssocArray is immutable');
     }
 
     public function offsetUnset($offset): void
     {
-        throw new \BadMethodCallException('AssocArray is immutable');
+        throw new BadMethodCallException('AssocArray is immutable');
     }
 }

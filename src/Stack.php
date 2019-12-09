@@ -8,23 +8,23 @@ interface Stack
      * @param mixed $value
      * @return Stack
      */
-    public function unshift($value);
+    public function unshift($value): Stack;
 
     /**
      * @param mixed $value
      * @return Stack
      */
-    public function shift(&$value = null);
+    public function shift(&$value = null): Stack;
 
     /**
      * @param mixed $value
      * @return Stack
      */
-    public function push($value);
+    public function push($value): Stack;
 
     /**
      * @param mixed $value
      * @return Stack
      */
-    public function pop(&$value = null);
+    public function pop(&$value = null): Stack;
 }

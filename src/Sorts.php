@@ -6,15 +6,11 @@ final class Sorts
 {
     public static function asc(): callable
     {
-        return function ($valueA, $valueB): int {
-            return $valueA <=> $valueB;
-        };
+        return fn($valueA, $valueB): int => $valueA <=> $valueB;
     }
 
     public static function desc(): callable
     {
-        return function ($valueA, $valueB): int {
-            return -1 * ($valueA <=> $valueB);
-        };
+        return fn($valueA, $valueB): int => -1 * ($valueA <=> $valueB);
     }
 }

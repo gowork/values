@@ -2,10 +2,21 @@
 
 namespace GW\Value;
 
+use ArrayIterator;
+use BadMethodCallException;
+use function array_chunk;
+use function array_reverse;
+use function array_slice;
+use function array_splice;
+use function count;
+use function in_array;
+use function is_array;
+use function is_bool;
+
 final class PlainArray implements ArrayValue
 {
     /** @var array */
-    private $items;
+    private array $items;
 
     public function __construct(array $items)
     {
@@ -29,7 +40,7 @@ final class PlainArray implements ArrayValue
 
         foreach ($this->items as $item) {
             $transformed = $transformer($item);
-            $elements[] = \is_array($transformed) ? $transformed : iterator_to_array($transformed);
+            $elements[] = is_array($transformed) ? $transformed : iterator_to_array($transformed);
         }
 
         return new self(array_merge([], ...$elements));
@@ -42,7 +53,7 @@ final class PlainArray implements ArrayValue
 
         foreach ($this->items as $item) {
             $key = $reducer($item);
-            $key = \is_bool($key) ? (string)(int)$key : (string)$key;
+            $key = is_bool($key) ? (string)(int)$key : (string)$key;
             /** @var ArrayValue[] $groups */
             $groups[$key] = ($groups[$key] ?? $empty)->push($item);
         }
@@ -52,7 +63,7 @@ final class PlainArray implements ArrayValue
 
     public function chunk(int $size): PlainArray
     {
-        return new self(\array_chunk($this->items, $size, false));
+        return new self(array_chunk($this->items, $size, false));
     }
 
     public function filterEmpty(): PlainArray
@@ -103,13 +114,13 @@ final class PlainArray implements ArrayValue
 
     public function slice(int $offset, int $length): PlainArray
     {
-        return new self(\array_slice($this->items, $offset, $length));
+        return new self(array_slice($this->items, $offset, $length));
     }
 
     public function splice(int $offset, int $length, ?ArrayValue $replacement = null): PlainArray
     {
         $items = $this->items;
-        \array_splice($items, $offset, $length, $replacement !== null ? $replacement->toArray() : []);
+        array_splice($items, $offset, $length, $replacement !== null ? $replacement->toArray() : []);
 
         return new self($items);
     }
@@ -276,7 +287,7 @@ final class PlainArray implements ArrayValue
      */
     public function findLast(callable $filter)
     {
-        foreach (\array_reverse($this->items) as $item) {
+        foreach (array_reverse($this->items) as $item) {
             if ($filter($item)) {
                 return $item;
             }
@@ -287,7 +298,7 @@ final class PlainArray implements ArrayValue
 
     public function hasElement($element): bool
     {
-        return \in_array($element, $this->items, true);
+        return in_array($element, $this->items, true);
     }
 
     public function any(callable $filter): bool
@@ -314,7 +325,7 @@ final class PlainArray implements ArrayValue
 
     public function count(): int
     {
-        return \count($this->items);
+        return count($this->items);
     }
 
     /**
@@ -325,9 +336,9 @@ final class PlainArray implements ArrayValue
         return $this->items;
     }
 
-    public function getIterator(): \Iterator
+    public function getIterator(): ArrayIterator
     {
-        return new \ArrayIterator($this->items);
+        return new ArrayIterator($this->items);
     }
 
     public function offsetExists($offset): bool
@@ -346,12 +357,12 @@ final class PlainArray implements ArrayValue
 
     public function offsetSet($offset, $value): void
     {
-        throw new \BadMethodCallException('ArrayValue is immutable');
+        throw new BadMethodCallException('ArrayValue is immutable');
     }
 
     public function offsetUnset($offset): void
     {
-        throw new \BadMethodCallException('ArrayValue is immutable');
+        throw new BadMethodCallException('ArrayValue is immutable');
     }
 
     public function implode(string $glue): StringValue
