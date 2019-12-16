@@ -28,8 +28,8 @@ final class AssocArray implements AssocValue
 
     /**
      * @template TNewValue
-     * @param callable(TValue $value, TKey $key=null):mixed $transformer
-     * @return AssocArray<TNewKey, TValue>
+     * @param callable(TValue $value, TKey $key=):TNewValue $transformer
+     * @return AssocArray<TKey, TNewValue>
      */
     public function map(callable $transformer): AssocArray
     {
@@ -51,7 +51,7 @@ final class AssocArray implements AssocValue
 
     /**
      * @template TNewKey
-     * @param callable(TKey $key, TValue $value = null): TNewKey $transformer
+     * @param callable(TKey $key, TValue $value=): TNewKey $transformer
      * @return AssocArray<TNewKey, TValue>
      */
     public function mapKeys(callable $transformer): AssocArray

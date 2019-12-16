@@ -51,7 +51,7 @@ interface StringsArray extends ArrayValue, StringValue
     /**
      * @template TNewKey
      * @param callable(StringValue $value):TNewKey $reducer
-     * @return AssocValue<TNewKey, StringsArray>
+     * @phpstan-return AssocValue<TNewKey, ArrayValue<StringValue>>
      */
     public function groupBy(callable $reducer): AssocValue;
 
@@ -171,7 +171,7 @@ interface StringsArray extends ArrayValue, StringValue
     // StringValue
 
     /**
-     * @param callable(StringValue $value): StringValue $transformer
+     * @param callable(string $value):(StringValue|string) $transformer
      */
     public function transform(callable $transformer): StringsArray;
 

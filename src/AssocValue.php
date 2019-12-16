@@ -42,7 +42,7 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess
 
     /**
      * @template TNewValue
-     * @param callable(TValue $value, TKey $key=null):mixed $transformer
+     * @param callable(TValue $value, TKey $key=):TNewValue $transformer
      * @return AssocValue<TKey, TNewValue>
      */
     public function map(callable $transformer): AssocValue;
@@ -108,7 +108,7 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess
 
     /**
      * @template TNewKey
-     * @param callable(TKey $key, TValue $value = null): TNewKey $transformer
+     * @param callable(TKey $key, TValue $value=): TNewKey $transformer
      * @return AssocValue<TNewKey, TValue>
      */
     public function mapKeys(callable $transformer): AssocValue;

@@ -56,11 +56,11 @@ final class PlainString implements StringValue
     }
 
     /**
-     * @param callable(string $value): string $transformer
+     * @param callable(string $value):(StringValue|string) $transformer
      */
     public function transform(callable $transformer): PlainString
     {
-        return new self($transformer($this->value));
+        return new self($this->castToString($transformer($this->value)));
     }
 
     public function stripTags(): PlainString

@@ -94,7 +94,9 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
-     * @return AssocValue<StringsArray>
+     * @template TNewKey
+     * @param callable(StringValue $value):TNewKey $reducer
+     * @phpstan-return AssocValue<TNewKey, ArrayValue<StringValue>>
      */
     public function groupBy(callable $reducer): AssocValue
     {
@@ -309,11 +311,11 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
-     * @param callable(StringValue $value): StringValue $transformer
+     * @param callable(string $value):(StringValue|string) $transformer
      */
     public function transform(callable $transformer): PlainStringsArray
     {
-        return $this->map(fn(StringValue $item): StringValue => $item->transform($transformer));
+        return $this->map(fn(StringValue $item): StringValue => Wrap::string($item->transform($transformer)));
     }
 
     public function stripTags(): PlainStringsArray

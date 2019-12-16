@@ -22,11 +22,11 @@ use function iterator_to_array;
  */
 final class PlainArray implements ArrayValue
 {
-    /** @var array<int, TValue> */
+    /** @phpstan-var array<int, TValue> */
     private array $items;
 
     /**
-     * @param array<mixed, TValue>
+     * @phpstan-param array<mixed, TValue> $items
      */
     public function __construct(array $items)
     {
@@ -62,29 +62,29 @@ final class PlainArray implements ArrayValue
 
     /**
      * @template TNewKey
-     * @param callable(TValue $value):TNewKey $reducer
-     * @return AssocValue<TNewKey, ArrayValue<TValue>>
+     * @phpstan-param callable(TValue $value):TNewKey $reducer
+     * @phpstan-return AssocValue<TNewKey, ArrayValue<TValue>>
      */
     public function groupBy(callable $reducer): AssocValue
     {
-        /** @var array<TNewKey, ArrayValue<TValue>> $groups */
+        /** @phpstan-var array<TNewKey, ArrayValue<TValue>> $groups */
         $groups = [];
 
-        /** @var ArrayValue<TValue> $empty */
+        /** @phpstan-var ArrayValue<TValue> $empty */
         $empty = Wrap::array([]);
 
         foreach ($this->items as $item) {
+            /** @phpstan-var TNewKey $key */
             $key = $reducer($item);
-            $key = is_bool($key) ? (string)(int)$key : (string)$key;
-            /** @var ArrayValue[] $groups */
             $groups[$key] = ($groups[$key] ?? $empty)->push($item);
         }
 
+        /** @phpstan-var array<TNewKey, ArrayValue<TValue>> $groups */
         return Wrap::assocArray($groups);
     }
 
     /**
-     * @return PlainArray<TValue>
+     * @phpstan-return PlainArray<array<TValue>>
      */
     public function chunk(int $size): PlainArray
     {
@@ -92,7 +92,7 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @return PlainArray<TValue>
+     * @phpstan-return PlainArray<TValue>
      */
     public function filterEmpty(): PlainArray
     {

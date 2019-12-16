@@ -66,7 +66,7 @@ interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayA
     public function groupBy(callable $reducer): AssocValue;
 
     /**
-     * @return ArrayValue<TValue>
+     * @return ArrayValue<array<TValue>>
      */
     public function chunk(int $size): ArrayValue;
 
