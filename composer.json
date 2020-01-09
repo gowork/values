@@ -24,7 +24,8 @@
     "require-dev": {
         "phpspec/phpspec": "^6.1",
         "phpstan/phpstan": "^0.11",
-        "phpbench/phpbench": "@dev"
+        "phpbench/phpbench": "@dev",
+        "phpunit/phpunit": "^8.5"
     },
     "autoload": {
         "psr-4": {
@@ -34,6 +35,7 @@
     "autoload-dev": {
         "psr-4": {
             "spec\\GW\\Value\\": "spec/",
+            "tests\\GW\\Value\\": "tests/",
             "doc\\GW\\Value\\": "examples/"
         }
     },
