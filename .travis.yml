@@ -9,3 +9,4 @@ install:
 script:
   - ./bin/phpspec run
   - ./bin/phpstan analyze -l 7 src
+  - ./bin/phpunit tests
