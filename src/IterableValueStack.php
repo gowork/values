@@ -51,15 +51,6 @@ final class IterableValueStack
         $modifiers = $this->modifiers;
         $i = \count($modifiers) - 1;
 
-        function next(&$modifiers, &$iterable, $i) {
-            if (!isset($modifiers[$i])) {
-                yield from $iterable;
-                return;
-            }
-
-            yield from $modifiers[$i--](next($modifiers, $iterable, $i));
-        }
-
-        yield from next($modifiers, $iterable, $i);
+        yield from $this->next($modifiers, $iterable, $i);
     }
 }
