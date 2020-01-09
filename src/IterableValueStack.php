@@ -34,20 +34,32 @@ final class IterableValueStack
         return $clone;
     }
 
+    private function next(array &$modifiers, iterable &$iterable, int $i): iterable
+    {
+        if (!isset($modifiers[$i])) {
+            yield from $iterable;
+
+            return;
+        }
+
+        yield from $modifiers[$i--]($this->next($modifiers, $iterable, $i));
+    }
+
     public function iterate(): iterable
     {
-        $values = ($this->iterable)();
-        $i = \count($this->modifiers) - 1;
+        $iterable = ($this->iterable)();
+        $modifiers = $this->modifiers;
+        $i = \count($modifiers) - 1;
 
-        $next = function () use (&$values, &$i, &$next) {
-            if (!isset($this->modifiers[$i])) {
-                yield from $values;
+        function next(&$modifiers, &$iterable, $i) {
+            if (!isset($modifiers[$i])) {
+                yield from $iterable;
                 return;
             }
 
-            yield from $this->modifiers[$i--]($next());
-        };
+            yield from $modifiers[$i--](next($modifiers, $iterable, $i));
+        }
 
-        yield from $next();
+        yield from next($modifiers, $iterable, $i);
     }
 }
