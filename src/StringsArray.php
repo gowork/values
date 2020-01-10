@@ -258,6 +258,19 @@ interface StringsArray extends ArrayValue, StringValue
 
     /**
      * @return StringsArray
+     * @param array|ArrayValue $search
+     * @param string|StringValue $replace
+     */
+    public function replaceAll($search, $replace): StringsArray;
+
+    /**
+     * @return StringsArray
+     * @param array|AssocValue $pairs
+     */
+    public function replacePairs($pairs): StringsArray;
+
+    /**
+     * @return StringsArray
      * @param string|StringValue $pattern
      * @param string|StringValue $replacement
      */

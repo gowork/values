@@ -87,6 +87,19 @@ interface StringValue extends Value
 
     /**
      * @return StringValue
+     * @param array|ArrayValue $search
+     * @param string|StringValue $replace
+     */
+    public function replaceAll($search, $replace): StringValue;
+
+    /**
+     * @return StringValue
+     * @param array|AssocValue $pairs
+     */
+    public function replacePairs($pairs): StringValue;
+
+    /**
+     * @return StringValue
      * @param string|StringValue $pattern
      * @param string|StringValue $replacement
      */

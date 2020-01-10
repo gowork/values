@@ -3,10 +3,10 @@
 namespace GW\Value;
 
 use IteratorAggregate;
+
 interface IterableValue extends IteratorAggregate
 {
     // IterableValue own
-
     /**
      * @param callable $callback function(mixed $value): void
      * @return IterableValue
