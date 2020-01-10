@@ -9,10 +9,10 @@
 
 ## Installation
 
-It works on PHP >=7.1. This library is available on Composer/Packagist as `gowork/values`. To install it execute:
+It works on PHP >=7.4. This library is available on Composer/Packagist as `gowork/values`. To install it execute:
 
 ```shell
-composer require gowork/values ^0.2
+composer require gowork/values ^0.3
 ```
 
 or manually update your `composer.json` with:
@@ -20,7 +20,7 @@ or manually update your `composer.json` with:
 {
     (...)
     "require": {
-        "gowork/values": "^0.1"
+        "gowork/values": "^0.3"
     }
     (...)
 }
