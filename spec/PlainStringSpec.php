@@ -239,6 +239,24 @@ final class PlainStringSpec extends ObjectBehavior
         $replaced->shouldBeLike(new PlainString('She sells nut shells by the nut shore'));
     }
 
+    function it_replaces_all_substrings_in_text()
+    {
+        $this->beConstructedWith('She sells seashells by the seashore');
+
+        $replaced = $this->replaceAll(['sea', 'the'], 'nut ');
+        $replaced->shouldNotBe($this);
+        $replaced->shouldBeLike(new PlainString('She sells nut shells by nut  nut shore'));
+    }
+
+    function it_replaces_pairs_in_text()
+    {
+        $this->beConstructedWith('She sells seashells by the seashore');
+
+        $replaced = $this->replacePairs(['sea' => 'nut ', 'by' => 'on']);
+        $replaced->shouldNotBe($this);
+        $replaced->shouldBeLike(new PlainString('She sells nut shells on the nut shore'));
+    }
+
     function it_replaces_by_pattern()
     {
         $this->beConstructedWith('She sells seashells by the seashore');

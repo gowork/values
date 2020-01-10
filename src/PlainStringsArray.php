@@ -317,6 +317,23 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
+     * @param array|ArrayValue $search
+     * @param string|StringValue $replace
+     */
+    public function replaceAll($search, $replace): PlainStringsArray
+    {
+        return $this->withMapByMethod(__FUNCTION__, $search, $replace);
+    }
+
+    /**
+     * @param array|AssocValue $pairs
+     */
+    public function replacePairs($pairs): PlainStringsArray
+    {
+        return $this->withMapByMethod(__FUNCTION__, $pairs);
+    }
+
+    /**
      * @param string|StringValue $pattern
      * @param string|StringValue $replacement
      */

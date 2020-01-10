@@ -3,6 +3,7 @@
 namespace GW\Value;
 
 use InvalidArgumentException;
+
 final class Safe
 {
     public static function comparator(callable $callable): callable
@@ -17,7 +18,11 @@ final class Safe
 
     public static function iterableTransformer(callable $callable): callable
     {
-        return fn(...$args): iterable => self::guard($callable(...$args), 'is_iterable', 'Iterable transformer must return iterable value.');
+        return fn(...$args): iterable => self::guard(
+            $callable(...$args),
+            'is_iterable',
+            'Iterable transformer must return iterable value.'
+        );
     }
 
     private static function guard($value, callable $assertion, string $message)

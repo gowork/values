@@ -2,6 +2,7 @@
 
 namespace GW\Value;
 
+use InvalidArgumentException;
 use RuntimeException;
 use TypeError;
 use function is_object;
@@ -140,6 +141,39 @@ final class PlainString implements StringValue
     public function replace($search, $replace): PlainString
     {
         return new self(str_replace($this->castToString($search), $this->castToString($replace), $this->value));
+    }
+
+    /**
+     * @param array|ArrayValue $search
+     * @param string|StringValue $replace
+     */
+    public function replaceAll($search, $replace): StringValue
+    {
+        if ($search instanceof ArrayValue) {
+            $search = $search->toArray();
+        }
+
+        if (!is_array($search)) {
+            throw new InvalidArgumentException('Search argument should be an array');
+        }
+
+        return new self(str_replace($search, $this->castToString($replace), $this->value));
+    }
+
+    /**
+     * @param array|AssocValue $pairs
+     */
+    public function replacePairs($pairs): StringValue
+    {
+        if ($pairs instanceof AssocValue) {
+            $pairs = $pairs->toAssocArray();
+        }
+
+        if (!is_array($pairs)) {
+            throw new InvalidArgumentException('Pairs argument should be an array');
+        }
+
+        return new self(strtr($this->value, $pairs));
     }
 
     /**

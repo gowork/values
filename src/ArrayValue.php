@@ -4,10 +4,10 @@ namespace GW\Value;
 
 use IteratorAggregate;
 use ArrayAccess;
+
 interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayAccess
 {
     // Collection
-
     /**
      * @param callable $callback function(mixed $value): void
      * @return ArrayValue
