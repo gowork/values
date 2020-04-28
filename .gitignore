@@ -3,3 +3,4 @@ vendor/
 .idea
 phpspec.yml
 composer.lock
+/composer.phar

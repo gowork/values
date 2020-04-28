@@ -8,27 +8,40 @@ final class Mappers
 {
     /**
      * @deprecated use method() instead
+     * @param array<int, mixed> $args
+     * @return callable(object $item): mixed
      */
-    public static function callMethod(string $method, ...$args): Closure
+    public static function callMethod(string $method, ...$args): callable
     {
         return self::method($method, ...$args);
     }
 
-    public static function method(string $method, ...$args): Closure
+    /**
+     * @param array<int, mixed> $args
+     * @return callable(object $item): mixed
+     */
+    public static function method(string $method, ...$args): callable
     {
-        return static function ($item) use ($method, $args) {
-            return $item->$method(...$args);
-        };
+        return static fn(object $item) => $item->$method(...$args);
     }
 
-    public static function property($propertyName): Closure
+    /**
+     * @return callable(object $item): mixed
+     */
+    public static function property(string $propertyName): callable
     {
         return static function ($object) use ($propertyName) {
             return $object->$propertyName;
         };
     }
 
-    public static function index($index): Closure
+    /**
+     * @template TKey
+     * @template TValue
+     * @phpstan-param TKey $index
+     * @phpstan-return callable(array<TKey, TValue> $item): TValue
+     */
+    public static function index($index): callable
     {
         return static function ($array) use ($index) {
             return $array[$index];

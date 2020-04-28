@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace GW\Value;
 
@@ -8,23 +8,35 @@ use function array_chunk;
 use function array_reverse;
 use function array_slice;
 use function array_splice;
+use function array_map;
+use function array_merge;
 use function count;
 use function in_array;
 use function is_array;
 use function is_bool;
+use function iterator_to_array;
 
+/**
+ * @template TValue
+ * @implements ArrayValue<TValue>
+ */
 final class PlainArray implements ArrayValue
 {
-    /** @var array */
+    /** @phpstan-var array<int, TValue> */
     private array $items;
 
+    /**
+     * @phpstan-param array<mixed, TValue> $items
+     */
     public function __construct(array $items)
     {
         $this->items = array_values($items);
     }
 
     /**
-     * @param callable $transformer function(mixed $value): mixed
+     * @template TNewValue
+     * @param callable(TValue $value):TNewValue $transformer
+     * @phpstan-return PlainArray<TNewValue>
      */
     public function map(callable $transformer): PlainArray
     {
@@ -32,7 +44,9 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @param callable $transformer function(mixed $value): iterable
+     * @template TNewValue
+     * @param callable(TValue $value):iterable<TNewValue> $transformer
+     * @phpstan-return PlainArray<TNewValue>
      */
     public function flatMap(callable $transformer): PlainArray
     {
@@ -46,33 +60,51 @@ final class PlainArray implements ArrayValue
         return new self(array_merge([], ...$elements));
     }
 
+    /**
+     * @template TNewKey
+     * @phpstan-param callable(TValue $value):TNewKey $reducer
+     * @phpstan-return AssocValue<TNewKey, ArrayValue<TValue>>
+     */
     public function groupBy(callable $reducer): AssocValue
     {
+        /** @phpstan-var array<TNewKey, ArrayValue<TValue>> $groups */
         $groups = [];
+
+        /** @phpstan-var ArrayValue<TValue> $empty */
         $empty = Wrap::array([]);
 
         foreach ($this->items as $item) {
+            /** @phpstan-var TNewKey $key */
             $key = $reducer($item);
-            $key = is_bool($key) ? (string)(int)$key : (string)$key;
-            /** @var ArrayValue[] $groups */
             $groups[$key] = ($groups[$key] ?? $empty)->push($item);
         }
 
+        /** @phpstan-var array<TNewKey, ArrayValue<TValue>> $groups */
         return Wrap::assocArray($groups);
     }
 
+    /**
+     * @phpstan-return PlainArray<array<int, TValue>>
+     */
     public function chunk(int $size): PlainArray
     {
-        return new self(array_chunk($this->items, $size, false));
+        /** @phpstan-var array<array<int, TValue>> $items */
+        $items = array_chunk($this->items, $size, false);
+
+        return new self($items);
     }
 
+    /**
+     * @phpstan-return PlainArray<TValue>
+     */
     public function filterEmpty(): PlainArray
     {
         return $this->filter(Filters::notEmpty());
     }
 
     /**
-     * @param callable $filter function(mixed $value): bool
+     * @param callable(TValue $value):bool $filter
+     * @phpstan-return PlainArray<TValue>
      */
     public function filter(callable $filter): PlainArray
     {
@@ -80,7 +112,8 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @param callable $comparator function(mixed $leftValue, mixed $rightValue): int{-1, 0, 1}
+     * @param callable(TValue $leftValue, TValue $rightValue):int $comparator
+     * @phpstan-return PlainArray<TValue>
      */
     public function sort(callable $comparator): PlainArray
     {
@@ -91,7 +124,8 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @param callable $callback function(mixed $value): void
+     * @param callable(TValue $value):void $callback
+     * @phpstan-return PlainArray<TValue>
      */
     public function each(callable $callback): PlainArray
     {
@@ -102,21 +136,35 @@ final class PlainArray implements ArrayValue
         return $this;
     }
 
+    /**
+     * @phpstan-return PlainArray<TValue>
+     */
     public function reverse(): PlainArray
     {
         return new self(array_reverse($this->items, false));
     }
 
+    /**
+     * @phpstan-param ArrayValue<TValue> $other
+     * @phpstan-return PlainArray<TValue>
+     */
     public function join(ArrayValue $other): PlainArray
     {
         return new self(array_merge($this->items, $other->toArray()));
     }
 
+    /**
+     * @phpstan-return PlainArray<TValue>
+     */
     public function slice(int $offset, int $length): PlainArray
     {
         return new self(array_slice($this->items, $offset, $length));
     }
 
+    /**
+     * @phpstan-param ArrayValue<TValue> $replacement
+     * @phpstan-return PlainArray<TValue>
+     */
     public function splice(int $offset, int $length, ?ArrayValue $replacement = null): PlainArray
     {
         $items = $this->items;
@@ -126,7 +174,8 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
+     * @param callable(TValue $valueA, TValue $valueB):int | null $comparator
+     * @phpstan-return PlainArray<TValue>
      */
     public function unique(?callable $comparator = null): PlainArray
     {
@@ -151,7 +200,9 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
+     * @phpstan-param ArrayValue<TValue> $other
+     * @param callable(TValue $valueA, TValue $valueB):int | null $comparator
+     * @phpstan-return PlainArray<TValue>
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): PlainArray
     {
@@ -167,7 +218,9 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
+     * @phpstan-param ArrayValue<TValue> $other
+     * @param callable(TValue $valueA, TValue $valueB):int | null $comparator
+     * @phpstan-return PlainArray<TValue>
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): PlainArray
     {
@@ -182,6 +235,9 @@ final class PlainArray implements ArrayValue
         return new self(array_uintersect($this->items, $other->toArray(), $comparator));
     }
 
+    /**
+     * @phpstan-return PlainArray<TValue>
+     */
     public function shuffle(): PlainArray
     {
         $items = $this->items;
@@ -193,7 +249,8 @@ final class PlainArray implements ArrayValue
     // adders and removers
 
     /**
-     * @param mixed $value
+     * @phpstan-param TValue $value
+     * @phpstan-return PlainArray<TValue>
      */
     public function unshift($value): PlainArray
     {
@@ -204,7 +261,9 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @param mixed $value
+     * @phpstan-param TValue $value
+     * @phpstan-return PlainArray<TValue>
+     * @phpstan-ignore-next-line weird errors regarding reference
      */
     public function shift(&$value = null): PlainArray
     {
@@ -215,7 +274,8 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @param mixed $value
+     * @phpstan-param TValue $value
+     * @phpstan-return PlainArray<TValue>
      */
     public function push($value): PlainArray
     {
@@ -226,7 +286,9 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @param mixed $value
+     * @phpstan-param TValue $value
+     * @phpstan-return PlainArray<TValue>
+     * @phpstan-ignore-next-line weird errors regarding reference
      */
     public function pop(&$value = null): PlainArray
     {
@@ -239,9 +301,10 @@ final class PlainArray implements ArrayValue
     // finalizers
 
     /**
-     * @param callable $transformer function(mixed $reduced, mixed $value): mixed
-     * @param mixed $start
-     * @return mixed
+     * @template TNewValue
+     * @param callable(TNewValue $reduced, TValue $value):TNewValue $transformer
+     * @phpstan-param TNewValue $start
+     * @phpstan-return TNewValue
      */
     public function reduce(callable $transformer, $start)
     {
@@ -249,7 +312,7 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @return mixed
+     * @phpstan-return ?TValue
      */
     public function first()
     {
@@ -257,7 +320,7 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @return mixed
+     * @phpstan-return ?TValue
      */
     public function last()
     {
@@ -267,8 +330,8 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @param callable $filter function(mixed $value): bool
-     * @return mixed
+     * @param callable(TValue $value):bool $filter
+     * @phpstan-return ?TValue
      */
     public function find(callable $filter)
     {
@@ -282,8 +345,8 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @param callable $filter function(mixed $value): bool
-     * @return mixed
+     * @param callable(TValue $value):bool $filter
+     * @phpstan-return ?TValue
      */
     public function findLast(callable $filter)
     {
@@ -301,6 +364,9 @@ final class PlainArray implements ArrayValue
         return in_array($element, $this->items, true);
     }
 
+    /**
+     * @param callable(TValue $value):bool $filter
+     */
     public function any(callable $filter): bool
     {
         foreach ($this->items as $item) {
@@ -312,6 +378,9 @@ final class PlainArray implements ArrayValue
         return false;
     }
 
+    /**
+     * @param callable(TValue $value):bool $filter
+     */
     public function every(callable $filter): bool
     {
         foreach ($this->items as $item) {
@@ -329,18 +398,24 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @return mixed[]
+     * @phpstan-return TValue[]
      */
     public function toArray(): array
     {
         return $this->items;
     }
 
+    /**
+     * @phpstan-return ArrayIterator<int, TValue>
+     */
     public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->items);
     }
 
+    /**
+     * @param int $offset
+     */
     public function offsetExists($offset): bool
     {
         return isset($this->items[$offset]);
@@ -348,18 +423,27 @@ final class PlainArray implements ArrayValue
 
     /**
      * @param int $offset
-     * @return mixed
+     * @return ?TValue
      */
     public function offsetGet($offset)
     {
         return $this->items[$offset];
     }
 
+    /**
+     * @param int $offset
+     * @phpstan-param TValue $value
+     * @throws BadMethodCallException For immutable types.
+     */
     public function offsetSet($offset, $value): void
     {
         throw new BadMethodCallException('ArrayValue is immutable');
     }
 
+    /**
+     * @param int $offset
+     * @throws BadMethodCallException For immutable types.
+     */
     public function offsetUnset($offset): void
     {
         throw new BadMethodCallException('ArrayValue is immutable');
@@ -370,6 +454,9 @@ final class PlainArray implements ArrayValue
         return Wrap::string(implode($glue, $this->toArray()));
     }
 
+    /**
+     * @phpstan-return PlainArray<TValue>
+     */
     public function notEmpty(): PlainArray
     {
         return $this->filter(Filters::notEmpty());
@@ -380,6 +467,9 @@ final class PlainArray implements ArrayValue
         return $this->items === [];
     }
 
+    /**
+     * @phpstan-return AssocValue<int, TValue>
+     */
     public function toAssocValue(): AssocValue
     {
         return Wrap::assocArray($this->items);

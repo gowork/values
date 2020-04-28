@@ -1,45 +1,55 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace GW\Value;
 
 use RuntimeException;
 use ArrayIterator;
 use BadMethodCallException;
+use function array_keys;
+use function array_map;
 use function in_array;
 use function count;
 
+/**
+ * @template TKey
+ * @template TValue
+ * @implements AssocValue<TKey, TValue>
+ */
 final class AssocArray implements AssocValue
 {
+    /** @phpstan-var array<TKey, TValue> */
     private array $items;
 
+    /**
+     * @phpstan-param array<TKey, TValue> $items
+     */
     public function __construct(array $items)
     {
         $this->items = $items;
     }
 
     /**
-     * @param callable $transformer function(mixed $value[, string $key]): mixed
+     * @template TNewValue
+     * @phpstan-param callable(TValue $value, TKey $key=):TNewValue $transformer
+     * @phpstan-return AssocArray<TKey, TNewValue>
      */
     public function map(callable $transformer): AssocArray
     {
-        $result = [];
-        foreach ($this->items as $key => $value) {
-            $result[$key] = $transformer($value, $key);
-        }
-
-        return new self($result);
+        return new self(array_map($transformer, $this->items, array_keys($this->items)));
     }
 
     /**
-     * @return StringsArray
+     * @phpstan-return ArrayValue<TKey>
      */
-    public function keys(): StringsArray
+    public function keys(): ArrayValue
     {
-        return Wrap::stringsArray(array_keys($this->items));
+        return Wrap::array(array_keys($this->items));
     }
 
     /**
-     * @param callable $transformer function(string $key[, mixed $value]): string
+     * @template TNewKey
+     * @param callable(TKey $key, TValue $value=): TNewKey $transformer
+     * @return AssocArray<TNewKey, TValue>
      */
     public function mapKeys(callable $transformer): AssocArray
     {
@@ -52,16 +62,27 @@ final class AssocArray implements AssocValue
         return new self($combined);
     }
 
+    /**
+     * @return AssocArray<TKey, TValue>
+     */
     public function filterEmpty(): AssocArray
     {
         return $this->filter(Filters::notEmpty());
     }
 
+    /**
+     * @param callable(TValue $value):bool $filter
+     * @return AssocArray<TKey, TValue>
+     */
     public function filter(callable $filter): AssocArray
     {
         return new self(array_filter($this->items, $filter));
     }
 
+    /**
+     * @param callable(TValue $valueA, TValue $valueB):int $comparator
+     * @return AssocArray<TKey, TValue>
+     */
     public function sort(callable $comparator): AssocArray
     {
         $items = $this->items;
@@ -70,11 +91,17 @@ final class AssocArray implements AssocValue
         return new self($items);
     }
 
+    /**
+     * @return AssocArray<TKey, TValue>
+     */
     public function reverse(): AssocArray
     {
         return new self(array_reverse($this->items, true));
     }
 
+    /**
+     * @return AssocArray<TKey, TValue>
+     */
     public function shuffle(): AssocArray
     {
         $items = $this->items;
@@ -84,7 +111,8 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @param callable $comparator function(string $keyA, string $keyB): int{-1, 1}
+     * @param callable(TKey $keyA, TKey $keyB): int $comparator
+     * @return AssocArray<TKey, TValue>
      */
     public function sortKeys(callable $comparator): AssocArray
     {
@@ -95,7 +123,8 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @param callable $callback function(mixed $value, string $key): void
+     * @phpstan-param callable(TValue $value, TKey $key=):void $callback
+     * @phpstan-return AssocArray<TKey, TValue>
      */
     public function each(callable $callback): AssocArray
     {
@@ -107,7 +136,8 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
+     * @phpstan-param callable(TValue $valueA, TValue $valueB):int|null $comparator
+     * @phpstan-return AssocArray<TKey, TValue>
      */
     public function unique(?callable $comparator = null): AssocArray
     {
@@ -127,40 +157,68 @@ final class AssocArray implements AssocValue
             $result[$keyA] = $valueA;
         }
 
+        /** @phpstan-var array<TKey, TValue> $result */
         return new self($result);
     }
 
     /**
-     * @param mixed $value
+     * @phpstan-param TKey $key
+     * @phpstan-param TValue $value
+     * @phpstan-return AssocArray<TKey, TValue>
      */
-    public function with(string $key, $value): AssocArray
+    public function with($key, $value): AssocArray
     {
-        return $this->merge(new self([$key => $value]));
+        /** @phpstan-var array<TKey, TValue> $items */
+        $items = [$key => $value];
+
+        return $this->merge(new self($items));
     }
 
+    /**
+     * @phpstan-param AssocValue<TKey, TValue> $other
+     * @phpstan-return AssocArray<TKey, TValue>
+     */
     public function merge(AssocValue $other): AssocArray
     {
         return new self(array_merge($this->items, $other->toAssocArray()));
     }
 
-    public function without(string ...$keys): AssocArray
+    /**
+     * @phpstan-param TKey $key
+     * @phpstan-param array<int, TKey> $keys
+     * @phpstan-return AssocArray<TKey, TValue>
+     * @phpstan-ignore-next-line phpstan does not support generic variadics
+     */
+    public function without($key, ...$keys): AssocArray
     {
-        return new self(array_diff_key($this->items, array_flip($keys)));
+        return new self(array_diff_key($this->items, array_flip([$key, ...$keys])));
     }
 
-    public function only(string ...$keys): AssocArray
+    /**
+     * @phpstan-param array<int, TKey> $keys
+     * @phpstan-return AssocArray<TKey, TValue>
+     * @phpstan-ignore-next-line phpstan does not support generic variadics
+     */
+    public function only(...$keys): AssocArray
     {
         return new self(array_intersect_key($this->items, array_flip($keys)));
     }
 
     /**
-     * @param mixed $value
+     * @phpstan-param TValue $value
+     * @phpstan-return AssocArray<TKey, TValue>
      */
     public function withoutElement($value): AssocArray
     {
         return $this->filter(Filters::notEqual($value));
     }
 
+    /**
+     * @template TNewValue
+     * @param callable(TNewValue $reduced, TValue $value, string $key):TNewValue $transformer
+     * @phpstan-param TNewValue $start
+     * @phpstan-return TNewValue
+     */
     public function reduce(callable $transformer, $start)
     {
         $reduced = $start;
@@ -173,33 +231,41 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @return mixed
+     * @phpstan-param TKey $key
+     * @phpstan-param ?TValue $default
+     * @phpstan-return ?TValue
      */
-    public function get(string $key, $default = null)
+    public function get($key, $default = null)
     {
         return $this->items[$key] ?? $default;
     }
 
-    public function has(string $key): bool
+    /**
+     * @phpstan-param TKey $key
+     */
+    public function has($key): bool
     {
         return isset($this->items[$key]);
     }
 
     /**
-     * @return mixed
+     * @return ?TValue
      */
     public function first()
     {
         return $this->values()->first();
     }
 
+    /**
+     * @return ArrayValue<TValue>
+     */
     public function values(): ArrayValue
     {
         return Wrap::array($this->items);
     }
 
     /**
-     * @return mixed
+     * @phpstan-return ?TValue
      */
     public function last()
     {
@@ -207,8 +273,8 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @param callable $filter function(mixed $value): bool
-     * @return mixed
+     * @param callable(TValue $value): bool $filter
+     * @phpstan-return ?TValue
      */
     public function find(callable $filter)
     {
@@ -216,14 +282,17 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @param callable $filter function(mixed $value): bool
-     * @return mixed
+     * @param callable(TValue $value): bool $filter
+     * @phpstan-return ?TValue
      */
     public function findLast(callable $filter)
     {
         return $this->values()->findLast($filter);
     }
 
+    /**
+     * @phpstan-param TValue $element
+     */
     public function hasElement($element): bool
     {
         return in_array($element, $this->items, true);
@@ -240,18 +309,24 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @return mixed[]
+     * @return TValue[]
      */
     public function toArray(): array
     {
         return $this->values()->toArray();
     }
 
+    /**
+     * @return array<TKey, TValue>
+     */
     public function toAssocArray(): array
     {
         return $this->items;
     }
 
+    /**
+     * @return ArrayIterator<TKey, TValue>
+     */
     public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->items);
@@ -267,11 +342,18 @@ final class AssocArray implements AssocValue
         return $this->items === [];
     }
 
+    /**
+     * @param TKey $offset
+     */
     public function offsetExists($offset): bool
     {
         return isset($this->items[$offset]);
     }
 
+    /**
+     * @param TKey $offset
+     * @return ?TValue
+     */
     public function offsetGet($offset)
     {
         return $this->items[$offset];

@@ -367,21 +367,6 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $this->getIterator()->shouldHaveType(\Iterator::class);
     }
 
-    function it_can_be_used_with_new_iterable()
-    {
-        $this->beConstructedThrough(function () {
-            $value = new InfiniteIterableValue([1, 2, 3]);
-            $value->toArray();
-
-            return $value->map(function (int $v): int {
-                    return $v + 1;
-                })
-                ->use([10, 11, 12]);
-        });
-
-        $this->toArray()->shouldEqual([11, 12, 13]);
-    }
-
     function it_can_be_used_after_iteration_break()
     {
         $this->beConstructedThrough(function () {
@@ -435,19 +420,8 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
             ->shouldEqual([4]);
 
         $modified
-            ->use([2, 2, 5])
-            ->map(function (int $i): int {return $i*2;})
-            ->toArray()
-            ->shouldEqual([8, 8]);
-
-        $modified
             ->toArray()
             ->shouldEqual([4]);
-
-        $modified
-            ->use([2, 2, 5])
-            ->toArray()
-            ->shouldEqual([4, 4]);
 
         $modified
             ->toArray()
@@ -456,11 +430,6 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $this
             ->toArray()
             ->shouldEqual([1, 2, 3]);
-
-        $modified
-            ->use((function () {yield from [2, 2, 5];})())
-            ->toArray()
-            ->shouldEqual([4, 4]);
     }
 
     function it_allows_to_split_array_to_chunks_of_given_size()

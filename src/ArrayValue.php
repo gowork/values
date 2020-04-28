@@ -1,103 +1,112 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace GW\Value;
 
+use BadMethodCallException;
 use IteratorAggregate;
 use ArrayAccess;
 
+/**
+ * @template TValue
+ * @extends Collection<TValue>
+ * @extends IteratorAggregate<int, TValue>
+ * @extends ArrayAccess<int, TValue>
+ */
 interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayAccess
 {
-    // Collection
     /**
-     * @param callable $callback function(mixed $value): void
-     * @return ArrayValue
+     * @param callable(TValue $value):void $callback
+     * @phpstan-return ArrayValue<TValue>
      */
     public function each(callable $callback): ArrayValue;
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return ArrayValue
+     * @param callable(TValue $valueA, TValue $valueB): int|null $comparator
+     * @phpstan-return ArrayValue<TValue>
      */
     public function unique(?callable $comparator = null): ArrayValue;
 
     /**
-     * @return mixed[]
+     * @phpstan-return array<int, TValue>
      */
     public function toArray(): array;
 
     /**
-     * @param callable $filter function(mixed $value): bool
-     * @return ArrayValue
+     * @param callable(TValue $value):bool $filter
+     * @phpstan-return ArrayValue<TValue>
      */
     public function filter(callable $filter): ArrayValue;
 
     /**
-     * @return ArrayValue
+     * @phpstan-return ArrayValue<TValue>
      */
     public function filterEmpty(): ArrayValue;
 
     /**
-     * @param callable $transformer function(mixed $value): mixed
-     * @return ArrayValue
+     * @template TNewValue
+     * @param callable(TValue $value):TNewValue $transformer
+     * @phpstan-return ArrayValue<TNewValue>
      */
     public function map(callable $transformer): ArrayValue;
 
     /**
-     * @param callable $transformer function(mixed $value): iterable
-     * @return ArrayValue
+     * @template TNewValue
+     * @param callable(TValue $value):iterable<TNewValue> $transformer
+     * @phpstan-return ArrayValue<TNewValue>
      */
     public function flatMap(callable $transformer): ArrayValue;
 
     /**
-     * @param callable $reducer function(mixed $value): string|int|bool
-     * @return AssocValue AssocValue<ArrayValue>
+     * @template TNewKey
+     * @param callable(TValue $value):TNewKey $reducer
+     * @phpstan-return AssocValue<TNewKey, ArrayValue<TValue>>
      */
     public function groupBy(callable $reducer): AssocValue;
 
     /**
-     * @return ArrayValue
+     * @phpstan-return ArrayValue<array<int, TValue>>
      */
     public function chunk(int $size): ArrayValue;
 
     /**
-     * @param callable $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return ArrayValue
+     * @param callable(TValue $valueA, TValue $valueB): int $comparator
+     * @phpstan-return ArrayValue<TValue>
      */
     public function sort(callable $comparator): ArrayValue;
 
     /**
-     * @return ArrayValue
+     * @phpstan-return ArrayValue<TValue>
      */
     public function shuffle(): ArrayValue;
 
     /**
-     * @return ArrayValue
+     * @phpstan-return ArrayValue<TValue>
      */
     public function reverse(): ArrayValue;
 
     // Stack
 
     /**
-     * @param mixed $value
-     * @return ArrayValue
+     * @phpstan-param TValue $value
+     * @phpstan-return ArrayValue<TValue>
      */
     public function unshift($value): ArrayValue;
 
     /**
-     * @param mixed $value
-     * @return ArrayValue
+     * @phpstan-param TValue $value
+     * @phpstan-return ArrayValue<TValue>
      */
     public function shift(&$value = null): ArrayValue;
 
     /**
-     * @param mixed $value
-     * @return ArrayValue
+     * @phpstan-param TValue $value
+     * @phpstan-return ArrayValue<TValue>
      */
     public function push($value): ArrayValue;
 
     /**
-     * @param mixed $value
-     * @return ArrayValue
+     * @phpstan-param TValue $value
+     * @phpstan-return ArrayValue<TValue>
      */
     public function pop(&$value = null): ArrayValue;
 
@@ -110,68 +119,75 @@ interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayA
 
     /**
      * @param int $offset
-     * @return mixed
+     * @phpstan-return TValue
      */
     public function offsetGet($offset);
 
     /**
      * @param int $offset
-     * @param mixed $value
-     * @return void
-     * @throws \BadMethodCallException For immutable types.
+     * @param TValue $value
+     * @throws BadMethodCallException For immutable types.
      */
     public function offsetSet($offset, $value): void;
 
     /**
      * @param int $offset
      * @return void
-     * @throws \BadMethodCallException For immutable types.
+     * @throws BadMethodCallException For immutable types.
      */
     public function offsetUnset($offset): void;
 
     // ArrayValue own
 
     /**
-     * @return ArrayValue
+     * @phpstan-param ArrayValue<TValue> $other
+     * @phpstan-return ArrayValue<TValue>
      */
     public function join(ArrayValue $other): ArrayValue;
 
     /**
-     * @return ArrayValue
+     * @phpstan-return ArrayValue<TValue>
      */
     public function slice(int $offset, int $length): ArrayValue;
 
     /**
-     * @return ArrayValue
+     * @phpstan-param ArrayValue<TValue> $replacement
+     * @phpstan-return ArrayValue<TValue>
      */
     public function splice(int $offset, int $length, ?ArrayValue $replacement = null): ArrayValue;
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return ArrayValue
+     * @phpstan-param ArrayValue<TValue> $other
+     * @param callable(TValue $valueA, TValue $valueB): int|null $comparator
+     * @phpstan-return ArrayValue<TValue>
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): ArrayValue;
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return ArrayValue
+     * @param ArrayValue<TValue> $other
+     * @param callable(TValue $valueA, TValue $valueB): int|null $comparator
+     * @return ArrayValue<TValue>
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): ArrayValue;
 
     /**
-     * @param callable $transformer function(mixed $reduced, mixed $value): mixed
-     * @param mixed $start
-     * @return mixed
+     * @template TNewValue
+     * @param callable(TNewValue $reduced, TValue $value):TNewValue $transformer
+     * @phpstan-param TNewValue $start
+     * @phpstan-return TNewValue
      */
     public function reduce(callable $transformer, $start);
 
     public function implode(string $glue): StringValue;
 
     /**
-     * @return ArrayValue
+     * @phpstan-return ArrayValue<TValue>
      */
     public function notEmpty(): ArrayValue;
 
+    /**
+     * @phpstan-return AssocValue<int, TValue>
+     */
     public function toAssocValue(): AssocValue;
 
     public function toStringsArray(): StringsArray;
