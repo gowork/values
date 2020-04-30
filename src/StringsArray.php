@@ -136,8 +136,8 @@ interface StringsArray extends ArrayValue, StringValue
     /**
      * @template TNewValue
      * @param callable(TNewValue $reduced, StringValue $value):TNewValue $transformer
-     * @param TNewValue $start
-     * @return TNewValue
+     * @phpstan-paramparam TNewValue $start
+     * @phpstan-paramreturn TNewValue
      */
     public function reduce(callable $transformer, $start);
 
