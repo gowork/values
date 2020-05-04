@@ -64,25 +64,25 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess
     // ArrayAccess
 
     /**
-     * @param TKey $offset
+     * @phpstan-param TKey $offset
      */
     public function offsetExists($offset): bool;
 
     /**
-     * @param TKey $offset
+     * @phpstan-param TKey $offset
      * @return ?TValue
      */
     public function offsetGet($offset);
 
     /**
-     * @param TKey $offset
-     * @param TValue $value
+     * @phpstan-param TKey $offset
+     * @phpstan-param TValue $value
      * @throws BadMethodCallException For immutable types.
      */
     public function offsetSet($offset, $value): void;
 
     /**
-     * @param TKey $offset
+     * @phpstan-param TKey $offset
      * @throws BadMethodCallException For immutable types.
      */
     public function offsetUnset($offset): void;
@@ -90,17 +90,17 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess
     // AssocValue own
 
     /**
-     * @return array<TKey, TValue>
+     * @phpstan-return array<TKey, TValue>
      */
     public function toAssocArray(): array;
 
     /**
-     * @return ArrayValue<TKey>
+     * @phpstan-return ArrayValue<TKey>
      */
     public function keys(): ArrayValue;
 
     /**
-     * @return ArrayValue<TValue>
+     * @phpstan-return ArrayValue<TValue>
      */
     public function values(): ArrayValue;
 

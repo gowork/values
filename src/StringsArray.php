@@ -136,8 +136,8 @@ interface StringsArray extends ArrayValue, StringValue
     /**
      * @template TNewValue
      * @param callable(TNewValue $reduced, StringValue $value):TNewValue $transformer
-     * @phpstan-paramparam TNewValue $start
-     * @phpstan-paramreturn TNewValue
+     * @phpstan-param TNewValue $start
+     * @phpstan-return TNewValue
      */
     public function reduce(callable $transformer, $start);
 
@@ -225,14 +225,14 @@ interface StringsArray extends ArrayValue, StringValue
 
     /**
      * @return StringsArray
-     * @param array|ArrayValue $search
+     * @param array<int,string>|ArrayValue<string> $search
      * @param string|StringValue $replace
      */
     public function replaceAll($search, $replace): StringsArray;
 
     /**
      * @return StringsArray
-     * @param array|AssocValue $pairs
+     * @param array<string,string>|AssocValue<string,string> $pairs
      */
     public function replacePairs($pairs): StringsArray;
 

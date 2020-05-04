@@ -35,7 +35,13 @@ final class AssocArray implements AssocValue
      */
     public function map(callable $transformer): AssocArray
     {
-        return new self(array_map($transformer, $this->items, array_keys($this->items)));
+        $result = [];
+        foreach ($this->items as $key => $value) {
+            $result[$key] = $transformer($value, $key);
+        }
+
+        /** @phpstan-var array<TKey, TNewValue> $result */
+        return new self($result);
     }
 
     /**

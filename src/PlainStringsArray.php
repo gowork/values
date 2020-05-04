@@ -59,7 +59,7 @@ final class PlainStringsArray implements StringsArray
 
     /**
      * @param StringsArray $other
-     * @param callable(StringValue $valueA, StringValue $valueB): int|null $comparator
+     * @param callable(StringValue $valueA, StringValue $valueB):int|null $comparator
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): PlainStringsArray
     {
@@ -414,7 +414,7 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
-     * @param array|ArrayValue $search
+     * @param array<int,string>|ArrayValue<string> $search
      * @param string|StringValue $replace
      */
     public function replaceAll($search, $replace): PlainStringsArray
@@ -423,7 +423,7 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
-     * @param array|AssocValue $pairs
+     * @param array<string,string>|AssocValue<string,string> $pairs
      */
     public function replacePairs($pairs): PlainStringsArray
     {

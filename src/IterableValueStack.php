@@ -12,7 +12,7 @@ final class IterableValueStack
     /** @phpstan-var IterableValueIterator<TKey, TValue> */
     private IterableValueIterator $iterable;
 
-    /** @phpstan-var array<int, (callable(iterable<TKey, TValue> $value): iterable<TNewKey, TNewValue>)> */
+    /** @phpstan-var array<int, (callable(iterable<TKey, TValue> $value): iterable<mixed, mixed>)> */
     private array $modifiers = [];
 
     /**
@@ -37,6 +37,11 @@ final class IterableValueStack
         return $clone;
     }
 
+    /**
+     * @phpstan-param array<int, (callable(iterable<TKey, TValue> $value): iterable<TKey, TValue>)> $modifiers
+     * @phpstan-param iterable<TKey, TValue> $iterable
+     * @phpstan-return iterable<TKey, TValue>
+     */
     private function next(array &$modifiers, iterable &$iterable, int $i): iterable
     {
         if (!isset($modifiers[$i])) {

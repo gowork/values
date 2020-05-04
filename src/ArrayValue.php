@@ -165,6 +165,7 @@ interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayA
     public function diff(ArrayValue $other, ?callable $comparator = null): ArrayValue;
 
     /**
+     * @template TOtherValue
      * @phpstan-param ArrayValue<TValue> $other
      * @param (callable(TValue $valueA, TOtherValue $valueB):int)|null $comparator
      * @phpstan-return ArrayValue<TValue>

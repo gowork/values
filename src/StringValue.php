@@ -87,14 +87,14 @@ interface StringValue extends Value
 
     /**
      * @return StringValue
-     * @param array|ArrayValue $search
+     * @param array<int,string>|ArrayValue<string> $search
      * @param string|StringValue $replace
      */
     public function replaceAll($search, $replace): StringValue;
 
     /**
      * @return StringValue
-     * @param array|AssocValue $pairs
+     * @param array<string,string>|AssocValue<string,string> $pairs
      */
     public function replacePairs($pairs): StringValue;
 
