@@ -55,7 +55,7 @@ final class AssocArray implements AssocValue
     /**
      * @template TNewKey
      * @param callable(TKey $key, TValue $value=): TNewKey $transformer
-     * @return AssocArray<TNewKey, TValue>
+     * @phpstan-return AssocArray<TNewKey, TValue>
      */
     public function mapKeys(callable $transformer): AssocArray
     {
@@ -69,7 +69,7 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @return AssocArray<TKey, TValue>
+     * @phpstan-return AssocArray<TKey, TValue>
      */
     public function filterEmpty(): AssocArray
     {
@@ -78,7 +78,7 @@ final class AssocArray implements AssocValue
 
     /**
      * @param callable(TValue $value):bool $filter
-     * @return AssocArray<TKey, TValue>
+     * @phpstan-return AssocArray<TKey, TValue>
      */
     public function filter(callable $filter): AssocArray
     {
@@ -87,7 +87,7 @@ final class AssocArray implements AssocValue
 
     /**
      * @param callable(TValue $valueA, TValue $valueB):int $comparator
-     * @return AssocArray<TKey, TValue>
+     * @phpstan-return AssocArray<TKey, TValue>
      */
     public function sort(callable $comparator): AssocArray
     {
@@ -98,7 +98,7 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @return AssocArray<TKey, TValue>
+     * @phpstan-return AssocArray<TKey, TValue>
      */
     public function reverse(): AssocArray
     {
@@ -106,7 +106,7 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @return AssocArray<TKey, TValue>
+     * @phpstan-return AssocArray<TKey, TValue>
      */
     public function shuffle(): AssocArray
     {
@@ -118,7 +118,7 @@ final class AssocArray implements AssocValue
 
     /**
      * @param callable(TKey $keyA, TKey $keyB): int $comparator
-     * @return AssocArray<TKey, TValue>
+     * @phpstan-return AssocArray<TKey, TValue>
      */
     public function sortKeys(callable $comparator): AssocArray
     {

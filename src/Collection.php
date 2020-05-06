@@ -10,24 +10,24 @@ namespace GW\Value;
 interface Collection extends Filterable, Mappable, Sortable, Countable, Reversible
 {
     /**
-     * @phpstan-return TValue
+     * @phpstan-return TValue|null
      */
     public function first();
 
     /**
-     * @phpstan-return TValue
+     * @phpstan-return TValue|null
      */
     public function last();
 
     /**
      * @param callable(TValue $value): bool $filter
-     * @phpstan-return TValue
+     * @phpstan-return TValue|null
      */
     public function find(callable $filter);
 
     /**
      * @param callable(TValue $value): bool $filter
-     * @phpstan-return TValue
+     * @phpstan-return TValue|null
      */
     public function findLast(callable $filter);
 
