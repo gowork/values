@@ -6,7 +6,7 @@ $array = Wrap::array(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
 
 var_export(
     $array->toAssocValue()
-        ->mapKeys(function (string $oldKey, string $value): string {
+        ->mapKeys(function (int $oldKey, string $value): string {
             return "{$oldKey}:{$value}";
         })
         ->toAssocArray()

@@ -10,7 +10,7 @@ var_export(
         ->map(function (StringValue $person): string {
             return $person->toString();
         })
-        ->mapKeys(function (string $oldKey, string $person): string {
+        ->mapKeys(function (int $oldKey, string $person): string {
             return $person;
         })
         ->toAssocArray()

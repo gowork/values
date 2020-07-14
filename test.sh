@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./bin/phpstan analyse src --level=8
+./bin/phpstan analyse src examples --level=8

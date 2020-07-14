@@ -6,8 +6,8 @@ final class Wrap
 {
     /**
      * @template TValue
-     * @param array<mixed, TValue> $array
-     * @return ArrayValue<TValue>
+     * @phpstan-param array<mixed, TValue> $array
+     * @phpstan-return ArrayValue<TValue>
      */
     public static function array(array $array = []): ArrayValue
     {
@@ -17,8 +17,8 @@ final class Wrap
     /**
      * @template TKey
      * @template TValue
-     * @param iterable<TKey, TValue> $iterator
-     * @return InfiniteIterableValue<TKey, TValue>
+     * @phpstan-param iterable<TKey, TValue> $iterator
+     * @phpstan-return InfiniteIterableValue<TKey, TValue>
      */
     public static function iterable(iterable $iterator = []): InfiniteIterableValue
     {
@@ -27,8 +27,8 @@ final class Wrap
 
     /**
      * @template TValue
-     * @param array<int, TValue> $array
-     * @return ArrayValue<TValue>
+     * @phpstan-param TValue ...$array
+     * @phpstan-return ArrayValue<TValue>
      */
     public static function arrayFromValues(...$array): ArrayValue
     {
@@ -38,8 +38,8 @@ final class Wrap
     /**
      * @template TKey
      * @template TValue
-     * @param array<TKey, TValue> $array
-     * @return AssocValue<TKey, TValue>
+     * @phpstan-param array<TKey, TValue> $array
+     * @phpstan-return AssocValue<TKey, TValue>
      */
     public static function assocArray(array $array = []): AssocValue
     {

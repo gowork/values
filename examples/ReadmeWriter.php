@@ -5,29 +5,38 @@ namespace doc\GW\Value;
 use GW\Value\Collection;
 use GW\Value\StringValue;
 use GW\Value\Wrap;
+use ReflectionClass;
+use function trim;
 
 final class ReadmeWriter
 {
+    /** @param array<class-string<object>> $classes */
     public function describeClasses(array $classes): StringValue
     {
         $markdown = Template::fromFile(__DIR__ . '/template/README.md');
 
         $classTemplates = Wrap::array($classes)
-            ->map(function(string $classRef): Template {
-                $class = new \ReflectionClass($classRef);
-                $classTemplate = $this->classTemplate($class);
+            ->map(
+                /** @param class-string<object> $classRef */
+                function (string $classRef): Template {
+                    $class = new ReflectionClass($classRef);
+                    $classTemplate = $this->classTemplate($class);
 
-                $methodTemplates = Wrap::array($class->getMethods())
-                    ->map(function(\ReflectionMethod $method) use ($class): Template {
-                        return $this->methodTemplate($class, $method);
-                    });
+                    $methodTemplates = Wrap::array($class->getMethods())
+                        ->map(
+                            function (\ReflectionMethod $method) use ($class): Template {
+                                return $this->methodTemplate($class, $method);
+                            }
+                        );
 
-                return $classTemplate->withParam('methods', $methodTemplates->implode(''));
-            });
+                    return $classTemplate->withParam('methods', $methodTemplates->implode(''));
+                }
+            );
 
         return $markdown->withParam('classes', $classTemplates->implode(''))->render();
     }
 
+    /** @param ReflectionClass<object> $class */
     private function classTemplate(\ReflectionClass $class): Template
     {
         $className = $this->className($class->name);
@@ -42,6 +51,7 @@ final class ReadmeWriter
         return $template;
     }
 
+    /** @param ReflectionClass<object> $class */
     private function methodTemplate(\ReflectionClass $class, \ReflectionMethod $method): Template
     {
         $className = $this->className($class->getName());
@@ -76,7 +86,7 @@ final class ReadmeWriter
 
     private function className(string $class): string
     {
-        return Wrap::string($class)->explode('\\')->last();
+        return (string)Wrap::string($class)->explode('\\')->last();
     }
 
     private function methodDeclaration(\ReflectionMethod $method): StringValue
@@ -85,19 +95,23 @@ final class ReadmeWriter
             return Wrap::string('');
         }
 
-        return $this->getFileLines($method->getFileName(), $method->getStartLine(), $method->getEndLine());
+        return $this->getFileLines(
+            $method->getFileName(),
+            $method->getStartLine() ?: 0,
+            $method->getEndLine() ?: 0
+        );
     }
 
     private function getFileLines(string $file, int $start, int $end): StringValue
     {
-        return Wrap::stringsArray(file($file, FILE_IGNORE_NEW_LINES))
+        return Wrap::stringsArray(file($file, FILE_IGNORE_NEW_LINES) ?: [])
             ->slice($start - 1, $end - $start + 1)
             ->implode(PHP_EOL);
     }
 
     private function methodDoc(\ReflectionMethod $method): StringValue
     {
-        return Wrap::string($method->getDocComment())
+        return Wrap::string($method->getDocComment() ?: '')
             ->explode(PHP_EOL)
             ->trim()
             ->map(function(StringValue $line): StringValue {
@@ -120,8 +134,8 @@ final class ReadmeWriter
         ob_end_clean();
 
         return Template::fromFile(__DIR__ . '/template/ClassMethodExample.md')
-            ->withParam('source', trim(file_get_contents($exampleFile)))
-            ->withParam('output', trim($output))
+            ->withParam('source', trim(file_get_contents($exampleFile) ?: ''))
+            ->withParam('output', trim($output ?: ''))
             ->render();
     }
 }

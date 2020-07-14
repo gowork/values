@@ -2,7 +2,8 @@
 
 use GW\Value\Wrap;
 
-$range = function (int $start, int $end) {
+/** @return iterable<int> */
+$range = static function (int $start, int $end) {
     for ($i = $start; $i <= $end; $i++) {
         yield $i;
     }
