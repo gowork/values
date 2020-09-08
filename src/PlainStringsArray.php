@@ -326,7 +326,7 @@ final class PlainStringsArray implements StringsArray
 
     public function stripTags(): PlainStringsArray
     {
-        return $this->map(fn(StringValue $item) : StringValue=> $item->stripTags());
+        return $this->map(fn(StringValue $item): StringValue => $item->stripTags());
     }
 
     /**
@@ -365,7 +365,7 @@ final class PlainStringsArray implements StringsArray
 
     public function lowerFirst(): PlainStringsArray
     {
-        return $this->map(fn(StringValue $item) : StringValue=> $item->lowerFirst());
+        return $this->map(fn(StringValue $item): StringValue => $item->lowerFirst());
     }
 
     public function upperFirst(): PlainStringsArray
