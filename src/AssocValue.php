@@ -125,11 +125,10 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess
     public function with($key, $value): AssocValue;
 
     /**
-     * @phpstan-param TKey $key
      * @phpstan-param array<int, TKey> $keys
      * @phpstan-return AssocValue<TKey, TValue>
      */
-    public function without($key, ...$keys): AssocValue;
+    public function without(...$keys): AssocValue;
 
     /**
      * @phpstan-param array<int, TKey> $keys

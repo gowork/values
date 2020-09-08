@@ -190,14 +190,13 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @phpstan-param TKey $key
      * @phpstan-param array<int, TKey> $keys
      * @phpstan-return AssocArray<TKey, TValue>
      * @phpstan-ignore-next-line phpstan does not support generic variadics
      */
-    public function without($key, ...$keys): AssocArray
+    public function without(...$keys): AssocArray
     {
-        return new self(array_diff_key($this->items, array_flip([$key, ...$keys])));
+        return new self(array_diff_key($this->items, array_flip($keys)));
     }
 
     /**
