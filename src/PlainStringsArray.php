@@ -94,9 +94,9 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
-     * @template TNewKey
-     * @param callable(StringValue $value):TNewKey $reducer
-     * @phpstan-return AssocValue<TNewKey, ArrayValue<StringValue>>
+     * @param callable(StringValue $value):string $reducer
+     * @phpstan-return AssocValue<string, ArrayValue<StringValue>>
+     * @phpstan-ignore-next-line shrug
      */
     public function groupBy(callable $reducer): AssocValue
     {
@@ -106,9 +106,7 @@ final class PlainStringsArray implements StringsArray
             // @phpstan-ignore-next-line shrug
             ->map(
                 /** @return ArrayValue<StringValue> */
-                static function (ArrayValue $value): ArrayValue {
-                    return $value->toStringsArray();
-                }
+                static fn(ArrayValue $value): ArrayValue => $value->toStringsArray()
             );
     }
 

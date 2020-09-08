@@ -19,15 +19,12 @@ final class ReadmeWriter
             ->map(
                 /** @param class-string<object> $classRef */
                 function (string $classRef): Template {
+                    /** @phpstan-ignore-next-line shrug */
                     $class = new ReflectionClass($classRef);
                     $classTemplate = $this->classTemplate($class);
 
                     $methodTemplates = Wrap::array($class->getMethods())
-                        ->map(
-                            function (\ReflectionMethod $method) use ($class): Template {
-                                return $this->methodTemplate($class, $method);
-                            }
-                        );
+                        ->map(fn(\ReflectionMethod $method): Template => $this->methodTemplate($class, $method));
 
                     return $classTemplate->withParam('methods', $methodTemplates->implode(''));
                 }

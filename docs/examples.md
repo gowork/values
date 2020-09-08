@@ -2353,7 +2353,7 @@ $stopwords = ['i', 'to', 'a', 'the', 'of'];
 $wordGroups = Wrap::string($text)
     ->lower()
     ->explode(' ')
-    ->groupBy(function (string $word) use ($stopwords): string {
+    ->groupBy(function (StringValue $word) use ($stopwords): string {
         return in_array($word, $stopwords, true) ? 'stopwords' : 'words';
     });
 
