@@ -22,7 +22,7 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess
     public function each(callable $callback): AssocValue;
 
     /**
-     * @phpstan-param callable(TValue $valueA, TValue $valueB):int|null $comparator
+     * @phpstan-param (callable(TValue $valueA, TValue $valueB):int)|null $comparator
      * @phpstan-return AssocValue<TKey, TValue>
      */
     public function unique(?callable $comparator = null): AssocValue;

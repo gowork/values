@@ -20,7 +20,7 @@ interface Collection extends Filterable, Mappable, Sortable, Countable, Reversib
     public function last();
 
     /**
-     * @param callable(TValue $value): bool $filter
+     * @param callable(TValue $value):bool $filter
      * @phpstan-return TValue|null
      */
     public function find(callable $filter);
@@ -37,23 +37,23 @@ interface Collection extends Filterable, Mappable, Sortable, Countable, Reversib
     public function hasElement($element): bool;
 
     /**
-     * @param callable(TValue $value): bool $filter
+     * @param callable(TValue $value):bool $filter
      */
     public function any(callable $filter): bool;
 
     /**
-     * @param callable(TValue $value): bool $filter
+     * @param callable(TValue $value):bool $filter
      */
     public function every(callable $filter): bool;
 
     /**
-     * @param callable(TValue $value): void $callback
+     * @param callable(TValue $value):void $callback
      * @phpstan-return Collection<TValue>
      */
     public function each(callable $callback): Collection;
 
     /**
-     * @param callable(TValue $valueA, TValue $valueB):int|null $comparator
+     * @param (callable(TValue $valueA, TValue $valueB):int)|null $comparator
      * @phpstan-return Collection<TValue>
      */
     public function unique(?callable $comparator = null): Collection;
@@ -64,7 +64,7 @@ interface Collection extends Filterable, Mappable, Sortable, Countable, Reversib
     public function toArray(): array;
 
     /**
-     * @param callable(TValue $value): bool $filter
+     * @param callable(TValue $value):bool $filter
      * @phpstan-return Collection<TValue>
      */
     public function filter(callable $filter): Collection;
@@ -76,7 +76,7 @@ interface Collection extends Filterable, Mappable, Sortable, Countable, Reversib
 
     /**
      * @template TNewValue
-     * @param callable(TValue $value): TNewValue $transformer
+     * @param callable(TValue $value):TNewValue $transformer
      * @phpstan-return Collection<TNewValue>
      */
     public function map(callable $transformer): Collection;

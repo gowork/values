@@ -123,13 +123,13 @@ interface StringsArray extends ArrayValue, StringValue
 
     /**
      * @param StringsArray $other
-     * @param callable(StringValue $valueA, StringValue $valueB): int|null $comparator
+     * @param (callable(StringValue $valueA, StringValue $valueB):int)|null $comparator
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): StringsArray;
 
     /**
      * @param StringsArray $other
-     * @param callable(StringValue $valueA, StringValue $valueB): int|null $comparator
+     * @param (callable(StringValue $valueA, StringValue $valueB):int)|null $comparator
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): StringsArray;
 

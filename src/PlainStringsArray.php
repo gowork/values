@@ -50,7 +50,7 @@ final class PlainStringsArray implements StringsArray
 
     /**
      * @param StringsArray $other
-     * @param callable(StringValue $valueA, StringValue $valueB): int|null $comparator
+     * @param (callable(StringValue $valueA, StringValue $valueB):int)|null $comparator
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): PlainStringsArray
     {
@@ -193,7 +193,7 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
-     * @param callable(StringValue $valueA, StringValue $valueB): int|null $comparator
+     * @param (callable(StringValue $valueA, StringValue $valueB):int)|null $comparator
      */
     public function unique(?callable $comparator = null): PlainStringsArray
     {

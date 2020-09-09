@@ -21,7 +21,7 @@ interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayA
     public function each(callable $callback): ArrayValue;
 
     /**
-     * @param callable(TValue $valueA, TValue $valueB): int|null $comparator
+     * @param (callable(TValue $valueA, TValue $valueB):int)|null $comparator
      * @phpstan-return ArrayValue<TValue>
      */
     public function unique(?callable $comparator = null): ArrayValue;
