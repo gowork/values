@@ -1,93 +1,99 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace GW\Value;
 
+/**
+ * @template TValue
+ * @extends Mappable<TValue>
+ * @extends Filterable<TValue>
+ */
 interface Collection extends Filterable, Mappable, Sortable, Countable, Reversible
 {
     /**
-     * @return mixed
+     * @phpstan-return TValue|null
      */
     public function first();
 
     /**
-     * @return mixed
+     * @phpstan-return TValue|null
      */
     public function last();
 
     /**
-     * @param callable $filter function(mixed $value): bool
-     * @return mixed
+     * @param callable(TValue $value):bool $filter
+     * @phpstan-return TValue|null
      */
     public function find(callable $filter);
 
     /**
-     * @param callable $filter function(mixed $value): bool
-     * @return mixed
+     * @param callable(TValue $value): bool $filter
+     * @phpstan-return TValue|null
      */
     public function findLast(callable $filter);
 
     /**
-     * @param mixed $element
+     * @phpstan-param TValue $element
      */
     public function hasElement($element): bool;
 
     /**
-     * @param callable $filter function(mixed $value): bool
+     * @param callable(TValue $value):bool $filter
      */
     public function any(callable $filter): bool;
 
     /**
-     * @param callable $filter function(mixed $value): bool
+     * @param callable(TValue $value):bool $filter
      */
     public function every(callable $filter): bool;
 
     /**
-     * @param callable $callback function(mixed $value): void
-     * @return Collection
+     * @param callable(TValue $value):void $callback
+     * @phpstan-return Collection<TValue>
      */
     public function each(callable $callback): Collection;
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return Collection
+     * @param (callable(TValue $valueA, TValue $valueB):int)|null $comparator
+     * @phpstan-return Collection<TValue>
      */
     public function unique(?callable $comparator = null): Collection;
 
     /**
-     * @return mixed[]
+     * @phpstan-return array<int, TValue>
      */
     public function toArray(): array;
 
     /**
-     * @param callable $filter function(mixed $value): bool
-     * @return Collection
+     * @param callable(TValue $value):bool $filter
+     * @phpstan-return Collection<TValue>
      */
     public function filter(callable $filter): Collection;
 
     /**
-     * @return Collection
+     * @phpstan-return Collection<TValue>
      */
     public function filterEmpty(): Collection;
 
     /**
-     * @param callable $transformer function(mixed $value): mixed
-     * @return Collection
+     * @template TNewValue
+     * @param callable(TValue $value):TNewValue $transformer
+     * @phpstan-return Collection<TNewValue>
      */
     public function map(callable $transformer): Collection;
 
     /**
-     * @param callable $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return Collection
+     * @param callable(TValue $valueA, TValue $valueB):int $comparator
+     * @phpstan-return Collection<TValue>
      */
     public function sort(callable $comparator): Collection;
 
     /**
-     * @return Collection
+     * @phpstan-return Collection<TValue>
      */
     public function shuffle(): Collection;
 
     /**
-     * @return Collection
+     * @phpstan-return Collection<TValue>
      */
     public function reverse(): Collection;
 }

@@ -2,11 +2,15 @@
 
 namespace GW\Value;
 
+/**
+ * @template TValue
+ */
 interface Mappable
 {
     /**
-     * @param callable $transformer function(mixed $value): mixed
-     * @return Mappable
+     * @template TNewValue
+     * @param callable(TValue $value):TNewValue $transformer
+     * @return Mappable<TNewValue>
      */
     public function map(callable $transformer): Mappable;
 }

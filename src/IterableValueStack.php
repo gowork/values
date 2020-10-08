@@ -4,27 +4,31 @@ namespace GW\Value;
 
 /**
  * @internal
+ * @template TKey
+ * @template TValue
  */
 final class IterableValueStack
 {
+    /** @phpstan-var IterableValueIterator<TKey, TValue> */
     private IterableValueIterator $iterable;
 
-    /** @var callable[] */
+    /** @phpstan-var array<int, (callable(iterable<TKey, TValue> $value): iterable<mixed, mixed>)> */
     private array $modifiers = [];
 
+    /**
+     * @phpstan-param IterableValueIterator<TKey, TValue> $iterable
+     */
     public function __construct(IterableValueIterator $iterable)
     {
         $this->iterable = $iterable;
     }
 
-    public function replaceIterator(IterableValueIterator $iterable): self
-    {
-        $clone = clone $this;
-        $clone->iterable = $iterable;
-
-        return $clone;
-    }
-
+    /**
+     * @template TNewKey
+     * @template TNewValue
+     * @param callable(iterable<TKey, TValue> $value): iterable<TNewKey, TNewValue> $modifier
+     * @phpstan-return IterableValueStack<TNewKey, TNewValue>
+     */
     public function push(callable $modifier): self
     {
         $clone = clone $this;
@@ -33,6 +37,11 @@ final class IterableValueStack
         return $clone;
     }
 
+    /**
+     * @phpstan-param array<int, (callable(iterable<TKey, TValue> $value): iterable<TKey, TValue>)> $modifiers
+     * @phpstan-param iterable<TKey, TValue> $iterable
+     * @phpstan-return iterable<TKey, TValue>
+     */
     private function next(array &$modifiers, iterable &$iterable, int $i): iterable
     {
         if (!isset($modifiers[$i])) {
@@ -44,6 +53,9 @@ final class IterableValueStack
         yield from $modifiers[$i--]($this->next($modifiers, $iterable, $i));
     }
 
+    /**
+     * @phpstan-return iterable<TKey, TValue>
+     */
     public function iterate(): iterable
     {
         $iterable = ($this->iterable)();

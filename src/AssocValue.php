@@ -1,146 +1,170 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace GW\Value;
 
+use BadMethodCallException;
 use IteratorAggregate;
 use ArrayAccess;
 
+/**
+ * @template TKey
+ * @template TValue
+ * @extends Collection<TValue>
+ * @extends IteratorAggregate<TKey, TValue>
+ * @extends ArrayAccess<TKey, TValue>
+ */
 interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess
 {
-    // Collection
     /**
-     * @param callable $callback function(mixed $value): void
-     * @return AssocValue
+     * @phpstan-param callable(TValue $value, TKey $key=):void $callback
+     * @phpstan-return AssocValue<TKey, TValue>
      */
     public function each(callable $callback): AssocValue;
 
     /**
-     * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return AssocValue
+     * @phpstan-param (callable(TValue $valueA, TValue $valueB):int)|null $comparator
+     * @phpstan-return AssocValue<TKey, TValue>
      */
     public function unique(?callable $comparator = null): AssocValue;
 
     /**
-     * @param callable $filter function(mixed $value): bool
-     * @return AssocValue
+     * @phpstan-param callable(TValue $value):bool $filter
+     * @phpstan-return AssocValue<TKey, TValue>
      */
     public function filter(callable $filter): AssocValue;
 
     /**
-     * @return AssocValue
+     * @phpstan-return AssocValue<TKey, TValue>
      */
     public function filterEmpty(): AssocValue;
 
     /**
-     * @param callable $transformer function(mixed $value[, string $key]): mixed
-     * @return AssocValue
+     * @template TNewValue
+     * @param callable(TValue $value, TKey $key=):TNewValue $transformer
+     * @phpstan-return AssocValue<TKey, TNewValue>
      */
     public function map(callable $transformer): AssocValue;
 
     /**
-     * @param callable $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return AssocValue
+     * @param callable(TValue $valueA, TValue $valueB):int $comparator
+     * @phpstan-return AssocValue<TKey, TValue>
      */
     public function sort(callable $comparator): AssocValue;
 
     /**
-     * @return AssocValue
+     * @phpstan-return AssocValue<TKey, TValue>
      */
     public function shuffle(): AssocValue;
 
     /**
-     * @return AssocValue
+     * @phpstan-return AssocValue<TKey, TValue>
      */
     public function reverse(): AssocValue;
 
     // ArrayAccess
 
     /**
-     * @param string $offset
+     * @phpstan-param TKey $offset
      */
     public function offsetExists($offset): bool;
 
     /**
-     * @param string $offset
-     * @return mixed
+     * @phpstan-param TKey $offset
+     * @return ?TValue
      */
     public function offsetGet($offset);
 
     /**
-     * @param string $offset
-     * @param mixed $value
-     * @return void
-     * @throws \BadMethodCallException For immutable types.
+     * @phpstan-param TKey $offset
+     * @phpstan-param TValue $value
+     * @throws BadMethodCallException For immutable types.
      */
     public function offsetSet($offset, $value): void;
 
     /**
-     * @param string $offset
-     * @return void
-     * @throws \BadMethodCallException For immutable types.
+     * @phpstan-param TKey $offset
+     * @throws BadMethodCallException For immutable types.
      */
     public function offsetUnset($offset): void;
 
     // AssocValue own
 
+    /**
+     * @phpstan-return array<TKey, TValue>
+     */
     public function toAssocArray(): array;
 
-    public function keys(): StringsArray;
+    /**
+     * @phpstan-return ArrayValue<TKey>
+     */
+    public function keys(): ArrayValue;
 
+    /**
+     * @phpstan-return ArrayValue<TValue>
+     */
     public function values(): ArrayValue;
 
     /**
-     * @param callable $transformer function(string $key[, mixed $value]): string
-     * @return AssocValue
+     * @template TNewKey
+     * @phpstan-param callable(TKey $key, TValue $value=): TNewKey $transformer
+     * @phpstan-return AssocValue<TNewKey, TValue>
      */
     public function mapKeys(callable $transformer): AssocValue;
 
     /**
-     * @param callable $comparator function(string $keyA, string $keyB): int{-1, 1}
-     * @return AssocValue
+     * @phpstan-param callable(TKey $keyA, TKey $keyB): int $comparator
+     * @phpstan-return AssocValue<TKey, TValue>
      */
     public function sortKeys(callable $comparator): AssocValue;
 
     /**
-     * @param mixed $value
-     * @return AssocValue
+     * @phpstan-param TKey $key
+     * @phpstan-param TValue $value
+     * @phpstan-return AssocValue<TKey, TValue>
      */
-    public function with(string $key, $value): AssocValue;
+    public function with($key, $value): AssocValue;
 
     /**
-     * @return AssocValue
+     * @phpstan-param array<int, TKey> $keys
+     * @phpstan-return AssocValue<TKey, TValue>
      */
-    public function without(string ...$keys): AssocValue;
+    public function without(...$keys): AssocValue;
 
     /**
-     * @return AssocValue
+     * @phpstan-param array<int, TKey> $keys
+     * @phpstan-return AssocValue<TKey, TValue>
      */
-    public function only(string ...$keys): AssocValue;
+    public function only(...$keys): AssocValue;
 
     /**
-     * @param mixed $value
-     * @return AssocValue
+     * @phpstan-param TValue $value
+     * @phpstan-return AssocValue<TKey, TValue>
      */
     public function withoutElement($value): AssocValue;
 
     /**
-     * @param AssocValue $other
-     * @return AssocValue
+     * @phpstan-param AssocValue<TKey, TValue> $other
+     * @phpstan-return AssocValue<TKey, TValue>
      */
     public function merge(AssocValue $other): AssocValue;
 
     /**
-     * @param callable $transformer function(mixed $reduced, mixed $value, string $key): mixed
-     * @param mixed $start
-     * @return mixed
+     * @template TNewValue
+     * @param callable(TNewValue $reduced, TValue $value, string $key):TNewValue $transformer
+     * @phpstan-param TNewValue $start
+     * @phpstan-return TNewValue
      */
     public function reduce(callable $transformer, $start);
 
     /**
-     * @param mixed $default
-     * @return mixed
+     * @phpstan-param TKey $key
+     * @phpstan-param ?TValue $default
+     * @phpstan-return ?TValue
      */
-    public function get(string $key, $default = null);
+    public function get($key, $default = null);
 
-    public function has(string $key): bool;
+    /**
+     * @phpstan-param TKey $key
+     */
+    public function has($key): bool;
 }

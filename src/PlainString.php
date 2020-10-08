@@ -10,7 +10,15 @@ use function is_scalar;
 use function is_string;
 use function mb_strlen;
 use function mb_strpos;
+use function mb_substr;
+use function mb_strtolower;
+use function mb_strtoupper;
 use function method_exists;
+use function strip_tags;
+use function trim;
+use function ltrim;
+use function rtrim;
+use function explode;
 
 final class PlainString implements StringValue
 {
@@ -48,9 +56,12 @@ final class PlainString implements StringValue
         return new self($this->castToString($other) . $this->value);
     }
 
+    /**
+     * @param callable(string $value):(StringValue|string) $transformer
+     */
     public function transform(callable $transformer): PlainString
     {
-        return new self($transformer($this->value));
+        return new self($this->castToString($transformer($this->value)));
     }
 
     public function stripTags(): PlainString
@@ -144,7 +155,7 @@ final class PlainString implements StringValue
     }
 
     /**
-     * @param array|ArrayValue $search
+     * @param array<int,string>|ArrayValue<string> $search
      * @param string|StringValue $replace
      */
     public function replaceAll($search, $replace): StringValue
@@ -161,7 +172,7 @@ final class PlainString implements StringValue
     }
 
     /**
-     * @param array|AssocValue $pairs
+     * @param array<string,string>|AssocValue<string,string> $pairs
      */
     public function replacePairs($pairs): StringValue
     {
@@ -244,10 +255,15 @@ final class PlainString implements StringValue
 
     /**
      * @param string|StringValue $pattern
+     * @return ArrayValue<string>
      */
     public function matchAllPatterns($pattern): ArrayValue
     {
         preg_match_all($this->castToString($pattern), $this->value, $matches, PREG_SET_ORDER);
+
+        if (!is_array($matches)) {
+            throw new RuntimeException("Failed to match regexp: {$pattern}");
+        }
 
         return Wrap::array($matches);
     }

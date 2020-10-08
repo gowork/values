@@ -25,6 +25,11 @@ final class Safe
         );
     }
 
+    /**
+     * @template TValue
+     * @param TValue $value
+     * @return TValue
+     */
     private static function guard($value, callable $assertion, string $message)
     {
         if ($assertion($value) === false) {

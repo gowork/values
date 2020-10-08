@@ -5,15 +5,15 @@ namespace doc\GW\Value;
 use GW\Value\AssocValue;
 use GW\Value\StringValue;
 use GW\Value\Wrap;
+use function file_get_contents;
 
 final class Template
 {
-    /** @var StringValue */
-    private $template;
+    private StringValue $template;
+    /** @var AssocValue<string, string> */
+    private AssocValue $params;
 
-    /** @var AssocValue <string, string> */
-    private $params;
-
+    /** @param AssocValue<string, string> $params */
     public function __construct(StringValue $template, AssocValue $params = null)
     {
         $this->template = $template;
@@ -22,7 +22,7 @@ final class Template
 
     public static function fromFile(string $path): self
     {
-        return new self(Wrap::string(file_get_contents($path)));
+        return new self(Wrap::string(file_get_contents($path) ?: ''));
     }
 
     public static function fromString(string $template): self
@@ -30,6 +30,7 @@ final class Template
         return new self(Wrap::string($template));
     }
 
+    /** @param AssocValue<string, string> $params */
     public function withParams(AssocValue $params): self
     {
         $clone = clone $this;
