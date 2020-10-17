@@ -1,0 +1,6 @@
+parameters:
+	parallel:
+		maximumNumberOfProcesses: 1
+
+includes:
+	- extension.neon

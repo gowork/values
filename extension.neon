@@ -1,0 +1,9 @@
+services:
+	-
+		class: GW\Value\PHPStan\ArrayValueNotEmptyExtension
+		tags:
+			- phpstan.broker.dynamicMethodReturnTypeExtension
+	-
+		class: GW\Value\PHPStan\IterableValueNotEmptyExtension
+		tags:
+			- phpstan.broker.dynamicMethodReturnTypeExtension
