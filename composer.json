@@ -25,7 +25,8 @@
         "phpspec/phpspec": "^6.1",
         "phpstan/phpstan": "^0.12",
         "phpbench/phpbench": "@dev",
-        "phpunit/phpunit": "^8.5 || ^9.0"
+        "phpunit/phpunit": "^8.5 || ^9.0",
+        "phpstan/extension-installer": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -41,5 +42,12 @@
     },
     "config": {
         "bin-dir": "bin"
+    },
+    "extra": {
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
+        }
     }
 }

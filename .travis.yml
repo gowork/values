@@ -8,5 +8,5 @@ install:
 
 script:
   - ./bin/phpspec run
-  - ./bin/phpstan analyze -l 7 src
+  - ./bin/phpstan analyze -l 8 src examples
   - ./bin/phpunit tests
