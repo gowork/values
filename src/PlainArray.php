@@ -54,7 +54,7 @@ final class PlainArray implements ArrayValue
 
         foreach ($this->items as $item) {
             $transformed = $transformer($item);
-            $elements[] = is_array($transformed) ? $transformed : iterator_to_array($transformed);
+            $elements[] = is_array($transformed) ? $transformed : [...$transformed];
         }
 
         return new self(array_merge([], ...$elements));
