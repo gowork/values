@@ -88,6 +88,18 @@ final class PlainArraySpec extends ObjectBehavior
         $this->flatMap($transformer)->shouldBeLike(new PlainArray([]));
     }
 
+    function it_can_flat_map_same_keys()
+    {
+        $this->beConstructedWith([1]);
+
+        $transformer = function (): iterable {
+            yield from [1,2,3];
+            yield from [4,5,6];
+        };
+
+        $this->flatMap($transformer)->toArray()->shouldBeLike([1,2,3,4,5,6]);
+    }
+
     function it_can_group_elements_by_key_generated_from_value()
     {
         $this->beConstructedWith([1, 2, 3, 4, 5, 10, 100, 101]);
