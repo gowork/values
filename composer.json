@@ -22,7 +22,7 @@
         "php": "^7.4"
     },
     "require-dev": {
-        "phpspec/phpspec": "^6.1",
+        "phpspec/phpspec": "^6.1 || ^7.0",
         "phpstan/phpstan": "^0.12",
         "phpbench/phpbench": "@dev",
         "phpunit/phpunit": "^8.5 || ^9.0",
