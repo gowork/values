@@ -164,10 +164,6 @@ final class PlainString implements StringValue
             $search = $search->toArray();
         }
 
-        if (!is_array($search)) {
-            throw new InvalidArgumentException('Search argument should be an array');
-        }
-
         return new self(str_replace($search, $this->castToString($replace), $this->value));
     }
 
@@ -178,10 +174,6 @@ final class PlainString implements StringValue
     {
         if ($pairs instanceof AssocValue) {
             $pairs = $pairs->toAssocArray();
-        }
-
-        if (!is_array($pairs)) {
-            throw new InvalidArgumentException('Pairs argument should be an array');
         }
 
         return new self(strtr($this->value, $pairs));

@@ -6,6 +6,7 @@ namespace GW\Value;
  * @template TValue
  * @extends Mappable<TValue>
  * @extends Filterable<TValue>
+ * @extends Sortable<TValue>
  */
 interface Collection extends Filterable, Mappable, Sortable, Countable, Reversible
 {

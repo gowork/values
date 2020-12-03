@@ -2,8 +2,6 @@
 
 namespace GW\Value;
 
-use Closure;
-
 final class Mappers
 {
     /**
@@ -22,7 +20,7 @@ final class Mappers
      */
     public static function method(string $method, ...$args): callable
     {
-        return static fn(object $item) => $item->$method(...$args);
+        return /** @phpstan-return mixed */static fn(object $item) => $item->$method(...$args);
     }
 
     /**
@@ -30,22 +28,18 @@ final class Mappers
      */
     public static function property(string $propertyName): callable
     {
-        return static function ($object) use ($propertyName) {
-            return $object->$propertyName;
-        };
+        return /** @phpstan-return mixed */static fn(object $object) => $object->$propertyName;
     }
 
     /**
      * @template TKey
      * @template TValue
      * @phpstan-param TKey $index
-     * @phpstan-return callable(array<TKey, TValue> $item): TValue
+     * @phpstan-return callable(array<TKey,TValue>): TValue
      */
     public static function index($index): callable
     {
-        return static function ($array) use ($index) {
-            return $array[$index];
-        };
+        return /** @phpstan-return TValue */static fn(array $array) => $array[$index];
     }
 
     private function __construct()

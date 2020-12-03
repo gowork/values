@@ -17,13 +17,49 @@ function arrayValue(): void
     $onlyNumbers->map(static fn(int $n): int => 1);
 }
 
-function iterableValue(): void
+/** @return iterable<int, string> */
+function iterableValue(): iterable
 {
     $numbersOrNulls = Wrap::iterable([1, 2, 3, null]);
-    $onlyNumbers = $numbersOrNulls->notEmpty();
 
-    Wrap::array([1, 2, 3])->map(static fn(int $n): int => 1);
-    $onlyNumbers->map(static fn(int $n): int => 1);
+    $onlyNumbers = $numbersOrNulls
+        ->map(fn (?int $n): ?object => $n === null ? null : (object)['value' => $n])
+        ->notEmpty()
+        ->map(fn (object $n): object => (object)[]);
+
+    Wrap::iterable([1, 2, 3])->map(static fn(int $n): int => 1);
+    return $onlyNumbers->map(static fn(object $n): string => "asa");
+}
+
+/** @return iterable<int, object> */
+function iterableValue2(): iterable
+{
+    $numbersOrNulls = Wrap::iterable([1, 2, 3, null]);
+
+    return $numbersOrNulls
+        ->map(fn (?int $n): ?object => $n === null ? null : (object)['value' => $n])
+        ->notEmpty();
+}
+
+/** @return iterable<string, object> */
+function iterableValue3(): iterable
+{
+    $numbersOrNulls = Wrap::iterable(['a' => 1, 'b' => 2, 'c' => 3, 'd' => null]);
+
+    return $numbersOrNulls
+        ->map(fn (?int $n): ?object => $n === null ? null : (object)['value' => $n])
+        ->notEmpty();
+}
+
+/** @return iterable<string, array[]> */
+function iterableValue4(): iterable
+{
+    $numbersOrNulls = Wrap::iterable(['a' => 1, 'b' => 2, 'c' => 3, 'd' => null]);
+
+    return $numbersOrNulls
+        ->map(fn (?int $n): ?object => $n === null ? null : (object)['value' => $n])
+        ->notEmpty()
+        ->chunk(2);
 }
 
 /**
@@ -34,9 +70,9 @@ interface FooCollection
     /**
      * @template TNewValue
      * @phpstan-param callable(TValue $value):TNewValue $transformer
-     * @phpstan-return FooCollection<TNewValue>
+     * @phpstan-return self<TNewValue>
      */
-    public function map(callable $transformer): FooCollection;
+    public function map(callable $transformer): self;
 
     /**
      * @param callable(TValue $value):bool $filter

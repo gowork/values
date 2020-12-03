@@ -28,6 +28,6 @@ final class IterableValueNotEmptyExtension implements DynamicMethodReturnTypeExt
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        return $this->removeNull($scope->getType($methodCall->var), 1);
+        return $this->removeNull($scope->getType($methodCall->var));
     }
 }

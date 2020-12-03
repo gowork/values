@@ -8,7 +8,7 @@ use PHPStan\Type\TypeCombinator;
 
 trait NotEmptyTypeRemover
 {
-    private function removeNull(Type $type, int $position = 0): Type
+    private function removeNull(Type $type): Type
     {
         if (!$type instanceof GenericObjectType) {
             return $type;
@@ -16,6 +16,6 @@ trait NotEmptyTypeRemover
 
         $types = $type->getTypes();
 
-        return new GenericObjectType($type->getClassName(), [TypeCombinator::removeNull($types[$position])]);
+        return new GenericObjectType($type->getClassName(), [TypeCombinator::removeNull($types[0])]);
     }
 }

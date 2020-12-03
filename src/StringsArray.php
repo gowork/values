@@ -123,7 +123,7 @@ interface StringsArray extends ArrayValue, StringValue
 
     /**
      * @param StringsArray $other
-     * @param (callable(StringValue $valueA, StringValue $valueB):int)|null $comparator
+     * @param (callable(StringValue, StringValue):int)|null $comparator
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): StringsArray;
 
@@ -135,7 +135,7 @@ interface StringsArray extends ArrayValue, StringValue
 
     /**
      * @template TNewValue
-     * @param callable(TNewValue $reduced, StringValue $value):TNewValue $transformer
+     * @phpstan-param callable(TNewValue, StringValue):TNewValue $transformer
      * @phpstan-param TNewValue $start
      * @phpstan-return TNewValue
      */

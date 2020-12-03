@@ -5,6 +5,7 @@ namespace GW\Value;
 use Traversable;
 use InvalidArgumentException;
 use function in_array;
+use function is_scalar;
 
 final class PlainStringsArray implements StringsArray
 {
@@ -313,6 +314,10 @@ final class PlainStringsArray implements StringsArray
      */
     public function pop(&$value = null): PlainStringsArray
     {
+        if (!isset($value)) {
+            return new self($this->strings->pop());
+        }
+
         return new self($this->strings->pop($value));
     }
 
@@ -584,16 +589,17 @@ final class PlainStringsArray implements StringsArray
     {
         return $strings
             ->map(
-                /** @return StringValue|object */
-                static function ($string) {
-                    return is_scalar($string) ? Wrap::string((string)$string) : $string;
-                }
-            )
-            ->each(
-                static function ($string): void {
+                /** @param mixed $string */
+                static function ($string): StringValue {
+                    if (is_scalar($string)) {
+                        return Wrap::string((string)$string);
+                    }
+
                     if (!$string instanceof StringValue) {
                         throw new InvalidArgumentException('StringsValue can contain only StringValue');
                     }
+
+                    return $string;
                 }
             );
     }
