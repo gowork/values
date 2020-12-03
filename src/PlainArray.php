@@ -13,8 +13,6 @@ use function array_merge;
 use function count;
 use function in_array;
 use function is_array;
-use function is_bool;
-use function iterator_to_array;
 
 /**
  * @template TValue
@@ -263,7 +261,6 @@ final class PlainArray implements ArrayValue
     /**
      * @phpstan-param TValue $value
      * @phpstan-return PlainArray<TValue>
-     * @phpstan-ignore-next-line weird errors regarding reference
      */
     public function shift(&$value = null): PlainArray
     {
@@ -288,7 +285,6 @@ final class PlainArray implements ArrayValue
     /**
      * @phpstan-param TValue $value
      * @phpstan-return PlainArray<TValue>
-     * @phpstan-ignore-next-line weird errors regarding reference
      */
     public function pop(&$value = null): PlainArray
     {
