@@ -59,7 +59,8 @@ function iterableValue4(): iterable
     return $numbersOrNulls
         ->map(fn (?int $n): ?object => $n === null ? null : (object)['value' => $n])
         ->notEmpty()
-        ->chunk(2);
+        ->chunk(2)
+        ->each(/** @param object[] $chunk */function (array $chunk): void {});
 }
 
 /**
