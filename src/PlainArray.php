@@ -13,8 +13,6 @@ use function array_merge;
 use function count;
 use function in_array;
 use function is_array;
-use function is_bool;
-use function iterator_to_array;
 
 /**
  * @template TValue
