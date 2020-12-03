@@ -263,7 +263,6 @@ final class PlainArray implements ArrayValue
     /**
      * @phpstan-param TValue $value
      * @phpstan-return PlainArray<TValue>
-     * @phpstan-ignore-next-line weird errors regarding reference
      */
     public function shift(&$value = null): PlainArray
     {
@@ -288,7 +287,6 @@ final class PlainArray implements ArrayValue
     /**
      * @phpstan-param TValue $value
      * @phpstan-return PlainArray<TValue>
-     * @phpstan-ignore-next-line weird errors regarding reference
      */
     public function pop(&$value = null): PlainArray
     {

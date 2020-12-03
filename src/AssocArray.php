@@ -2,9 +2,9 @@
 
 namespace GW\Value;
 
-use RuntimeException;
 use ArrayIterator;
 use BadMethodCallException;
+use function array_combine;
 use function array_keys;
 use function array_map;
 use function in_array;
@@ -60,10 +60,6 @@ final class AssocArray implements AssocValue
     public function mapKeys(callable $transformer): AssocArray
     {
         $combined = array_combine(array_map($transformer, array_keys($this->items), $this->items), $this->items);
-
-        if ($combined === false) {
-            throw new RuntimeException('Cannot map keys - combined array is broken.');
-        }
 
         return new self($combined);
     }
@@ -192,7 +188,6 @@ final class AssocArray implements AssocValue
     /**
      * @phpstan-param array<int, TKey> $keys
      * @phpstan-return AssocArray<TKey, TValue>
-     * @phpstan-ignore-next-line phpstan does not support generic variadics
      */
     public function without(...$keys): AssocArray
     {
@@ -202,7 +197,6 @@ final class AssocArray implements AssocValue
     /**
      * @phpstan-param array<int, TKey> $keys
      * @phpstan-return AssocArray<TKey, TValue>
-     * @phpstan-ignore-next-line phpstan does not support generic variadics
      */
     public function only(...$keys): AssocArray
     {
