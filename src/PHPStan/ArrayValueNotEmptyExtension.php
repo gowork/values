@@ -20,7 +20,7 @@ final class ArrayValueNotEmptyExtension implements DynamicMethodReturnTypeExtens
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return $methodReflection->getName() === 'notEmpty';
+        return $methodReflection->getName() === 'notEmpty' || $methodReflection->getName() === 'filterEmpty';
     }
 
     public function getTypeFromMethodCall(

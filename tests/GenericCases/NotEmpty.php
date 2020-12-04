@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace doc\GW\Value;
+namespace tests\GW\Value\GenericCases;
 
 use Error;
 use GW\Value\Wrap;
@@ -51,7 +51,7 @@ function iterableValue3(): iterable
         ->notEmpty();
 }
 
-/** @return iterable<string, array[]> */
+/** @return iterable<int, object[][]> */
 function iterableValue4(): iterable
 {
     $numbersOrNulls = Wrap::iterable(['a' => 1, 'b' => 2, 'c' => 3, 'd' => null]);
