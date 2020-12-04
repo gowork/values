@@ -115,4 +115,14 @@ final class Filters
     {
         return static fn(object $item): bool => $item->$method(...$args);
     }
+
+    /**
+     * @template T
+     * @param iterable<iterable<T>> $collection
+     * @return iterable<T>
+     */
+    public static function flatten(iterable $collection): iterable
+    {
+        return $collection;
+    }
 }
