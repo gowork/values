@@ -279,9 +279,9 @@ final class PlainString implements StringValue
      */
     public function explode($delimiter): PlainStringsArray
     {
+        /** @var string[]|false $strings */
         $strings = explode($this->castToString($delimiter), $this->value);
 
-        // @phpstan-ignore-next-line
         if ($strings === false) {
             throw new RuntimeException("Cannot explode using delimiter: {$delimiter}");
         }

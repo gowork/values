@@ -380,7 +380,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $popped = $this->pop();
         $popped->shouldBeLike($clone->pop($last));
 
-        if ($last != Wrap::string('last')) {
+        if ($last != Wrap::string(Wrap::string('last'))) {
             throw new FailureException('Popped value should be assigned to provided variable');
         }
 
