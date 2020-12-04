@@ -121,7 +121,7 @@ interface IterableValue extends IteratorAggregate
     public function toArray(): array;
 
     /**
-     * @phpstan-return IterableValue<TKey, TValue[]>
+     * @phpstan-return IterableValue<int, array<int, TValue>>
      */
     public function chunk(int $size): IterableValue;
 
