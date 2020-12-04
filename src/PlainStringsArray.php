@@ -314,10 +314,6 @@ final class PlainStringsArray implements StringsArray
      */
     public function pop(&$value = null): PlainStringsArray
     {
-        if (!isset($value)) {
-            return new self($this->strings->pop());
-        }
-
         return new self($this->strings->pop($value));
     }
 
