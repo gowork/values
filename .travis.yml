@@ -9,5 +9,6 @@ install:
 
 script:
   - ./bin/phpspec run
-  - ./bin/phpstan analyze -l 8 src examples
+  - ./bin/phpstan analyze -l 8 src examples tests/GenericCases
   - ./bin/phpunit tests
+  - ./bin/psalm

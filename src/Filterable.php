@@ -8,8 +8,8 @@ namespace GW\Value;
 interface Filterable
 {
     /**
-     * @param callable(TValue $value):bool $filter
-     * @return Filterable<TValue>
+     * @phpstan-param callable(TValue):bool $filter
+     * @phpstan-return Filterable<TValue>
      */
     public function filter(callable $filter): Filterable;
 }

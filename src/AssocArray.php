@@ -2,6 +2,7 @@
 
 namespace GW\Value;
 
+use _HumbugBoxbde535255540\Symfony\Component\Console\Exception\RuntimeException;
 use ArrayIterator;
 use BadMethodCallException;
 use function array_combine;
@@ -59,7 +60,12 @@ final class AssocArray implements AssocValue
      */
     public function mapKeys(callable $transformer): AssocArray
     {
+        /** @var array<TNewKey, TValue>|false $combined */
         $combined = array_combine(array_map($transformer, array_keys($this->items), $this->items), $this->items);
+
+        if ($combined === false) {
+            throw new RuntimeException('Cannot map keys - combined array is broken.');
+        }
 
         return new self($combined);
     }

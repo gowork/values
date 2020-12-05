@@ -158,21 +158,21 @@ interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayA
 
     /**
      * @phpstan-param ArrayValue<TValue> $other
-     * @param (callable(TValue $valueA, TValue $valueB):int)|null $comparator
+     * @param (callable(TValue,TValue):int)|null $comparator
      * @phpstan-return ArrayValue<TValue>
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): ArrayValue;
 
     /**
      * @phpstan-param ArrayValue<TValue> $other
-     * @param (callable(TValue $valueA, TValue $valueB):int)|null $comparator
+     * @param (callable(TValue,TValue):int)|null $comparator
      * @phpstan-return ArrayValue<TValue>
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): ArrayValue;
 
     /**
      * @template TNewValue
-     * @param callable(TNewValue $reduced, TValue $value):TNewValue $transformer
+     * @param callable(TNewValue, TValue):TNewValue $transformer
      * @phpstan-param TNewValue $start
      * @phpstan-return TNewValue
      */

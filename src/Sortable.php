@@ -2,16 +2,17 @@
 
 namespace GW\Value;
 
+/**
+ * @template TValue
+ */
 interface Sortable
 {
     /**
-     * @param callable $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
-     * @return Sortable
+     * @phpstan-param callable(TValue,TValue):int $comparator
+     * @phpstan-return Sortable<TValue>
      */
     public function sort(callable $comparator): Sortable;
 
-    /**
-     * @return Sortable
-     */
+    /** @phpstan-return Sortable<TValue> */
     public function shuffle(): Sortable;
 }

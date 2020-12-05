@@ -394,7 +394,7 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @phpstan-return InfiniteIterableValue<TKey, TValue[]>
+     * @phpstan-return InfiniteIterableValue<int, array<int, TValue>>
      */
     public function chunk(int $size): InfiniteIterableValue
     {
