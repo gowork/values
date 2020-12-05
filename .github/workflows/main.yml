@@ -5,7 +5,7 @@ jobs:
         runs-on: ${{ matrix.operating-system }}
         strategy:
             matrix:
-                operating-system: [ ubuntu-latest, windows-latest, macos-latest ]
+                operating-system: [ ubuntu-latest ]
                 php-versions: [ '7.4', '8.0' ]
         steps:
             -   name: Checkout
@@ -15,7 +15,19 @@ jobs:
                 uses: shivammathur/setup-php@v2
                 with:
                     php-version: ${{ matrix.php-versions }}
-                    extensions: mbstring, intl
+                    extensions: mbstring
 
-            -   name: Install Composer dependencies
+            -   name: Composer dependencies
                 run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+            -   name: "PHPSpec"
+                run: ./bin/phpspec run
+
+            -   name: "PHPStan"
+                run: ./bin/phpstan analyze -l 8 src examples tests/GenericCases
+
+            -   name: "PHPUnit"
+                run: ./bin/phpunit tests
+
+            -   name: "Psalm"
+                run: ./bin/psalm
