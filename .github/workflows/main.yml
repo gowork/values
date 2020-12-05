@@ -1,4 +1,7 @@
-on: [ push, pull_request ]
+on:
+    push: { branches: [ master ] }
+    pull_request: ~
+    
 jobs:
     run:
         name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
