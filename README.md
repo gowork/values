@@ -6,6 +6,7 @@
 [![License](https://poser.pugx.org/gowork/values/license)](https://packagist.org/packages/gowork/values)
 [![Latest Stable Version](https://poser.pugx.org/gowork/values/v/stable)](https://packagist.org/packages/gowork/values)
 [![Maintainability](https://api.codeclimate.com/v1/badges/b4fde36fad9d09cce9eb/maintainability)](https://codeclimate.com/github/gowork/values/maintainability)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/gowork/values/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/gowork/values/?branch=master)
 
 ## Installation
 
