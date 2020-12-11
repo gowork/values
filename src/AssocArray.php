@@ -2,7 +2,7 @@
 
 namespace GW\Value;
 
-use _HumbugBoxbde535255540\Symfony\Component\Console\Exception\RuntimeException;
+use RuntimeException;
 use ArrayIterator;
 use BadMethodCallException;
 use function array_combine;
