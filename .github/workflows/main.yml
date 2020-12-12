@@ -1,0 +1,38 @@
+name: tests
+
+on:
+    push: { branches: [ master ] }
+    pull_request: ~
+    
+jobs:
+    run:
+        name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+        runs-on: ${{ matrix.operating-system }}
+        strategy:
+            matrix:
+                operating-system: [ ubuntu-latest ]
+                php-versions: [ '7.4', '8.0' ]
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v2
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php-versions }}
+                    extensions: mbstring
+
+            -   name: Composer dependencies
+                run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+            -   name: "PHPSpec"
+                run: ./bin/phpspec run
+
+            -   name: "PHPStan"
+                run: ./bin/phpstan analyze -l 8 src examples tests/GenericCases
+
+            -   name: "PHPUnit"
+                run: ./bin/phpunit tests
+
+            -   name: "Psalm"
+                run: ./bin/psalm
