@@ -498,7 +498,7 @@ final class PlainStringsArray implements StringsArray
 
     /**
      * @param string|StringValue $pattern
-     * @return ArrayValue<string>
+     * @return ArrayValue<string[][]>
      */
     public function matchAllPatterns($pattern): ArrayValue
     {
