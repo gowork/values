@@ -21,6 +21,21 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
+     * @template TNewKey
+     * @template TNewValue
+     * @phpstan-param IterableValueStack<TNewKey, TNewValue> $stack
+     * @phpstan-return self<TNewKey, TNewValue>
+     */
+    private static function fromStack(IterableValueStack $stack): self
+    {
+        /** @var self<TNewKey, TNewValue> $clone */
+        $clone = new self([]);
+        $clone->stack = $stack;
+
+        return $clone;
+    }
+
+    /**
      * @param callable(TValue $value):void $callback
      * @phpstan-return InfiniteIterableValue<TKey, TValue>
      */
@@ -40,7 +55,7 @@ final class InfiniteIterableValue implements IterableValue
     public function unique(?callable $comparator = null): InfiniteIterableValue
     {
         if ($comparator === null) {
-            $comparator = fn($a, $b) => $a <=> $b;
+            $comparator = static fn($a, $b) => $a <=> $b;
         }
 
         $knownValues = [];
@@ -80,8 +95,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function filter(callable $filter): InfiniteIterableValue
     {
-        $clone = clone $this;
-        $clone->stack = $clone->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -93,9 +107,7 @@ final class InfiniteIterableValue implements IterableValue
                     }
                 }
             }
-        );
-
-        return $clone;
+        ));
     }
 
     /**
@@ -113,8 +125,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function map(callable $transformer): InfiniteIterableValue
     {
-        $clone = clone $this;
-        $clone->stack = $clone->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TNewValue>
@@ -124,9 +135,7 @@ final class InfiniteIterableValue implements IterableValue
                     yield $transformer($value);
                 }
             }
-        );
-
-        return $clone;
+        ));
     }
 
     /**
@@ -136,8 +145,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function flatMap(callable $transformer): InfiniteIterableValue
     {
-        $clone = clone $this;
-        $clone->stack = $clone->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TNewValue>
@@ -147,9 +155,7 @@ final class InfiniteIterableValue implements IterableValue
                     yield from $transformer($value);
                 }
             }
-        );
-
-        return $clone;
+        ));
     }
 
     /**
@@ -166,8 +172,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function unshift($value): InfiniteIterableValue
     {
-        $clone = clone $this;
-        $clone->stack = $clone->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -176,9 +181,7 @@ final class InfiniteIterableValue implements IterableValue
                 yield $value;
                 yield from $iterable;
             }
-        );
-
-        return $clone;
+        ));
     }
 
     /**
@@ -187,8 +190,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function push($value): InfiniteIterableValue
     {
-        $clone = clone $this;
-        $clone->stack = $clone->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -197,9 +199,7 @@ final class InfiniteIterableValue implements IterableValue
                 yield from $iterable;
                 yield $value;
             }
-        );
-
-        return $clone;
+        ));
     }
 
     /**
@@ -208,8 +208,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function join(iterable $other): InfiniteIterableValue
     {
-        $clone = clone $this;
-        $clone->stack = $clone->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -218,9 +217,7 @@ final class InfiniteIterableValue implements IterableValue
                 yield from $iterable;
                 yield from $other;
             }
-        );
-
-        return $clone;
+        ));
     }
 
     /**
@@ -228,8 +225,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function slice(int $offset, int $length): InfiniteIterableValue
     {
-        $clone = clone $this;
-        $clone->stack = $clone->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -247,9 +243,7 @@ final class InfiniteIterableValue implements IterableValue
                     }
                 }
             }
-        );
-
-        return $clone;
+        ));
     }
 
     /**
@@ -259,8 +253,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): InfiniteIterableValue
     {
-        $clone = clone $this;
-        $clone->stack = $clone->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -280,9 +273,7 @@ final class InfiniteIterableValue implements IterableValue
                     yield $value;
                 }
             }
-        );
-
-        return $clone;
+        ));
     }
 
     /**
@@ -292,8 +283,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): InfiniteIterableValue
     {
-        $clone = clone $this;
-        $clone->stack = $clone->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -313,9 +303,7 @@ final class InfiniteIterableValue implements IterableValue
                     yield $value;
                 }
             }
-        );
-
-        return $clone;
+        ));
     }
 
     /**
@@ -398,8 +386,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function chunk(int $size): InfiniteIterableValue
     {
-        $clone = clone $this;
-        $clone->stack = $this->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue[]>
@@ -420,9 +407,7 @@ final class InfiniteIterableValue implements IterableValue
                     yield $buffer;
                 }
             }
-        );
-
-        return $clone;
+        ));
     }
 
     /**
@@ -430,8 +415,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function flatten(): InfiniteIterableValue
     {
-        $clone = clone $this;
-        $clone->stack = $this->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -441,9 +425,7 @@ final class InfiniteIterableValue implements IterableValue
                     yield from $item;
                 }
             }
-        );
-
-        return $clone;
+        ));
     }
 
     /**
