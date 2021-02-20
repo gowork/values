@@ -26,7 +26,7 @@ final class InfiniteIterableValue implements IterableValue
      * @phpstan-param IterableValueStack<TNewKey, TNewValue> $stack
      * @phpstan-return self<TNewKey, TNewValue>
      */
-    private function fromStack(IterableValueStack $stack): self
+    private static function fromStack(IterableValueStack $stack): self
     {
         /** @var self<TNewKey, TNewValue> $clone */
         $clone = new self([]);
@@ -95,7 +95,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function filter(callable $filter): InfiniteIterableValue
     {
-        return $this->fromStack($this->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -125,7 +125,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function map(callable $transformer): InfiniteIterableValue
     {
-        return $this->fromStack($this->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TNewValue>
@@ -145,7 +145,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function flatMap(callable $transformer): InfiniteIterableValue
     {
-        return $this->fromStack($this->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TNewValue>
@@ -172,7 +172,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function unshift($value): InfiniteIterableValue
     {
-        return $this->fromStack($this->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -190,7 +190,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function push($value): InfiniteIterableValue
     {
-        return $this->fromStack($this->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -208,7 +208,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function join(iterable $other): InfiniteIterableValue
     {
-        return $this->fromStack($this->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -225,7 +225,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function slice(int $offset, int $length): InfiniteIterableValue
     {
-        return $this->fromStack($this->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -253,7 +253,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): InfiniteIterableValue
     {
-        return $this->fromStack($this->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -283,7 +283,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): InfiniteIterableValue
     {
-        return $this->fromStack($this->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
@@ -386,7 +386,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function chunk(int $size): InfiniteIterableValue
     {
-        return $this->fromStack($this->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue[]>
@@ -415,7 +415,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function flatten(): InfiniteIterableValue
     {
-        return $this->fromStack($this->stack->push(
+        return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
