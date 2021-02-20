@@ -654,7 +654,7 @@ final class PlainArraySpec extends ObjectBehavior
         $this->shouldImplement(\ArrayAccess::class);
 
         Assert::assertTrue($this->offsetExists(0));
-        Assert::assertFalse($this->offsetExists(66));
+        Assert::assertFalse($this->offsetExists(33));
         $this->offsetGet(0)->shouldReturn('item 1');
         $this[0]->shouldBe('item 1');
     }

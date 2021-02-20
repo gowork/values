@@ -46,14 +46,6 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $join->toNativeStrings()->shouldBeLike(['string 1', 'string 2', 'string 3', 'string 4']);
     }
 
-    function it_joins_with_regular_ArrayValue_with_strings()
-    {
-        $this->beConstructedWithStrings('string 1', 'string 2');
-
-        $this->join(Wrap::array(['string 3', 'string 4']))
-            ->toNativeStrings()->shouldBeLike(['string 1', 'string 2', 'string 3', 'string 4']);
-    }
-
     function it_can_be_sliced()
     {
         $strings = ['string 1', 'string 2', 'string 3', 'string 4'];
@@ -73,7 +65,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $this->splice(1, 2)->toNativeStrings()->shouldBeLike(['string 1', 'string 4']);
 
-        $this->splice(1, 2, Wrap::array(['string x', 'string y']))
+        $this->splice(1, 2, Wrap::stringsArray(['string x', 'string y']))
             ->toNativeStrings()->shouldBeLike(['string 1', 'string x', 'string y', 'string 4']);
 
         $this->splice(0, 3)->toNativeStrings()->shouldBeLike(['string 4']);

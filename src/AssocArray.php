@@ -280,18 +280,24 @@ final class AssocArray implements AssocValue
         return in_array($element, $this->items->toAssocArray(), true);
     }
 
+    /**
+     * @param callable(TValue $value):bool $filter
+     */
     public function any(callable $filter): bool
     {
         return $this->values()->any($filter);
     }
 
+    /**
+     * @param callable(TValue $value):bool $filter
+     */
     public function every(callable $filter): bool
     {
         return $this->values()->every($filter);
     }
 
     /**
-     * @return TValue[]
+     * @return array<int, TValue>
      */
     public function toArray(): array
     {
