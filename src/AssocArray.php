@@ -176,10 +176,10 @@ final class AssocArray implements AssocValue
      */
     public function with($key, $value): AssocArray
     {
-        /** @phpstan-var array<TKey, TValue> $items */
-        $items = [$key => $value];
+        $items = $this->items;
+        $items[$key] = $value;
 
-        return $this->merge(new self($items));
+        return new self($items);
     }
 
     /**
