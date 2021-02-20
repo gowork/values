@@ -19,7 +19,6 @@ final class ReadmeWriter
             ->map(
                 /** @param class-string<object> $classRef */
                 function (string $classRef): Template {
-                    /** @phpstan-ignore-next-line shrug */
                     $class = new ReflectionClass($classRef);
                     $classTemplate = $this->classTemplate($class);
 
@@ -65,7 +64,7 @@ final class ReadmeWriter
         }
 
         $template = Template::fromFile(__DIR__ . '/template/ClassMethod.md')
-            ->withParams(Wrap::assocArray(compact('className', 'methodName', 'definition')));
+            ->withParams(Wrap::assocArray(['className' => $className, 'methodName' => $methodName, 'definition' => $definition->toString()]));
 
         $descriptionFile = __DIR__ . "/template/{$className}-{$methodName}.md";
 
