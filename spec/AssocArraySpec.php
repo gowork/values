@@ -99,6 +99,24 @@ final class AssocArraySpec extends ObjectBehavior
         );
     }
 
+    function it_can_add_element()
+    {
+        $this->beConstructedWith(['a' => 'foo', 'b' => 'bar']);
+        $this->with('c', 'baz')->toAssocArray()->shouldEqual(['a' => 'foo', 'b' => 'bar', 'c' => 'baz']);
+    }
+
+    function it_can_replace_element()
+    {
+        $this->beConstructedWith(['a' => 'foo', 'b' => 'bar']);
+        $this->with('b', 'baz')->toAssocArray()->shouldEqual(['a' => 'foo', 'b' => 'baz']);
+    }
+
+    function it_can_replace_int_element()
+    {
+        $this->beConstructedWith(['foo', 'bar']);
+        $this->with(1, 'baz')->toAssocArray()->shouldEqual(['foo', 'baz']);
+    }
+
     function it_can_delete_element_by_key()
     {
         $array = $this->without('a');
@@ -116,6 +134,14 @@ final class AssocArraySpec extends ObjectBehavior
         $array = $this->without('a', 'c');
         $array->shouldNotBe($this);
         $array->shouldBeLike(new AssocArray(['b' => 'berni']));
+    }
+
+    function it_can_create_a_copy_without_multiple_int_keys()
+    {
+        $this->beConstructedWith(['a', 'b', 'c', 'd']);
+        $array = $this->without(1, 3);
+        $array->shouldNotBe($this);
+        $array->shouldBeLike(new AssocArray([0 => 'a', 2 => 'c']));
     }
 
     function it_can_create_a_copy_with_only_given_set_of_keys()
