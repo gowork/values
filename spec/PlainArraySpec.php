@@ -5,6 +5,7 @@ namespace spec\GW\Value;
 use GW\Value\Filters;
 use GW\Value\PlainArray;
 use GW\Value\Sorts;
+use GW\Value\StringsArray;
 use GW\Value\Wrap;
 use PhpSpec\Exception\Example\FailureException;
 use PhpSpec\ObjectBehavior;
@@ -46,7 +47,7 @@ final class PlainArraySpec extends ObjectBehavior
         });
 
         $mapped->shouldNotBe($this);
-        $mapped->shouldBeLike(new PlainArray(['item 1 mapped', 'item 2 mapped', 'item 3 mapped']));
+        $mapped->toArray()->shouldBeLike(['item 1 mapped', 'item 2 mapped', 'item 3 mapped']);
     }
 
     function it_maps_items_with_php_callable()
@@ -56,7 +57,7 @@ final class PlainArraySpec extends ObjectBehavior
         $mapped = $this->map('intval');
 
         $mapped->shouldNotBe($this);
-        $mapped->shouldBeLike(new PlainArray([100, 50, 0, 1, 0]));
+        $mapped->toArray()->shouldBeLike([100, 50, 0, 1, 0]);
     }
 
     function it_maps_with_flattening_with_array_transformer()
@@ -85,7 +86,7 @@ final class PlainArraySpec extends ObjectBehavior
             return [];
         };
 
-        $this->flatMap($transformer)->shouldBeLike(new PlainArray([]));
+        $this->flatMap($transformer)->toArray()->shouldBeLike([]);
     }
 
     function it_can_flat_map_same_keys()
@@ -109,11 +110,12 @@ final class PlainArraySpec extends ObjectBehavior
         };
 
         $this->groupBy($transformer)
+            ->toAssocArray()
             ->shouldBeLike(
-                Wrap::assocArray([
+                [
                     'even' => Wrap::array([2, 4, 10, 100]),
                     'odd' => Wrap::array([1, 3, 5, 101])
-                ])
+                ]
             );
     }
 
@@ -126,12 +128,12 @@ final class PlainArraySpec extends ObjectBehavior
         };
 
         $grouped = $this->groupBy($transformer);
-        $grouped->shouldBeLike(
-            Wrap::assocArray([
+        $grouped->toAssocArray()->shouldBeLike(
+            [
                 0 => Wrap::array([3, 6, 9]),
                 1 => Wrap::array([1, 4, 7]),
                 2 => Wrap::array([2, 5, 8])
-            ])
+            ]
         );
         $grouped->get('0')->toArray()->shouldReturn([3, 6, 9]);
     }
@@ -218,8 +220,8 @@ final class PlainArraySpec extends ObjectBehavior
 
         $legends = $this->flatMap($mapper);
         $legends->shouldNotBe($this);
-        $legends->shouldBeLike(
-            new PlainArray([
+        $legends->toArray()->shouldBeLike(
+            [
                 'John',
                 'Paul',
                 'George',
@@ -232,10 +234,10 @@ final class PlainArraySpec extends ObjectBehavior
                 'Jimmy',
                 'John Paul',
                 'John',
-            ])
+            ]
         );
     }
-    
+
     function it_filters_items_with_closure()
     {
         $this->beConstructedWith([
@@ -252,12 +254,12 @@ final class PlainArraySpec extends ObjectBehavior
         });
 
         $notBad->shouldNotBe($this);
-        $notBad->shouldBeLike(
-            new PlainArray([
+        $notBad->toArray()->shouldBeLike(
+            [
                 'And the whole world has to',
                 'Answer right now',
                 'Just to tell you once again',
-            ])
+            ]
         );
     }
 
@@ -268,7 +270,7 @@ final class PlainArraySpec extends ObjectBehavior
         $numbers = $this->filter('is_numeric');
 
         $numbers->shouldNotBe($this);
-        $numbers->shouldBeLike(new PlainArray(['1410', 3.14]));
+        $numbers->toArray()->shouldBeLike(['1410', 3.14]);
     }
 
     function it_sorts_numbers_ascending()
@@ -276,7 +278,7 @@ final class PlainArraySpec extends ObjectBehavior
         $this->beConstructedWith([4, 1, 8, 2, 9, 3, 5, 7, 6]);
 
         $sorted = $this->sort(Sorts::asc());
-        $sorted->shouldBeLike(new PlainArray([1, 2, 3, 4, 5, 6, 7, 8, 9]));
+        $sorted->toArray()->shouldBeLike([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     }
 
     function it_sorts_numbers_descending()
@@ -284,7 +286,7 @@ final class PlainArraySpec extends ObjectBehavior
         $this->beConstructedWith([4, 1, 8, 2, 9, 3, 5, 7, 6]);
 
         $sorted = $this->sort(Sorts::desc());
-        $sorted->shouldBeLike(new PlainArray([9, 8, 7, 6, 5, 4, 3, 2, 1]));
+        $sorted->toArray()->shouldBeLike([9, 8, 7, 6, 5, 4, 3, 2, 1]);
     }
 
     function it_sorts_strings_ascending()
@@ -292,7 +294,7 @@ final class PlainArraySpec extends ObjectBehavior
         $this->beConstructedWith(['def', 'efg', 'abc', 'xyz', 'zzz']);
 
         $sorted = $this->sort(Sorts::asc());
-        $sorted->shouldBeLike(new PlainArray(['abc', 'def', 'efg', 'xyz', 'zzz']));
+        $sorted->toArray()->shouldBeLike(['abc', 'def', 'efg', 'xyz', 'zzz']);
     }
 
     function it_sorts_strings_descending()
@@ -300,7 +302,7 @@ final class PlainArraySpec extends ObjectBehavior
         $this->beConstructedWith(['def', 'efg', 'abc', 'xyz', 'zzz']);
 
         $sorted = $this->sort(Sorts::desc());
-        $sorted->shouldBeLike(new PlainArray(['zzz', 'xyz', 'efg', 'def', 'abc']));
+        $sorted->toArray()->shouldBeLike(['zzz', 'xyz', 'efg', 'def', 'abc']);
     }
 
     function it_can_call_some_action_on_each_item(CallableMock $callable)
@@ -321,7 +323,7 @@ final class PlainArraySpec extends ObjectBehavior
         $reversed = $this->reverse();
 
         $reversed->shouldNotBe($this);
-        $reversed->shouldBeLike(new PlainArray(['item 3', 'item 2', 'item 1']));
+        $reversed->toArray()->shouldBeLike(['item 3', 'item 2', 'item 1']);
     }
 
     function it_joins_with_other_array()
@@ -331,7 +333,7 @@ final class PlainArraySpec extends ObjectBehavior
         $joined = $this->join(new PlainArray(['b 1', 'b 2', 'b 3']));
 
         $joined->shouldNotBe($this);
-        $joined->shouldBeLike(new PlainArray(['a 1', 'a 2', 'a 3', 'b 1', 'b 2', 'b 3']));
+        $joined->toArray()->shouldBeLike(['a 1', 'a 2', 'a 3', 'b 1', 'b 2', 'b 3']);
     }
 
     function it_slices_given_part()
@@ -339,9 +341,9 @@ final class PlainArraySpec extends ObjectBehavior
         $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
 
         $this->slice(0, 1)->shouldNotBe($this);
-        $this->slice(0, 1)->shouldBeLike(new PlainArray(['item 1']));
-        $this->slice(1, 4)->shouldBeLike(new PlainArray(['item 2', 'item 3', 'item 4', 'item 5']));
-        $this->slice(5, 1)->shouldBeLike(new PlainArray(['item 6']));
+        $this->slice(0, 1)->toArray()->shouldBeLike(['item 1']);
+        $this->slice(1, 4)->toArray()->shouldBeLike(['item 2', 'item 3', 'item 4', 'item 5']);
+        $this->slice(5, 1)->toArray()->shouldBeLike(['item 6']);
     }
 
     function it_allows_to_remove_slice_from_array_with_splice()
@@ -349,11 +351,11 @@ final class PlainArraySpec extends ObjectBehavior
         $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
 
         $this->splice(0, 1)->shouldNotBe($this);
-        $this->splice(0, 0)->shouldBeLike($this);
-        $this->splice(0, 1)->shouldBeLike(new PlainArray(['item 2', 'item 3', 'item 4', 'item 5', 'item 6']));
-        $this->splice(1, 4)->shouldBeLike(new PlainArray(['item 1', 'item 6']));
-        $this->splice(5, 1)->shouldBeLike(new PlainArray(['item 1', 'item 2', 'item 3', 'item 4', 'item 5']));
-        $this->splice(-1, 1)->shouldBeLike(new PlainArray(['item 1', 'item 2', 'item 3', 'item 4', 'item 5']));
+        $this->splice(0, 0)->toArray()->shouldBeLike($this->toArray());
+        $this->splice(0, 1)->toArray()->shouldBeLike(['item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
+        $this->splice(1, 4)->toArray()->shouldBeLike(['item 1', 'item 6']);
+        $this->splice(5, 1)->toArray()->shouldBeLike(['item 1', 'item 2', 'item 3', 'item 4', 'item 5']);
+        $this->splice(-1, 1)->toArray()->shouldBeLike(['item 1', 'item 2', 'item 3', 'item 4', 'item 5']);
     }
 
     function it_allows_to_replace_slice_of_array_with_splice()
@@ -361,16 +363,16 @@ final class PlainArraySpec extends ObjectBehavior
         $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
 
         $this->splice(0, 1, new PlainArray(['X', 'Y']))
-            ->shouldBeLike(new PlainArray(['X', 'Y', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']));
+            ->toArray()->shouldBeLike(['X', 'Y', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
 
         $this->splice(1, 4, new PlainArray(['X', 'Y']))
-            ->shouldBeLike(new PlainArray(['item 1', 'X', 'Y','item 6']));
+            ->toArray()->shouldBeLike(['item 1', 'X', 'Y','item 6']);
 
         $this->splice(5, 1, new PlainArray(['X', 'Y']))
-            ->shouldBeLike(new PlainArray(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'X', 'Y']));
+            ->toArray()->shouldBeLike(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'X', 'Y']);
 
         $this->splice(-1, 1, new PlainArray(['X', 'Y']))
-            ->shouldBeLike(new PlainArray(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'X', 'Y']));
+            ->toArray()->shouldBeLike(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'X', 'Y']);
     }
 
     function it_can_return_clone_with_unique_values_comparing_them_as_strings()
@@ -380,7 +382,7 @@ final class PlainArraySpec extends ObjectBehavior
         $unique = $this->unique();
 
         $unique->shouldNotBe($this);
-        $unique->shouldBeLike(new PlainArray(['item 1', 'item 2', 'item 3', 'item 4', 'item 5']));
+        $unique->toArray()->shouldBeLike(['item 1', 'item 2', 'item 3', 'item 4', 'item 5']);
     }
 
     function it_can_return_clone_with_unique_values_comparing_them_using_comparator()
@@ -400,13 +402,13 @@ final class PlainArraySpec extends ObjectBehavior
         $unique = $this->unique($comparator);
 
         $unique->shouldNotBe($this);
-        $unique->shouldBeLike(
-            new PlainArray([
+        $unique->toArray()->shouldBeLike(
+            [
                 new DummyEntity(1, 'Joe'),
                 new DummyEntity(2, 'William'),
                 new DummyEntity(3, 'Jack'),
                 new DummyEntity(4, 'Averell'),
-            ])
+            ]
         );
     }
 
@@ -416,9 +418,9 @@ final class PlainArraySpec extends ObjectBehavior
         $this->beConstructedWith($items);
 
         $this->diff(new PlainArray([]))->shouldBe($this);
-        $this->diff(new PlainArray($items))->shouldBeLike(new PlainArray([]));
-        $this->diff(new PlainArray(['item 1', 'item 4']))->shouldBeLike(new PlainArray(['item 2', 'item 3']));
-        $this->diff(new PlainArray(['item 2', 'item 3']))->shouldBeLike(new PlainArray(['item 1', 'item 4']));
+        $this->diff(new PlainArray($items))->toArray()->shouldBeLike([]);
+        $this->diff(new PlainArray(['item 1', 'item 4']))->toArray()->shouldBeLike(['item 2', 'item 3']);
+        $this->diff(new PlainArray(['item 2', 'item 3']))->toArray()->shouldBeLike(['item 1', 'item 4']);
     }
 
     function it_returns_diff_using_provided_comparator()
@@ -434,11 +436,11 @@ final class PlainArraySpec extends ObjectBehavior
 
         $this->diff(new PlainArray([]), $comparator)->shouldBe($this);
         $this->diff(new PlainArray([new DummyEntity(5, 'Ma')]), $comparator)
-            ->shouldBeLike(new PlainArray([$joe, $william, $jack, $averell]));
-        $this->diff(new PlainArray([$joe]), $comparator)->shouldBeLike(new PlainArray([$william, $jack, $averell]));
-        $this->diff(new PlainArray([$averell]), $comparator)->shouldBeLike(new PlainArray([$joe, $william, $jack]));
-        $this->diff(new PlainArray([$william, $jack]), $comparator)->shouldBeLike(new PlainArray([$joe, $averell]));
-        $this->diff(new PlainArray([$joe, $william, $jack, $averell]), $comparator)->shouldBeLike(new PlainArray([]));
+            ->toArray()->shouldBeLike([$joe, $william, $jack, $averell]);
+        $this->diff(new PlainArray([$joe]), $comparator)->toArray()->shouldBeLike([$william, $jack, $averell]);
+        $this->diff(new PlainArray([$averell]), $comparator)->toArray()->shouldBeLike([$joe, $william, $jack]);
+        $this->diff(new PlainArray([$william, $jack]), $comparator)->toArray()->shouldBeLike([$joe, $averell]);
+        $this->diff(new PlainArray([$joe, $william, $jack, $averell]), $comparator)->toArray()->shouldBeLike([]);
     }
 
     function it_returns_intersection_using_string_comparison_by_default()
@@ -446,12 +448,12 @@ final class PlainArraySpec extends ObjectBehavior
         $items = ['item 1', 'item 2', 'item 3', 'item 4'];
         $this->beConstructedWith($items);
 
-        $this->intersect(new PlainArray([]))->shouldBeLike(new PlainArray([]));
-        $this->intersect(new PlainArray($items))->shouldBe($this);
+        $this->intersect(new PlainArray([]))->toArray()->shouldBeLike([]);
+        $this->intersect(new PlainArray($items))->toArray()->shouldBe($items);
         $this->intersect(new PlainArray(['item 1', 'item 4', 'item 5']))
-            ->shouldBeLike(new PlainArray(['item 1', 'item 4']));
+            ->toArray()->shouldBeLike(['item 1', 'item 4']);
         $this->intersect(new PlainArray(['item 0', 'item 2', 'item 3', 'item 5']))
-            ->shouldBeLike(new PlainArray(['item 2', 'item 3']));
+            ->toArray()->shouldBeLike(['item 2', 'item 3']);
     }
 
     function it_returns_intersection_using_provided_comparator()
@@ -461,20 +463,21 @@ final class PlainArraySpec extends ObjectBehavior
         $jack = new DummyEntity(3, 'Jack');
         $averell = new DummyEntity(4, 'Averell');
 
-        $this->beConstructedWith([$joe, $william, $jack, $averell]);
+        $items = [$joe, $william, $jack, $averell];
+        $this->beConstructedWith($items);
 
         $comparator = $this->entityComparator();
 
-        $this->intersect(new PlainArray([]), $comparator)->shouldBeLike(new PlainArray([]));
-        $this->intersect(new PlainArray([$joe, $william, $jack, $averell]), $comparator)->shouldBe($this);
+        $this->intersect(new PlainArray([]), $comparator)->toArray()->shouldBeLike([]);
+        $this->intersect(new PlainArray($items), $comparator)->toArray()->shouldBe($items);
         $this->intersect(new PlainArray([new DummyEntity(5, 'Ma')]), $comparator)
-            ->shouldBeLike(new PlainArray([]));
-        $this->intersect(new PlainArray([$joe]), $comparator)->shouldBeLike(new PlainArray([$joe]));
-        $this->intersect(new PlainArray([$averell]), $comparator)->shouldBeLike(new PlainArray([$averell]));
+            ->toArray()->shouldBeLike([]);
+        $this->intersect(new PlainArray([$joe]), $comparator)->toArray()->shouldBeLike([$joe]);
+        $this->intersect(new PlainArray([$averell]), $comparator)->toArray()->shouldBeLike([$averell]);
         $this->intersect(new PlainArray([$william, $jack]), $comparator)
-            ->shouldBeLike(new PlainArray([$william, $jack]));
-        $this->intersect(new PlainArray([$joe, $william, $jack, $averell]), $comparator)
-            ->shouldBeLike(new PlainArray([$joe, $william, $jack, $averell]));
+            ->toArray()->shouldBeLike([$william, $jack]);
+        $this->intersect(new PlainArray($items), $comparator)
+            ->toArray()->shouldBeLike($items);
     }
 
     function it_shuffles_items_returning_clone()
@@ -493,7 +496,7 @@ final class PlainArraySpec extends ObjectBehavior
 
         $clone = $this->unshift('item 0');
         $clone->shouldNotBe($this);
-        $clone->shouldBeLike(new PlainArray(['item 0', 'item 1', 'item 2', 'item 3']));
+        $clone->toArray()->shouldBeLike(['item 0', 'item 1', 'item 2', 'item 3']);
     }
 
     function it_shifts_value_of_the_beginning_and_returns_reduced_array()
@@ -502,7 +505,7 @@ final class PlainArraySpec extends ObjectBehavior
 
         $clone = $this->shift();
         $clone->shouldNotBe($this);
-        $clone->shouldBeLike(new PlainArray(['item 2', 'item 3']));
+        $clone->toArray()->shouldBeLike(['item 2', 'item 3']);
     }
 
     function it_shifts_value_of_the_beginning_and_assigns_to_variable()
@@ -529,7 +532,7 @@ final class PlainArraySpec extends ObjectBehavior
 
         $clone = $this->push('item 4');
         $clone->shouldNotBe($this);
-        $clone->shouldBeLike(new PlainArray(['item 1', 'item 2', 'item 3', 'item 4']));
+        $clone->toArray()->shouldBeLike(['item 1', 'item 2', 'item 3', 'item 4']);
     }
 
     function it_pops_value_of_the_end_and_returns_reduced_array()
@@ -538,7 +541,7 @@ final class PlainArraySpec extends ObjectBehavior
 
         $clone = $this->pop();
         $clone->shouldNotBe($this);
-        $clone->shouldBeLike(new PlainArray(['item 1', 'item 2']));
+        $clone->toArray()->shouldBeLike(['item 1', 'item 2']);
     }
 
     function it_pops_value_of_the_end_and_assigns_to_variable()
@@ -674,7 +677,9 @@ final class PlainArraySpec extends ObjectBehavior
     {
         $this->beConstructedWith(['one', 'two', 'three']);
 
-        $this->toStringsArray()->shouldBeLike(Wrap::stringsArray(['one', 'two', 'three']));
+        $stringsArray = $this->toStringsArray();
+        $stringsArray->shouldBeAnInstanceOf(StringsArray::class);
+        $stringsArray->toNativeStrings()->shouldBeLike(['one', 'two', 'three']);
     }
 
     function it_can_tell_if_has_element_or_not()

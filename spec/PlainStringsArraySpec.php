@@ -42,7 +42,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $join = $this->join(PlainStringsArray::fromArray(['string 3', 'string 4']));
         $join->shouldNotBe($this);
-        $join->shouldBeLike(PlainStringsArray::fromArray(['string 1', 'string 2', 'string 3', 'string 4']));
+        $join->toNativeStrings()->shouldBeLike(['string 1', 'string 2', 'string 3', 'string 4']);
     }
 
     function it_joins_with_regular_ArrayValue_with_strings()
@@ -50,66 +50,70 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $this->beConstructedWithStrings('string 1', 'string 2');
 
         $this->join(Wrap::array(['string 3', 'string 4']))
-            ->shouldBeLike(PlainStringsArray::fromArray(['string 1', 'string 2', 'string 3', 'string 4']));
+            ->toNativeStrings()->shouldBeLike(['string 1', 'string 2', 'string 3', 'string 4']);
     }
 
     function it_can_be_sliced()
     {
-        $this->beConstructedWithStrings('string 1', 'string 2', 'string 3', 'string 4');
+        $strings = ['string 1', 'string 2', 'string 3', 'string 4'];
+        $this->beConstructedWithStrings(...$strings);
 
         $this->slice(0, 1)->shouldNotBe($this);
-        $this->slice(0, 1)->shouldBeLike(PlainStringsArray::fromArray(['string 1']));
-        $this->slice(3, 1)->shouldBeLike(PlainStringsArray::fromArray(['string 4']));
-        $this->slice(1, 2)->shouldBeLike(PlainStringsArray::fromArray(['string 2', 'string 3']));
-        $this->slice(0, 4)->shouldBeLike($this);
-        $this->slice(0, 500)->shouldBeLike($this);
+        $this->slice(0, 1)->toNativeStrings()->shouldBeLike(['string 1']);
+        $this->slice(3, 1)->toNativeStrings()->shouldBeLike(['string 4']);
+        $this->slice(1, 2)->toNativeStrings()->shouldBeLike(['string 2', 'string 3']);
+        $this->slice(0, 4)->toNativeStrings()->shouldBeLike($strings);
+        $this->slice(0, 500)->toNativeStrings()->shouldBeLike($strings);
     }
 
     function it_can_be_spliced()
     {
         $this->beConstructedWithStrings('string 1', 'string 2', 'string 3', 'string 4');
 
-        $this->splice(1, 2)->shouldBeLike(PlainStringsArray::fromArray(['string 1', 'string 4']));
+        $this->splice(1, 2)->toNativeStrings()->shouldBeLike(['string 1', 'string 4']);
 
         $this->splice(1, 2, Wrap::array(['string x', 'string y']))
-            ->shouldBeLike(PlainStringsArray::fromArray(['string 1', 'string x', 'string y', 'string 4']));
+            ->toNativeStrings()->shouldBeLike(['string 1', 'string x', 'string y', 'string 4']);
 
-        $this->splice(0, 3)->shouldBeLike(PlainStringsArray::fromArray(['string 4']));
+        $this->splice(0, 3)->toNativeStrings()->shouldBeLike(['string 4']);
 
-        $this->splice(-1, 1)->shouldBeLike(PlainStringsArray::fromArray(['string 1', 'string 2', 'string 3']));
+        $this->splice(-1, 1)->toNativeStrings()->shouldBeLike(['string 1', 'string 2', 'string 3']);
 
-        $this->splice(0, 100)->shouldBeLike(PlainStringsArray::fromArray([]));
+        $this->splice(0, 100)->toNativeStrings()->shouldBeLike([]);
 
         $this->splice(0, 0, PlainStringsArray::fromArray(['string 0']))
-            ->shouldBeLike(PlainStringsArray::fromArray(['string 0', 'string 1', 'string 2', 'string 3', 'string 4']));
+            ->toNativeStrings()->shouldBeLike(['string 0', 'string 1', 'string 2', 'string 3', 'string 4']);
     }
 
     function it_returns_diff()
     {
-        $this->beConstructedWithStrings('string 1', 'string 2', 'string 3', 'string 4');
+        $strings = ['string 1', 'string 2', 'string 3', 'string 4'];
+        $this->beConstructedWithStrings(...$strings);
 
         $diff = $this->diff(PlainStringsArray::fromArray(['string 2', 'string 3']));
         $diff->shouldNotBe($this);
-        $diff->shouldBeLike(PlainStringsArray::fromArray(['string 1', 'string 4']));
+        $diff->toNativeStrings()->shouldBeLike(['string 1', 'string 4']);
 
         $this->diff(PlainStringsArray::fromArray(['string 1', 'string 2', 'string 3', 'string 4']))
-            ->shouldBeLike(PlainStringsArray::fromArray([]));
+            ->toNativeStrings()->shouldBeLike([]);
 
-        $this->diff(PlainStringsArray::fromArray([]))->shouldBeLike($this);
+        $this->diff(PlainStringsArray::fromArray([]))->toNativeStrings()->shouldBeLike($strings);
     }
 
     function it_returns_intersection()
     {
-        $this->beConstructedWithStrings('string 1', 'string 2', 'string 3', 'string 4');
+        $strings = ['string 1', 'string 2', 'string 3', 'string 4'];
+        $this->beConstructedWithStrings(...$strings);
 
         $intersect = $this->intersect(PlainStringsArray::fromArray(['string 2', 'string 3']));
         $intersect->shouldNotBe($this);
-        $intersect->shouldBeLike(PlainStringsArray::fromArray(['string 2', 'string 3']));
+        $intersect->toNativeStrings()->shouldBeLike(['string 2', 'string 3']);
 
         $this->intersect(PlainStringsArray::fromArray(['string 1', 'string 2', 'string 3', 'string 4']))
-            ->shouldBeLike($this);
+            ->toNativeStrings()
+            ->shouldBeLike($strings);
 
-        $this->intersect(PlainStringsArray::fromArray([]))->shouldBeLike(PlainStringsArray::fromArray([]));
+        $this->intersect(PlainStringsArray::fromArray([]))->toNativeStrings()->shouldBeLike([]);
     }
 
     function it_reduces_array_to_single_value()
@@ -131,7 +135,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
             return $value->upper();
         };
 
-        $this->map($mapper)->shouldBeLike(PlainStringsArray::fromArray(['AAA', 'BBB', 'CCC', 'DDD']));
+        $this->map($mapper)->toNativeStrings()->shouldBeLike(['AAA', 'BBB', 'CCC', 'DDD']);
     }
 
     function it_maps_values_to_another_StringsArray_with_mapper_returning_string()
@@ -142,7 +146,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
             return $value->upper()->toString();
         };
 
-        $this->map($mapper)->shouldBeLike(PlainStringsArray::fromArray(['AAA', 'BBB', 'CCC', 'DDD']));
+        $this->map($mapper)->toNativeStrings()->shouldBeLike(['AAA', 'BBB', 'CCC', 'DDD']);
     }
 
     function it_flat_maps_string_values()
@@ -156,7 +160,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
         );
 
         $mapped->shouldNotBe($this);
-        $mapped->shouldBeLike(PlainStringsArray::fromArray(['blue', 'ball', 'red', 'balloon', 'green', 'grass']));
+        $mapped->toNativeStrings()->shouldBeLike(['blue', 'ball', 'red', 'balloon', 'green', 'grass']);
     }
 
     function it_can_group_items()
@@ -209,20 +213,20 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $unique = $this->unique();
         $unique->shouldNotBe($this);
-        $unique->shouldBeLike(PlainStringsArray::fromArray(['first', 'second', 'third']));
+        $unique->toNativeStrings()->shouldBeLike(['first', 'second', 'third']);
     }
 
     function it_returns_StringsArray_with_unique_values_using_comparator()
     {
         $this->beConstructedWithStrings('first', 'FIRST', 'second');
 
-        $this->unique()->shouldBeLike(PlainStringsArray::fromArray(['first', 'FIRST', 'second']));
+        $this->unique()->toNativeStrings()->shouldBeLike(['first', 'FIRST', 'second']);
 
         $lowerComparator = function (StringValue $valueA, StringValue $valueB): int {
             return $valueA->lower() <=> $valueB->lower();
         };
 
-        $this->unique($lowerComparator)->shouldBeLike(PlainStringsArray::fromArray(['first', 'second']));
+        $this->unique($lowerComparator)->toNativeStrings()->shouldBeLike(['first', 'second']);
     }
 
     function it_returns_regular_array()
@@ -242,7 +246,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $notEmpty = $this->filterEmpty();
 
         $notEmpty->shouldNotBe($this);
-        $notEmpty->shouldBeLike(PlainStringsArray::fromArray(['first', ' ', 'second', '0', 'false']));
+        $notEmpty->toNativeStrings()->shouldBeLike(['first', ' ', 'second', '0', 'false']);
     }
 
     function it_sorts_ascending()
@@ -251,7 +255,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $sorted = $this->sort(Sorts::asc());
         $sorted->shouldNotBeLike($this);
-        $sorted->shouldBeLike(PlainStringsArray::fromArray(['alpha', 'beta', 'omega', 'zeta']));
+        $sorted->toNativeStrings()->shouldBeLike(['alpha', 'beta', 'omega', 'zeta']);
     }
 
     function it_sorts_descending()
@@ -260,7 +264,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $sorted = $this->sort(Sorts::desc());
         $sorted->shouldNotBeLike($this);
-        $sorted->shouldBeLike(PlainStringsArray::fromArray(['zeta', 'omega', 'beta', 'alpha']));
+        $sorted->toNativeStrings()->shouldBeLike(['zeta', 'omega', 'beta', 'alpha']);
     }
 
     function it_shuffles_string_items(ArrayValue $strings)
@@ -282,7 +286,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $reversed = $this->reverse();
         $reversed->shouldNotBe($this);
-        $reversed->shouldBeLike(PlainStringsArray::fromArray(['My', 'name', 'is', 'Yoda']));
+        $reversed->toNativeStrings()->shouldBeLike(['My', 'name', 'is', 'Yoda']);
     }
 
     function it_can_be_iterated()
@@ -327,7 +331,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $added = $this->unshift('zero');
         $added->shouldNotBe($this);
-        $added->shouldBeLike(PlainStringsArray::fromArray(['zero', 'one', 'two', 'three']));
+        $added->toNativeStrings()->shouldBeLike(['zero', 'one', 'two', 'three']);
     }
 
     function it_prepends_StringValue()
@@ -336,7 +340,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $added = $this->unshift(Wrap::string('zero'));
         $added->shouldNotBe($this);
-        $added->shouldBeLike(PlainStringsArray::fromArray(['zero', 'one', 'two', 'three']));
+        $added->toNativeStrings()->shouldBeLike(['zero', 'one', 'two', 'three']);
     }
 
     function it_shift_item_from_the_beginning_of_strings_array()
@@ -360,7 +364,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $appended = $this->push('three');
         $appended->shouldNotBe($this);
-        $appended->shouldBeLike(PlainStringsArray::fromArray(['one', 'two', 'three']));
+        $appended->toNativeStrings()->shouldBeLike(['one', 'two', 'three']);
     }
 
     function it_appends_StringValue()
@@ -369,7 +373,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $appended = $this->push(Wrap::string('three'));
         $appended->shouldNotBe($this);
-        $appended->shouldBeLike(PlainStringsArray::fromArray(['one', 'two', 'three']));
+        $appended->toNativeStrings()->shouldBeLike(['one', 'two', 'three']);
     }
 
     function it_pops_string_from_the_end_of_array()
@@ -398,8 +402,8 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $stripped = $this->stripTags();
         $stripped->shouldNotBe($this);
-        $stripped->shouldBeLike(
-            PlainStringsArray::fromArray(['This is a header', 'This is a subtitle', ' alert(\'This is javascript\'); '])
+        $stripped->toNativeStrings()->shouldBeLike(
+            ['This is a header', 'This is a subtitle', ' alert(\'This is javascript\'); ']
         );
     }
 
@@ -407,42 +411,42 @@ final class PlainStringsArraySpec extends ObjectBehavior
     {
         $this->beConstructedWithStrings(" \t\n one  ", "  two \n\r ");
 
-        $this->trim()->shouldBeLike(PlainStringsArray::fromArray(['one', 'two']));
+        $this->trim()->toNativeStrings()->shouldBeLike(['one', 'two']);
     }
 
     function it_trims_all_contained_strings_with_custom_characters()
     {
         $this->beConstructedWithStrings(' xxx one xxx ', 'xxxtwoxxx', ' three ');
 
-        $this->trim(' x')->shouldBeLike(PlainStringsArray::fromArray(['one', 'two', 'three']));
+        $this->trim(' x')->toNativeStrings()->shouldBeLike(['one', 'two', 'three']);
     }
 
     function it_trims_right_all_contained_strings()
     {
         $this->beConstructedWithStrings(" \t\n one  ", "  two \n\r ");
 
-        $this->trimRight()->shouldBeLike(PlainStringsArray::fromArray([" \t\n one", "  two"]));
+        $this->trimRight()->toNativeStrings()->shouldBeLike([" \t\n one", "  two"]);
     }
 
     function it_trims_right_all_contained_strings_with_custom_characters()
     {
         $this->beConstructedWithStrings(' xxx one xxx ', 'xxxtwoxxx', ' three ');
 
-        $this->trimRight(' x')->shouldBeLike(PlainStringsArray::fromArray([' xxx one', 'xxxtwo', ' three']));
+        $this->trimRight(' x')->toNativeStrings()->shouldBeLike([' xxx one', 'xxxtwo', ' three']);
     }
 
     function it_trims_left_all_contained_strings()
     {
         $this->beConstructedWithStrings(" \t\n one  ", "  two \n\r ");
 
-        $this->trimLeft()->shouldBeLike(PlainStringsArray::fromArray(["one  ", "two \n\r "]));
+        $this->trimLeft()->toNativeStrings()->shouldBeLike(["one  ", "two \n\r "]);
     }
 
     function it_trims_left_all_contained_strings_with_custom_characters()
     {
         $this->beConstructedWithStrings(' xxx one xxx ', 'xxxtwoxxx', ' three ');
 
-        $this->trimLeft(' x')->shouldBeLike(PlainStringsArray::fromArray(['one xxx ', 'twoxxx', 'three ']));
+        $this->trimLeft(' x')->toNativeStrings()->shouldBeLike(['one xxx ', 'twoxxx', 'three ']);
     }
 
     function it_transforms_strings_to_lower_case()
@@ -451,7 +455,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $lower = $this->lower();
         $lower->shouldNotBe($this);
-        $lower->shouldBeLike(PlainStringsArray::fromArray(['will', 'will', 'smith', 'smith?']));
+        $lower->toNativeStrings()->shouldBeLike(['will', 'will', 'smith', 'smith?']);
     }
 
     function it_transforms_national_characters_to_lower_case()
@@ -460,7 +464,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $lower = $this->lower();
         $lower->shouldNotBe($this);
-        $lower->shouldBeLike(PlainStringsArray::fromArray(['zażółć', 'gęślą', 'jaźń']));
+        $lower->toNativeStrings()->shouldBeLike(['zażółć', 'gęślą', 'jaźń']);
     }
 
     function it_transforms_strings_to_upper_case()
@@ -469,7 +473,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $upper = $this->upper();
         $upper->shouldNotBe($this);
-        $upper->shouldBeLike(PlainStringsArray::fromArray(['WILL', 'WILL', 'SMITH', 'SMITH?']));
+        $upper->toNativeStrings()->shouldBeLike(['WILL', 'WILL', 'SMITH', 'SMITH?']);
     }
 
     function it_transforms_national_characters_to_upper_case()
@@ -478,7 +482,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $upper = $this->upper();
         $upper->shouldNotBe($this);
-        $upper->shouldBeLike(PlainStringsArray::fromArray(['ZAŻÓŁĆ', 'GĘŚLĄ', 'JAŹŃ']));
+        $upper->toNativeStrings()->shouldBeLike(['ZAŻÓŁĆ', 'GĘŚLĄ', 'JAŹŃ']);
     }
 
     function it_transforms_first_letter_to_lower_case_in_all_strings()
@@ -487,7 +491,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $lower = $this->lowerFirst();
         $lower->shouldNotBe($this);
-        $lower->shouldBeLike(PlainStringsArray::fromArray(['żABA', 'mEANS', 'fROG']));
+        $lower->toNativeStrings()->shouldBeLike(['żABA', 'mEANS', 'fROG']);
     }
 
     function it_transforms_first_letter_to_upper_case_in_all_strings()
@@ -496,7 +500,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $lower = $this->upperFirst();
         $lower->shouldNotBe($this);
-        $lower->shouldBeLike(PlainStringsArray::fromArray(['Żaba', 'Means', 'Frog']));
+        $lower->toNativeStrings()->shouldBeLike(['Żaba', 'Means', 'Frog']);
     }
 
     function it_can_be_converted_to_ArrayValue_containing_StringValue()
@@ -504,7 +508,8 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $this->beConstructedWithStrings('one', 'two', 'three');
 
         $this->toArrayValue()
-            ->shouldBeLike(Wrap::array([Wrap::string('one'), Wrap::string('two'), Wrap::string('three')]));
+            ->toArray()
+            ->shouldBeLike([Wrap::string('one'), Wrap::string('two'), Wrap::string('three')]);
     }
 
     function it_can_be_converted_to_AssocValue_containing_StringValue()
@@ -544,7 +549,7 @@ final class PlainStringsArraySpec extends ObjectBehavior
 
         $transformed = $this->transform('md5');
         $transformed->shouldNotBe($this);
-        $transformed->shouldBeLike(PlainStringsArray::fromArray([md5('one'), md5('two'), md5('three')]));
+        $transformed->toNativeStrings()->shouldBeLike([md5('one'), md5('two'), md5('three')]);
     }
 
     function it_returns_PlainArray_containing_regex_matches()

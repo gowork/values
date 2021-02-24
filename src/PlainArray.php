@@ -4,12 +4,24 @@ namespace GW\Value;
 
 use ArrayIterator;
 use BadMethodCallException;
-use function array_chunk;
+use GW\Value\Arrayable\Chunk;
+use GW\Value\Arrayable\DiffByComparator;
+use GW\Value\Arrayable\DiffByString;
+use GW\Value\Arrayable\Filter;
+use GW\Value\Arrayable\FlatMap;
+use GW\Value\Arrayable\IntersectByComparator;
+use GW\Value\Arrayable\IntersectByString;
+use GW\Value\Arrayable\Join;
+use GW\Value\Arrayable\JustArray;
+use GW\Value\Arrayable\Map;
+use GW\Value\Arrayable\Reverse;
+use GW\Value\Arrayable\Shuffle;
+use GW\Value\Arrayable\Slice;
+use GW\Value\Arrayable\Sort;
+use GW\Value\Arrayable\Splice;
+use GW\Value\Arrayable\UniqueByComparator;
+use GW\Value\Arrayable\UniqueByString;
 use function array_reverse;
-use function array_slice;
-use function array_splice;
-use function array_map;
-use function array_merge;
 use function count;
 use function in_array;
 use function is_array;
@@ -21,14 +33,15 @@ use function is_array;
 final class PlainArray implements ArrayValue
 {
     /** @phpstan-var array<int, TValue> */
-    private array $items;
+    private Arrayable $items;
 
     /**
-     * @phpstan-param array<mixed, TValue> $items
+     * @phpstan-param array<mixed, TValue>|Arrayable $items
      */
-    public function __construct(array $items)
+    public function __construct($items)
     {
-        $this->items = array_values($items);
+        // FIXME if you can
+        $this->items = is_array($items) ? new JustArray($items) : $items;
     }
 
     /**
@@ -38,7 +51,7 @@ final class PlainArray implements ArrayValue
      */
     public function map(callable $transformer): PlainArray
     {
-        return new self(array_map($transformer, $this->items));
+        return new self(new Map($this->items, $transformer));
     }
 
     /**
@@ -48,14 +61,7 @@ final class PlainArray implements ArrayValue
      */
     public function flatMap(callable $transformer): PlainArray
     {
-        $elements = [];
-
-        foreach ($this->items as $item) {
-            $transformed = $transformer($item);
-            $elements[] = is_array($transformed) ? $transformed : [...$transformed];
-        }
-
-        return new self(array_merge([], ...$elements));
+        return new self(new FlatMap($this->items, $transformer));
     }
 
     /**
@@ -71,7 +77,7 @@ final class PlainArray implements ArrayValue
         /** @phpstan-var ArrayValue<TValue> $empty */
         $empty = Wrap::array([]);
 
-        foreach ($this->items as $item) {
+        foreach ($this->items->toArray() as $item) {
             /** @phpstan-var TNewKey $key */
             $key = $reducer($item);
             $groups[$key] = ($groups[$key] ?? $empty)->push($item);
@@ -86,10 +92,7 @@ final class PlainArray implements ArrayValue
      */
     public function chunk(int $size): PlainArray
     {
-        /** @phpstan-var array<array<int, TValue>> $items */
-        $items = array_chunk($this->items, $size, false);
-
-        return new self($items);
+        return new self(new Chunk($this->items, $size));
     }
 
     /**
@@ -106,7 +109,7 @@ final class PlainArray implements ArrayValue
      */
     public function filter(callable $filter): PlainArray
     {
-        return new self(array_filter($this->items, $filter));
+        return new self(new Filter($this->items, $filter));
     }
 
     /**
@@ -115,10 +118,7 @@ final class PlainArray implements ArrayValue
      */
     public function sort(callable $comparator): PlainArray
     {
-        $items = $this->items;
-        uasort($items, $comparator);
-
-        return new self($items);
+        return new self(new Sort($this->items, $comparator));
     }
 
     /**
@@ -127,7 +127,7 @@ final class PlainArray implements ArrayValue
      */
     public function each(callable $callback): PlainArray
     {
-        foreach ($this->items as $item) {
+        foreach ($this->items->toArray() as $item) {
             $callback($item);
         }
 
@@ -139,7 +139,7 @@ final class PlainArray implements ArrayValue
      */
     public function reverse(): PlainArray
     {
-        return new self(array_reverse($this->items, false));
+        return new self(new Reverse($this->items));
     }
 
     /**
@@ -148,7 +148,8 @@ final class PlainArray implements ArrayValue
      */
     public function join(ArrayValue $other): PlainArray
     {
-        return new self(array_merge($this->items, $other->toArray()));
+        // FIXME
+        return new self(new Join($this->items, new JustArray($other->toArray())));
     }
 
     /**
@@ -156,7 +157,7 @@ final class PlainArray implements ArrayValue
      */
     public function slice(int $offset, int $length): PlainArray
     {
-        return new self(array_slice($this->items, $offset, $length));
+        return new self(new Slice($this->items, $offset, $length));
     }
 
     /**
@@ -165,10 +166,10 @@ final class PlainArray implements ArrayValue
      */
     public function splice(int $offset, int $length, ?ArrayValue $replacement = null): PlainArray
     {
-        $items = $this->items;
-        array_splice($items, $offset, $length, $replacement !== null ? $replacement->toArray() : []);
+        // FIXME
+        $replacement = new JustArray($replacement !== null ? $replacement->toArray() : []);
 
-        return new self($items);
+        return new self(new Splice($this->items, $offset, $length, $replacement));
     }
 
     /**
@@ -178,23 +179,10 @@ final class PlainArray implements ArrayValue
     public function unique(?callable $comparator = null): PlainArray
     {
         if ($comparator === null) {
-            return new self(array_unique($this->items));
+            return new self(new UniqueByString($this->items));
         }
 
-        $result = [];
-
-        foreach ($this->items as $valueA) {
-            foreach ($result as $valueB) {
-                if ($comparator($valueA, $valueB) === 0) {
-                    // item already in result
-                    continue 2;
-                }
-            }
-
-            $result[] = $valueA;
-        }
-
-        return new self($result);
+        return new self(new UniqueByComparator($this->items, $comparator));
     }
 
     /**
@@ -208,11 +196,13 @@ final class PlainArray implements ArrayValue
             return $this;
         }
 
+        $other = new JustArray($other->toArray());
         if ($comparator === null) {
-            return new self(array_diff($this->items, $other->toArray()));
+            // FIXME
+            return new self(new DiffByString($this->items, $other));
         }
 
-        return new self(array_udiff($this->items, $other->toArray(), $comparator));
+        return new self(new DiffByComparator($this->items, $other, $comparator));
     }
 
     /**
@@ -222,15 +212,11 @@ final class PlainArray implements ArrayValue
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): PlainArray
     {
-        if ($this->items === $other->toArray()) {
-            return $this;
-        }
-
         if ($comparator === null) {
-            return new self(array_intersect($this->items, $other->toArray()));
+            return new self(new IntersectByString($this->items, $other));
         }
 
-        return new self(array_uintersect($this->items, $other->toArray(), $comparator));
+        return new self(new IntersectByComparator($this->items, $other, $comparator));
     }
 
     /**
@@ -238,10 +224,7 @@ final class PlainArray implements ArrayValue
      */
     public function shuffle(): PlainArray
     {
-        $items = $this->items;
-        shuffle($items);
-
-        return new self($items);
+        return new self(new Shuffle($this->items));
     }
 
     // adders and removers
@@ -252,10 +235,10 @@ final class PlainArray implements ArrayValue
      */
     public function unshift($value): PlainArray
     {
-        $clone = clone $this;
-        array_unshift($clone->items, $value);
+        $items = $this->toArray();
+        array_unshift($items, $value);
 
-        return $clone;
+        return new self(new JustArray($items));
     }
 
     /**
@@ -264,10 +247,10 @@ final class PlainArray implements ArrayValue
      */
     public function shift(&$value = null): PlainArray
     {
-        $clone = clone $this;
-        $value = array_shift($clone->items);
+        $items = $this->toArray();
+        $value = array_shift($items);
 
-        return $clone;
+        return new self(new JustArray($items));;
     }
 
     /**
@@ -276,10 +259,10 @@ final class PlainArray implements ArrayValue
      */
     public function push($value): PlainArray
     {
-        $clone = clone $this;
-        $clone->items[] = $value;
+        $items = $this->toArray();
+        $items[] = $value;
 
-        return $clone;
+        return new self(new JustArray($items));
     }
 
     /**
@@ -288,10 +271,10 @@ final class PlainArray implements ArrayValue
      */
     public function pop(&$value = null): PlainArray
     {
-        $clone = clone $this;
-        $value = array_pop($clone->items);
+        $items = $this->toArray();
+        $value = array_pop($items);
 
-        return $clone;
+        return new self(new JustArray($items));
     }
 
     // finalizers
@@ -304,7 +287,7 @@ final class PlainArray implements ArrayValue
      */
     public function reduce(callable $transformer, $start)
     {
-        return array_reduce($this->items, $transformer, $start);
+        return array_reduce($this->items->toArray(), $transformer, $start);
     }
 
     /**
@@ -312,7 +295,7 @@ final class PlainArray implements ArrayValue
      */
     public function first()
     {
-        return $this->items[0] ?? null;
+        return $this->items->toArray()[0] ?? null;
     }
 
     /**
@@ -322,7 +305,7 @@ final class PlainArray implements ArrayValue
     {
         $count = $this->count();
 
-        return $count > 0 ? $this->items[$count - 1] : null;
+        return $count > 0 ? $this->items->toArray()[$count - 1] : null;
     }
 
     /**
@@ -331,7 +314,7 @@ final class PlainArray implements ArrayValue
      */
     public function find(callable $filter)
     {
-        foreach ($this->items as $item) {
+        foreach ($this->items->toArray() as $item) {
             if ($filter($item)) {
                 return $item;
             }
@@ -346,7 +329,7 @@ final class PlainArray implements ArrayValue
      */
     public function findLast(callable $filter)
     {
-        foreach (array_reverse($this->items) as $item) {
+        foreach (array_reverse($this->items->toArray()) as $item) {
             if ($filter($item)) {
                 return $item;
             }
@@ -357,7 +340,7 @@ final class PlainArray implements ArrayValue
 
     public function hasElement($element): bool
     {
-        return in_array($element, $this->items, true);
+        return in_array($element, $this->items->toArray(), true);
     }
 
     /**
@@ -365,7 +348,7 @@ final class PlainArray implements ArrayValue
      */
     public function any(callable $filter): bool
     {
-        foreach ($this->items as $item) {
+        foreach ($this->items->toArray() as $item) {
             if ($filter($item)) {
                 return true;
             }
@@ -379,7 +362,7 @@ final class PlainArray implements ArrayValue
      */
     public function every(callable $filter): bool
     {
-        foreach ($this->items as $item) {
+        foreach ($this->items->toArray() as $item) {
             if (!$filter($item)) {
                 return false;
             }
@@ -390,7 +373,7 @@ final class PlainArray implements ArrayValue
 
     public function count(): int
     {
-        return count($this->items);
+        return count($this->items->toArray());
     }
 
     /**
@@ -398,7 +381,7 @@ final class PlainArray implements ArrayValue
      */
     public function toArray(): array
     {
-        return $this->items;
+        return $this->items->toArray();
     }
 
     /**
@@ -406,7 +389,7 @@ final class PlainArray implements ArrayValue
      */
     public function getIterator(): ArrayIterator
     {
-        return new ArrayIterator($this->items);
+        return new ArrayIterator($this->items->toArray());
     }
 
     /**
@@ -414,7 +397,7 @@ final class PlainArray implements ArrayValue
      */
     public function offsetExists($offset): bool
     {
-        return isset($this->items[$offset]);
+        return isset($this->items->toArray()[$offset]);
     }
 
     /**
@@ -423,7 +406,7 @@ final class PlainArray implements ArrayValue
      */
     public function offsetGet($offset)
     {
-        return $this->items[$offset];
+        return $this->items->toArray()[$offset];
     }
 
     /**
@@ -460,7 +443,7 @@ final class PlainArray implements ArrayValue
 
     public function isEmpty(): bool
     {
-        return $this->items === [];
+        return $this->items->toArray() === [];
     }
 
     /**
@@ -468,11 +451,11 @@ final class PlainArray implements ArrayValue
      */
     public function toAssocValue(): AssocValue
     {
-        return Wrap::assocArray($this->items);
+        return Wrap::assocArray($this->items->toArray());
     }
 
     public function toStringsArray(): StringsArray
     {
-        return Wrap::stringsArray($this->items);
+        return Wrap::stringsArray($this->items->toArray());
     }
 }

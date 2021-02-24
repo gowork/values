@@ -8,7 +8,7 @@ namespace GW\Value;
  * @extends Filterable<TValue>
  * @extends Sortable<TValue>
  */
-interface Collection extends Filterable, Mappable, Sortable, Countable, Reversible
+interface Collection extends Filterable, Mappable, Sortable, Countable, Reversible, Arrayable
 {
     /**
      * @phpstan-return TValue|null
