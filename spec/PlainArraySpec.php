@@ -417,7 +417,7 @@ final class PlainArraySpec extends ObjectBehavior
         $items = ['item 1', 'item 2', 'item 3', 'item 4'];
         $this->beConstructedWith($items);
 
-        $this->diff(new PlainArray([]))->shouldBe($this);
+        $this->diff(new PlainArray([]))->toArray()->shouldBeLike($this->toArray());
         $this->diff(new PlainArray($items))->toArray()->shouldBeLike([]);
         $this->diff(new PlainArray(['item 1', 'item 4']))->toArray()->shouldBeLike(['item 2', 'item 3']);
         $this->diff(new PlainArray(['item 2', 'item 3']))->toArray()->shouldBeLike(['item 1', 'item 4']);
@@ -434,7 +434,7 @@ final class PlainArraySpec extends ObjectBehavior
 
         $comparator = $this->entityComparator();
 
-        $this->diff(new PlainArray([]), $comparator)->shouldBe($this);
+        $this->diff(new PlainArray([]), $comparator)->toArray()->shouldBeLike($this->toArray());
         $this->diff(new PlainArray([new DummyEntity(5, 'Ma')]), $comparator)
             ->toArray()->shouldBeLike([$joe, $william, $jack, $averell]);
         $this->diff(new PlainArray([$joe]), $comparator)->toArray()->shouldBeLike([$william, $jack, $averell]);

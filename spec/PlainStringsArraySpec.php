@@ -168,15 +168,19 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $this->beConstructedWithStrings('red', 'green', 'blue', 'black');
 
         $this
-            ->groupBy(function (StringValue $value): string {
-                return $value->substring(0, 1)->toString();
-            })
+            ->groupBy(
+                function (StringValue $value): string {
+                    return $value->substring(0, 1)->toString();
+                }
+            )
             ->shouldBeLike(
-                Wrap::assocArray([
-                    'r' => PlainStringsArray::fromArray(['red']),
-                    'g' => PlainStringsArray::fromArray(['green']),
-                    'b' => PlainStringsArray::fromArray(['blue', 'black']),
-                ])
+                Wrap::assocArray(
+                    [
+                        'r' => PlainStringsArray::fromArray(['red']),
+                        'g' => PlainStringsArray::fromArray(['green']),
+                        'b' => PlainStringsArray::fromArray(['blue', 'black']),
+                    ]
+                )
             );
     }
 

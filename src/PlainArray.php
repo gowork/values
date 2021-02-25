@@ -4,6 +4,7 @@ namespace GW\Value;
 
 use ArrayIterator;
 use BadMethodCallException;
+use GW\Value\Arrayable\Cache;
 use GW\Value\Arrayable\Chunk;
 use GW\Value\Arrayable\DiffByComparator;
 use GW\Value\Arrayable\DiffByString;
@@ -40,8 +41,7 @@ final class PlainArray implements ArrayValue
      */
     public function __construct($items)
     {
-        // FIXME if you can
-        $this->items = is_array($items) ? new JustArray($items) : $items;
+        $this->items = is_array($items) ? new JustArray($items) : new Cache($items);
     }
 
     /**
@@ -71,20 +71,17 @@ final class PlainArray implements ArrayValue
      */
     public function groupBy(callable $reducer): AssocValue
     {
-        /** @phpstan-var array<TNewKey, ArrayValue<TValue>> $groups */
+        /** @phpstan-var array<TNewKey, array<TValue>> $groups */
         $groups = [];
-
-        /** @phpstan-var ArrayValue<TValue> $empty */
-        $empty = Wrap::array([]);
 
         foreach ($this->items->toArray() as $item) {
             /** @phpstan-var TNewKey $key */
             $key = $reducer($item);
-            $groups[$key] = ($groups[$key] ?? $empty)->push($item);
+            $groups[$key][] = $item;
         }
 
-        /** @phpstan-var array<TNewKey, ArrayValue<TValue>> $groups */
-        return Wrap::assocArray($groups);
+        /** @phpstan-var array<TNewKey, array<TValue>> $groups */
+        return Wrap::assocArray($groups)->map([Wrap::class, 'array']);
     }
 
     /**
@@ -148,8 +145,7 @@ final class PlainArray implements ArrayValue
      */
     public function join(ArrayValue $other): PlainArray
     {
-        // FIXME
-        return new self(new Join($this->items, new JustArray($other->toArray())));
+        return new self(new Join($this->items, $other));
     }
 
     /**
@@ -166,10 +162,7 @@ final class PlainArray implements ArrayValue
      */
     public function splice(int $offset, int $length, ?ArrayValue $replacement = null): PlainArray
     {
-        // FIXME
-        $replacement = new JustArray($replacement !== null ? $replacement->toArray() : []);
-
-        return new self(new Splice($this->items, $offset, $length, $replacement));
+        return new self(new Splice($this->items, $offset, $length, $replacement ?? new JustArray([])));
     }
 
     /**
@@ -192,13 +185,7 @@ final class PlainArray implements ArrayValue
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): PlainArray
     {
-        if ($other->count() === 0) {
-            return $this;
-        }
-
-        $other = new JustArray($other->toArray());
         if ($comparator === null) {
-            // FIXME
             return new self(new DiffByString($this->items, $other));
         }
 
