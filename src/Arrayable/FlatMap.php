@@ -6,23 +6,34 @@ use GW\Value\Arrayable;
 use function array_merge;
 use function is_array;
 
+/**
+ * @template TValue
+ * @template TNewValue
+ * @implements Arrayable<TNewValue>
+ */
 final class FlatMap implements Arrayable
 {
-    private Arrayable $items;
-    /** @var callable */
+    /** @var Arrayable<TValue> */
+    private Arrayable $arrayable;
+    /** @var callable(TValue):iterable<TNewValue> */
     private $transformer;
 
-    public function __construct(Arrayable $items, callable $transformer)
+    /**
+     * @param Arrayable<TValue> $arrayable
+     * @param callable(TValue):iterable<TNewValue> $transformer
+     */
+    public function __construct(Arrayable $arrayable, callable $transformer)
     {
-        $this->items = $items;
+        $this->arrayable = $arrayable;
         $this->transformer = $transformer;
     }
 
+    /** @return TNewValue[] */
     public function toArray(): array
     {
         $elements = [];
 
-        foreach ($this->items->toArray() as $item) {
+        foreach ($this->arrayable->toArray() as $item) {
             $transformed = ($this->transformer)($item);
             $elements[] = is_array($transformed) ? $transformed : [...$transformed];
         }

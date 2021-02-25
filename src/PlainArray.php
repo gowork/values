@@ -22,6 +22,7 @@ use GW\Value\Arrayable\Sort;
 use GW\Value\Arrayable\Splice;
 use GW\Value\Arrayable\UniqueByComparator;
 use GW\Value\Arrayable\UniqueByString;
+use function array_map;
 use function array_reverse;
 use function count;
 use function in_array;
@@ -33,11 +34,11 @@ use function is_array;
  */
 final class PlainArray implements ArrayValue
 {
-    /** @phpstan-var array<int, TValue> */
+    /** @phpstan-var Arrayable<TValue> */
     private Arrayable $items;
 
     /**
-     * @phpstan-param array<mixed, TValue>|Arrayable $items
+     * @phpstan-param array<mixed, TValue>|Arrayable<TValue> $items
      */
     public function __construct($items)
     {
@@ -80,8 +81,10 @@ final class PlainArray implements ArrayValue
             $groups[$key][] = $item;
         }
 
-        /** @phpstan-var array<TNewKey, array<TValue>> $groups */
-        return Wrap::assocArray($groups)->map([Wrap::class, 'array']);
+        /** @phpstan-var array<TNewKey, ArrayValue<TValue>> $groupsWrapped */
+        $groupsWrapped = array_map([Wrap::class, 'array'], $groups);
+
+        return Wrap::assocArray($groupsWrapped);
     }
 
     /**

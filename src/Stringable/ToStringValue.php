@@ -9,6 +9,7 @@ use function is_scalar;
 
 final class ToStringValue
 {
+    /** @param mixed $string */
     public function __invoke($string): StringValue
     {
         if (is_scalar($string)) {
