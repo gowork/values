@@ -173,14 +173,13 @@ final class PlainStringsArraySpec extends ObjectBehavior
                     return $value->substring(0, 1)->toString();
                 }
             )
+            ->toAssocArray()
             ->shouldBeLike(
-                Wrap::assocArray(
-                    [
-                        'r' => PlainStringsArray::fromArray(['red']),
-                        'g' => PlainStringsArray::fromArray(['green']),
-                        'b' => PlainStringsArray::fromArray(['blue', 'black']),
-                    ]
-                )
+                [
+                    'r' => PlainStringsArray::fromArray(['red']),
+                    'g' => PlainStringsArray::fromArray(['green']),
+                    'b' => PlainStringsArray::fromArray(['blue', 'black']),
+                ]
             );
     }
 

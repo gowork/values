@@ -397,7 +397,7 @@ final class PlainArraySpec extends ObjectBehavior
             new DummyEntity(4, 'Goofy'),
         ]);
 
-        $comparator = $this->entityComparator();
+        $comparator = new DummyEntityComparator();
 
         $unique = $this->unique($comparator);
 
@@ -432,7 +432,7 @@ final class PlainArraySpec extends ObjectBehavior
 
         $this->beConstructedWith([$joe, $william, $jack, $averell]);
 
-        $comparator = $this->entityComparator();
+        $comparator = new DummyEntityComparator();
 
         $this->diff(new PlainArray([]), $comparator)->toArray()->shouldBeLike($this->toArray());
         $this->diff(new PlainArray([new DummyEntity(5, 'Ma')]), $comparator)
@@ -466,7 +466,7 @@ final class PlainArraySpec extends ObjectBehavior
         $items = [$joe, $william, $jack, $averell];
         $this->beConstructedWith($items);
 
-        $comparator = $this->entityComparator();
+        $comparator = new DummyEntityComparator();
 
         $this->intersect(new PlainArray([]), $comparator)->toArray()->shouldBeLike([]);
         $this->intersect(new PlainArray($items), $comparator)->toArray()->shouldBe($items);
@@ -690,12 +690,5 @@ final class PlainArraySpec extends ObjectBehavior
         $this->hasElement('2')->shouldReturn(true);
         $this->hasElement(2)->shouldReturn(false);
         $this->hasElement('five')->shouldReturn(false);
-    }
-
-    private function entityComparator(): \Closure
-    {
-        return function (DummyEntity $entityA, DummyEntity $entityB): int {
-            return $entityA->id <=> $entityB->id;
-        };
     }
 }

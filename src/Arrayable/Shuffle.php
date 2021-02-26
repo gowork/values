@@ -25,7 +25,7 @@ final class Shuffle implements Arrayable
     public function toArray(): array
     {
         $items = $this->arrayable->toArray();
-        shuffle($items);;
+        shuffle($items);
 
         return array_values($items);
     }

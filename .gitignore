@@ -4,3 +4,4 @@ vendor/
 phpspec.yml
 composer.lock
 /composer.phar
+/coverage
