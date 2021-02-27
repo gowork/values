@@ -3,35 +3,39 @@
 namespace GW\Value\Associable;
 
 use GW\Value\Associable;
-use function uksort;
+use function array_reverse;
 
 /**
  * @template TKey
  * @template TValue
  * @implements Associable<TKey,TValue>
  */
-final class SortKeys implements Associable
+final class WithItem implements Associable
 {
     /** @var Associable<TKey,TValue> */
     private Associable $associable;
-    /** @var callable(TKey,TKey):int */
-    private $comparator;
+    /** @var TKey */
+    private $key;
+    /** @var TValue */
+    private $value;
 
     /**
      * @param Associable<TKey,TValue> $associable
-     * @param callable(TKey,TKey):int $comparator
+     * @param TKey $key
+     * @param TValue $value
      */
-    public function __construct(Associable $associable, callable $comparator)
+    public function __construct(Associable $associable, $key, $value)
     {
         $this->associable = $associable;
-        $this->comparator = $comparator;
+        $this->key = $key;
+        $this->value = $value;
     }
 
     /** @return array<TKey,TValue> */
     public function toAssocArray(): array
     {
         $items = $this->associable->toAssocArray();
-        uksort($items, $this->comparator);
+        $items[$this->key] = $this->value;
 
         return $items;
     }

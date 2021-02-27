@@ -1,0 +1,7 @@
+suites:
+    values:
+        namespace: GW\Value
+        psr4_prefix: GW\Value
+
+extensions:
+    FriendsOfPhpSpec\PhpSpec\CodeCoverage\CodeCoverageExtension: ~

@@ -19,6 +19,7 @@ use GW\Value\Associable\SortKeys;
 use GW\Value\Associable\UniqueByComparator;
 use GW\Value\Associable\UniqueByString;
 use GW\Value\Associable\Values;
+use GW\Value\Associable\WithItem;
 use GW\Value\Associable\Without;
 use function array_key_exists;
 use function count;
@@ -155,10 +156,7 @@ final class AssocArray implements AssocValue
      */
     public function with($key, $value): AssocArray
     {
-        $items = $this->items->toAssocArray();
-        $items[$key] = $value;
-
-        return new self($items);
+        return new self(new WithItem($this->items, $key, $value));
     }
 
     /**
