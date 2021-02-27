@@ -21,7 +21,7 @@ function coverage() {
 }
 
 function benchmarks() {
-  ./bin/phpbench run benchmarks --report=values --output=md --retry-threshold=5 --revs=100 -vv
+  ./bin/phpbench run benchmarks --report=values --output=md --retry-threshold=5 --revs=1000 -vv
 }
 
 function main() {
