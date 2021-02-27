@@ -520,7 +520,8 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $this->beConstructedWithStrings('one', 'two', 'three');
 
         $this->toAssocValue()
-            ->shouldBeLike(Wrap::assocArray([Wrap::string('one'), Wrap::string('two'), Wrap::string('three')]));
+            ->toAssocArray()
+            ->shouldBeLike([0 => Wrap::string('one'), 1 => Wrap::string('two'), 2 => Wrap::string('three')]);
     }
 
     function it_implements_toStringsArray_from_ArrayValue_returning_self()

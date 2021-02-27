@@ -45,7 +45,7 @@ final class AssocValueBench
      */
     public function arrayMapWrapped(): void
     {
-        Wrap::assocArray($this->dataSet)->map($this->mapper);
+        Wrap::assocArray($this->dataSet)->map($this->mapper)->toAssocArray();
     }
 
     /**
@@ -54,7 +54,7 @@ final class AssocValueBench
      */
     public function arrayFilterWrapped(): void
     {
-        Wrap::assocArray($this->dataSet)->filter($this->filter);
+        Wrap::assocArray($this->dataSet)->filter($this->filter)->toAssocArray();
     }
 
     /**
@@ -63,7 +63,7 @@ final class AssocValueBench
      */
     public function arrayMapAndFilterWrapped(): void
     {
-        Wrap::assocArray($this->dataSet)->map($this->mapper)->filter($this->filter);
+        Wrap::assocArray($this->dataSet)->map($this->mapper)->filter($this->filter)->toAssocArray();
     }
 
     /**
@@ -72,7 +72,7 @@ final class AssocValueBench
      */
     public function arraySortWrapped(): void
     {
-        Wrap::assocArray($this->dataSet)->sort($this->sorter);
+        Wrap::assocArray($this->dataSet)->sort($this->sorter)->toAssocArray();
     }
 
     /**
@@ -93,6 +93,6 @@ final class AssocValueBench
      */
     public function arrayMapKeysWrapped(): void
     {
-        Wrap::assocArray($this->dataSet)->mapKeys($this->mapper);
+        Wrap::assocArray($this->dataSet)->mapKeys($this->mapper)->toAssocArray();
     }
 }

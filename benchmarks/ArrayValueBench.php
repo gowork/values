@@ -69,7 +69,7 @@ final class ArrayValueBench
      */
     public function arrayMapWrapped(): void
     {
-        Wrap::array($this->dataSet)->map($this->mapper);
+        Wrap::array($this->dataSet)->map($this->mapper)->toArray();
     }
 
     /**
@@ -101,7 +101,7 @@ final class ArrayValueBench
      */
     public function arrayFilterWrapped(): void
     {
-        Wrap::array($this->dataSet)->filter($this->filter);
+        Wrap::array($this->dataSet)->filter($this->filter)->toArray();
     }
 
     /**
@@ -119,7 +119,7 @@ final class ArrayValueBench
      */
     public function arrayMapAndFilterWrapped(): void
     {
-        Wrap::array($this->dataSet)->map($this->mapper)->filter($this->filter);
+        Wrap::array($this->dataSet)->map($this->mapper)->filter($this->filter)->toArray();
     }
 
     /**
@@ -138,7 +138,7 @@ final class ArrayValueBench
      */
     public function arraySortWrapped(): void
     {
-        Wrap::array($this->dataSet)->sort($this->comparator);
+        Wrap::array($this->dataSet)->sort($this->comparator)->toArray();
     }
 
     /**
@@ -156,7 +156,7 @@ final class ArrayValueBench
      */
     public function arrayDiffSameWrapped(): void
     {
-        Wrap::array($this->dataSet)->diff(Wrap::array($this->dataSet));
+        Wrap::array($this->dataSet)->diff(Wrap::array($this->dataSet))->toArray();
     }
 
     /**
@@ -174,7 +174,7 @@ final class ArrayValueBench
      */
     public function arrayDiffSubsetWrapped(): void
     {
-        Wrap::array($this->dataSet)->diff(Wrap::array($this->dataSubset));
+        Wrap::array($this->dataSet)->diff(Wrap::array($this->dataSubset))->toArray();
     }
 
     /**
@@ -192,6 +192,6 @@ final class ArrayValueBench
      */
     public function arrayDiffComparatorWrapped(): void
     {
-        Wrap::array($this->dataSet)->diff(Wrap::array($this->dataSubset), $this->comparator);
+        Wrap::array($this->dataSet)->diff(Wrap::array($this->dataSubset), $this->comparator)->toArray();
     }
 }

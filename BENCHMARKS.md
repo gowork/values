@@ -5,51 +5,51 @@ Performance: native vs wrapped
 
 benchmark | subject | revs | mem_peak | time_rev | diff
  --- | --- | --- | --- | --- | --- 
-ArrayValueBench | arrayDiffSameFunction | 10 | 2,600,176b | 0.35ms | 1.10x
-ArrayValueBench | arrayDiffSameWrapped | 10 | 3,781,632b | 0.69ms | 2.15x
-ArrayValueBench | arrayDiffSubsetFunction | 10 | 2,575,600b | 0.32ms | 1.00x
-ArrayValueBench | arrayDiffSubsetWrapped | 10 | 3,757,112b | 0.86ms | 2.66x
-ArrayValueBench | arrayDiffComparatorFunction | 10 | 2,895,128b | 17.02ms | 52.83x
-ArrayValueBench | arrayDiffComparatorWrapped | 10 | 3,757,120b | 17.40ms | 54.03x
+ArrayValueBench | arrayDiffSameFunction | 100 | 3,306,376b | 0.21ms | 1.10x
+ArrayValueBench | arrayDiffSameWrapped | 100 | 3,468,240b | 0.22ms | 1.17x
+ArrayValueBench | arrayDiffSubsetFunction | 100 | 3,220,360b | 0.19ms | 1.00x
+ArrayValueBench | arrayDiffSubsetWrapped | 100 | 3,869,672b | 0.26ms | 1.41x
+ArrayValueBench | arrayDiffComparatorFunction | 100 | 3,535,792b | 97.18ms | 518.64x
+ArrayValueBench | arrayDiffComparatorWrapped | 100 | 3,870,264b | 105.43ms | 562.71x
 
 ### groups: array filter
 
 benchmark | subject | revs | mem_peak | time_rev | diff
  --- | --- | --- | --- | --- | --- 
-ArrayValueBench | arrayFilterFunction | 10 | 2,500,888b | 0.92ms | 1.00x
-ArrayValueBench | arrayFilterForeach | 10 | 2,500,888b | 0.95ms | 1.03x
-ArrayValueBench | arrayFilterWrapped | 10 | 2,737,096b | 1.04ms | 1.13x
-AssocValueBench | arrayFilterWrapped | 10 | 2,554,048b | 0.93ms | 1.01x
+ArrayValueBench | arrayFilterFunction | 100 | 3,141,624b | 6.58ms | 1.00x
+ArrayValueBench | arrayFilterForeach | 100 | 3,141,624b | 6.90ms | 1.05x
+ArrayValueBench | arrayFilterWrapped | 100 | 3,141,624b | 6.63ms | 1.01x
+AssocValueBench | arrayFilterWrapped | 100 | 3,258,304b | 7.10ms | 1.08x
 
 ### groups: array map
 
 benchmark | subject | revs | mem_peak | time_rev | diff
  --- | --- | --- | --- | --- | --- 
-ArrayValueBench | arrayMapFunction | 10 | 3,178,736b | 1.46ms | 1.06x
-ArrayValueBench | arrayMapForeach | 10 | 3,178,728b | 1.37ms | 1.00x
-ArrayValueBench | arrayMapWrapped | 10 | 4,360,128b | 1.55ms | 1.13x
-AssocValueBench | arrayMapWrapped | 10 | 3,551,544b | 2.14ms | 1.57x
+ArrayValueBench | arrayMapFunction | 100 | 3,819,472b | 7.00ms | 1.05x
+ArrayValueBench | arrayMapForeach | 100 | 3,819,360b | 7.08ms | 1.06x
+ArrayValueBench | arrayMapWrapped | 100 | 3,981,088b | 6.66ms | 1.00x
+AssocValueBench | arrayMapWrapped | 100 | 4,385,312b | 8.30ms | 1.25x
 
 ### groups: array map filter
 
 benchmark | subject | revs | mem_peak | time_rev | diff
  --- | --- | --- | --- | --- | --- 
-ArrayValueBench | arrayMapAndFilterFunction | 10 | 3,236,144b | 2.07ms | 1.00x
-ArrayValueBench | arrayMapAndFilterWrapped | 10 | 4,360,144b | 2.56ms | 1.24x
-AssocValueBench | arrayMapAndFilterWrapped | 10 | 3,551,560b | 2.79ms | 1.35x
+ArrayValueBench | arrayMapAndFilterFunction | 100 | 3,880,912b | 13.63ms | 1.03x
+ArrayValueBench | arrayMapAndFilterWrapped | 100 | 4,061,864b | 13.27ms | 1.00x
+AssocValueBench | arrayMapAndFilterWrapped | 100 | 4,388,280b | 16.74ms | 1.26x
 
 ### groups: array map keys
 
 benchmark | subject | revs | mem_peak | time_rev | diff
  --- | --- | --- | --- | --- | --- 
-AssocValueBench | arrayMapKeysForeach | 10 | 3,435,712b | 2.14ms | 1.00x
-AssocValueBench | arrayMapKeysWrapped | 10 | 3,900,784b | 2.14ms | 1.00x
+AssocValueBench | arrayMapKeysForeach | 100 | 4,238,208b | 8.21ms | 1.00x
+AssocValueBench | arrayMapKeysWrapped | 100 | 4,385,456b | 8.41ms | 1.02x
 
 ### groups: array sort
 
 benchmark | subject | revs | mem_peak | time_rev | diff
  --- | --- | --- | --- | --- | --- 
-ArrayValueBench | arraySortFunction | 10 | 3,128,584b | 13.73ms | 1.00x
-ArrayValueBench | arraySortWrapped | 10 | 3,781,648b | 13.97ms | 1.02x
-AssocValueBench | arraySortWrapped | 10 | 2,732,416b | 13.97ms | 1.02x
+ArrayValueBench | arraySortFunction | 100 | 3,834,800b | 75.45ms | 1.00x
+ArrayValueBench | arraySortWrapped | 100 | 3,996,552b | 80.27ms | 1.06x
+AssocValueBench | arraySortWrapped | 100 | 3,533,088b | 79.62ms | 1.06x
 

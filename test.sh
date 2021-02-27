@@ -16,6 +16,14 @@ function psalm() {
   ./bin/psalm
 }
 
+function coverage() {
+  phpdbg -qrr bin/phpspec run --config=phpspec-cov.yml
+}
+
+function benchmarks() {
+  ./bin/phpbench run benchmarks --report=values --output=md --retry-threshold=5 --revs=100 -vv
+}
+
 function main() {
   case "$1" in
     spec)
@@ -29,6 +37,12 @@ function main() {
       ;;
     psalm)
       psalm
+      ;;
+    coverage)
+      coverage
+      ;;
+    benchmarks)
+      benchmarks
       ;;
     *)
       spec && unit && stan && psalm

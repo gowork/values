@@ -4,6 +4,7 @@ namespace GW\Value;
 
 use ArrayIterator;
 use BadMethodCallException;
+use GW\Value\Arrayable\Associate;
 use GW\Value\Arrayable\Cache;
 use GW\Value\Arrayable\Chunk;
 use GW\Value\Arrayable\DiffByComparator;
@@ -441,7 +442,7 @@ final class PlainArray implements ArrayValue
      */
     public function toAssocValue(): AssocValue
     {
-        return Wrap::assocArray($this->items->toArray());
+        return new AssocArray(new Associate($this->items));
     }
 
     public function toStringsArray(): StringsArray

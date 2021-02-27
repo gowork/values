@@ -670,7 +670,7 @@ final class PlainArraySpec extends ObjectBehavior
     {
         $this->beConstructedWith(['item 0', 'item 1', 'item 2']);
 
-        $this->toAssocValue()->shouldBeLike(Wrap::assocArray(['0' => 'item 0', '1' => 'item 1', '2' => 'item 2']));
+        $this->toAssocValue()->toAssocArray()->shouldBeLike(['0' => 'item 0', '1' => 'item 1', '2' => 'item 2']);
     }
 
     function it_can_be_converted_to_StringsArray()
