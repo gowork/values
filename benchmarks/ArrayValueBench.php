@@ -3,6 +3,12 @@
 namespace bench\GW\Value;
 
 use GW\Value\Wrap;
+use function array_diff;
+use function array_map;
+use function array_slice;
+use function array_udiff;
+use function strpos;
+use function strrev;
 
 /**
  * @OutputTimeUnit("milliseconds", precision=2)
@@ -27,17 +33,17 @@ final class ArrayValueBench
     public function __construct()
     {
         $this->dataSet = array_map('md5', range(1, 10000));
-        $this->dataSubset = \array_slice($this->dataSet, 100, 1000);
+        $this->dataSubset = array_slice($this->dataSet, 100, 1000);
 
-        $this->mapper = function (string $value): string {
+        $this->mapper = static function (string $value): string {
             return strrev($value);
         };
 
-        $this->filter = function (string $value): bool {
+        $this->filter = static function (string $value): bool {
             return strpos($value, 'a') === 0;
         };
 
-        $this->comparator = function (string $a, string $b): int {
+        $this->comparator = static function (string $a, string $b): int {
             return $a <=> $b;
         };
     }
