@@ -2,6 +2,7 @@
 
 namespace spec\GW\Value;
 
+use GW\Value\Filters;
 use GW\Value\Wrap;
 use GW\Value\AssocArray;
 use PhpSpec\ObjectBehavior;
@@ -27,7 +28,7 @@ final class AssocArraySpec extends ObjectBehavior
     {
         $keys = $this->keys();
         $keys->shouldNotBe($this);
-        $keys->shouldBeLike(Wrap::array(['a', 'b', 'c']));
+        $keys->toArray()->shouldBeLike(['a', 'b', 'c']);
     }
 
     function it_should_return_filtered_array()
@@ -40,11 +41,11 @@ final class AssocArraySpec extends ObjectBehavior
 
         $filtered = $this->filterEmpty();
         $filtered->shouldNotBe($this);
-        $filtered->shouldBeLike(
-            new AssocArray([
+        $filtered->toAssocArray()->shouldBeLike(
+            [
                 'a' => 'alf',
                 'c' => 'clifford',
-            ])
+            ]
         );
     }
 
@@ -57,12 +58,12 @@ final class AssocArraySpec extends ObjectBehavior
     {
         $reversed = $this->reverse();
         $reversed->shouldNotBe($this);
-        $reversed->shouldBeLike(
-            new AssocArray([
+        $reversed->toAssocArray()->shouldBeLike(
+            [
                 'c' => 'clifford',
                 'b' => 'berni',
                 'a' => 'alf',
-            ])
+            ]
         );
     }
 
@@ -70,32 +71,59 @@ final class AssocArraySpec extends ObjectBehavior
     {
         $shuffled = $this->shuffle();
         $shuffled->shouldNotBe($this);
-        $shuffled->shouldNotBeLike(
-            new AssocArray([
+        $shuffled->toAssocArray()->shouldNotBeLike(
+            [
                 'a' => 'alf',
                 'b' => 'berni',
                 'c' => 'clifford',
-            ])
+            ]
         );
     }
 
     function it_return_unique_values()
     {
-        $this->beConstructedWith(['a', 'a', 'a']);
-        $this->unique()->shouldBeLike(new AssocArray(['a']));
+        $this->beConstructedWith(['a' => 'a', 'b' => 'a', 'c' => 'a']);
+        $this->unique()->toAssocArray()->shouldBeLike(['a' => 'a']);
+    }
+
+    function it_can_return_clone_with_unique_values_comparing_them_using_comparator()
+    {
+        $this->beConstructedWith([
+            'a' => new DummyEntity(1, 'Joe'),
+            'b' => new DummyEntity(1, 'Joey'),
+            'c' => new DummyEntity(2, 'William'),
+            'd' => new DummyEntity(2, 'Will'),
+            'e' => new DummyEntity(3, 'Jack'),
+            'f' => new DummyEntity(4, 'Averell'),
+            'g' => new DummyEntity(4, 'Goofy'),
+        ]);
+
+        $comparator = new DummyEntityComparator();
+
+        $unique = $this->unique($comparator);
+
+        $unique->shouldNotBe($this);
+        $unique->toAssocArray()->shouldBeLike(
+            [
+                'a' => new DummyEntity(1, 'Joe'),
+                'c' => new DummyEntity(2, 'William'),
+                'e' => new DummyEntity(3, 'Jack'),
+                'f' => new DummyEntity(4, 'Averell'),
+            ]
+        );
     }
 
     function it_can_merge_two_arrays()
     {
         $merged = $this->merge(new AssocArray(['d' => 'dummy']));
         $merged->shouldNotBe($this);
-        $merged->shouldBeLike(
-            new AssocArray([
+        $merged->toAssocArray()->shouldBeLike(
+            [
                 'a' => 'alf',
                 'b' => 'berni',
                 'c' => 'clifford',
                 'd' => 'dummy'
-            ])
+            ]
         );
     }
 
@@ -121,11 +149,11 @@ final class AssocArraySpec extends ObjectBehavior
     {
         $array = $this->without('a');
         $array->shouldNotBe($this);
-        $array->shouldBeLike(
-            new AssocArray([
+        $array->toAssocArray()->shouldBeLike(
+            [
                 'b' => 'berni',
                 'c' => 'clifford',
-            ])
+            ]
         );
     }
 
@@ -133,7 +161,7 @@ final class AssocArraySpec extends ObjectBehavior
     {
         $array = $this->without('a', 'c');
         $array->shouldNotBe($this);
-        $array->shouldBeLike(new AssocArray(['b' => 'berni']));
+        $array->toAssocArray()->shouldBeLike(['b' => 'berni']);
     }
 
     function it_can_create_a_copy_without_multiple_int_keys()
@@ -141,7 +169,7 @@ final class AssocArraySpec extends ObjectBehavior
         $this->beConstructedWith(['a', 'b', 'c', 'd']);
         $array = $this->without(1, 3);
         $array->shouldNotBe($this);
-        $array->shouldBeLike(new AssocArray([0 => 'a', 2 => 'c']));
+        $array->toAssocArray()->shouldBeLike([0 => 'a', 2 => 'c']);
     }
 
     function it_can_create_a_copy_with_only_given_set_of_keys()
@@ -149,20 +177,20 @@ final class AssocArraySpec extends ObjectBehavior
         $array = $this->only('a', 'c');
 
         $array->shouldNotBe($this);
-        $array->shouldBeLike(new AssocArray(['a' => 'alf', 'c' => 'clifford']));
+        $array->toAssocArray()->shouldBeLike(['a' => 'alf', 'c' => 'clifford']);
 
-        $this->only('a')->shouldBeLike(new AssocArray(['a' => 'alf']));
+        $this->only('a')->toAssocArray()->shouldBeLike(['a' => 'alf']);
     }
 
     function it_can_delete_element_by_value()
     {
         $array = $this->withoutElement('alf');
         $array->shouldNotBe($this);
-        $array->shouldBeLike(
-            new AssocArray([
+        $array->toAssocArray()->shouldBeLike(
+            [
                 'b' => 'berni',
                 'c' => 'clifford',
-            ])
+            ]
         );
     }
 
@@ -223,7 +251,7 @@ final class AssocArraySpec extends ObjectBehavior
     {
         $this->beConstructedWith(['zero', 'one', 'two']);
 
-        $this->keys()->shouldBeLike(Wrap::array(['0', '1', '2']));
+        $this->keys()->toArray()->shouldBeLike(['0', '1', '2']);
     }
 
     function it_can_be_created_from_array()
@@ -238,12 +266,12 @@ final class AssocArraySpec extends ObjectBehavior
         });
 
         $mapped->shouldNotBe($this);
-        $mapped->shouldBeLike(
-            new AssocArray([
+        $mapped->toAssocArray()->shouldBeLike(
+            [
                 'a' => 'a: alf',
                 'b' => 'b: berni',
                 'c' => 'c: clifford',
-            ])
+            ]
         );
     }
 
@@ -254,12 +282,12 @@ final class AssocArraySpec extends ObjectBehavior
         });
 
         $mapped->shouldNotBe($this);
-        $mapped->shouldBeLike(
-            new AssocArray([
+        $mapped->toAssocArray()->shouldBeLike(
+            [
                 'a: alf' => 'alf',
                 'b: berni' => 'berni',
                 'c: clifford' => 'clifford',
-            ])
+            ]
         );
     }
 
@@ -270,7 +298,7 @@ final class AssocArraySpec extends ObjectBehavior
         });
 
         $filtered->shouldNotBe($this);
-        $filtered->shouldBeLike(new AssocArray(['a' => 'alf']));
+        $filtered->toAssocArray()->shouldBeLike(['a' => 'alf']);
     }
 
     function it_can_be_sorted_with_comparator()
@@ -280,12 +308,12 @@ final class AssocArraySpec extends ObjectBehavior
         });
 
         $reversed->shouldNotBe($this);
-        $reversed->shouldBeLike(
-            new AssocArray([
+        $reversed->toAssocArray()->shouldBeLike(
+            [
                 'c' => 'clifford',
                 'b' => 'berni',
                 'a' => 'alf',
-            ])
+            ]
         );
     }
 
@@ -296,12 +324,12 @@ final class AssocArraySpec extends ObjectBehavior
         });
 
         $reversed->shouldNotBe($this);
-        $reversed->shouldBeLike(
-            new AssocArray([
+        $reversed->toAssocArray()->shouldBeLike(
+            [
                 'c' => 'clifford',
                 'b' => 'berni',
                 'a' => 'alf',
-            ])
+            ]
         );
     }
 
@@ -335,5 +363,62 @@ final class AssocArraySpec extends ObjectBehavior
         $this->hasElement('2')->shouldReturn(true);
         $this->hasElement(2)->shouldReturn(false);
         $this->hasElement('five')->shouldReturn(false);
+    }
+
+    function it_allows_to_check_if_any_element_satisfies_filter_condition()
+    {
+        $this->beConstructedWith(['a' => 2, 'b' => 4, 'c' => 6, 'd' => 8, 'e' => 10, 'f' => 12, 'g' => 14, 'h' => 16]);
+
+        $isEven = function (int $value): bool {
+            return ($value % 2) === 0;
+        };
+        $isOdd = Filters::not($isEven);
+        $isTwo = Filters::equal(2);
+        $isHundred = Filters::equal(100);
+
+        $this->any($isEven)->shouldReturn(true);
+        $this->any($isTwo)->shouldReturn(true);
+
+        $this->any($isOdd)->shouldReturn(false);
+        $this->any($isHundred)->shouldReturn(false);
+    }
+
+    function it_allows_to_check_if_every_element_satisfies_filter_condition()
+    {
+        $this->beConstructedWith(['a' => 2, 'b' => 4, 'c' => 6, 'd' => 8, 'e' => 10, 'f' => 12, 'g' => 14, 'h' => 16]);
+
+        $isEven = function (int $value): bool {
+            return ($value % 2) === 0;
+        };
+        $isOdd = Filters::not($isEven);
+        $isTwo = Filters::equal(2);
+        $isHundred = Filters::equal(100);
+
+        $this->every($isEven)->shouldReturn(true);
+
+        $this->every($isTwo)->shouldReturn(false);
+        $this->every($isOdd)->shouldReturn(false);
+        $this->every($isHundred)->shouldReturn(false);
+    }
+
+    function it_implements_ArrayAccess()
+    {
+        $items = ['a' => 'item 1', 'b' => 'item 2', 'c' => 'item 3'];
+        $this->beConstructedWith($items);
+
+        $this->shouldImplement(\ArrayAccess::class);
+
+        $this->offsetExists('a')->shouldReturn(true);
+        $this->offsetGet('b')->shouldReturn('item 2');
+        $this['a']->shouldBe('item 1');
+    }
+
+    function it_does_not_allow_mutations_trough_ArrayAccess()
+    {
+        $items = ['a' => 'item 1', 'b' => 'item 2', 'c' => 'item 3'];
+        $this->beConstructedWith($items);
+
+        $this->shouldThrow(\BadMethodCallException::class)->during('offsetSet', ['a', 'mutated 1']);
+        $this->shouldThrow(\BadMethodCallException::class)->during('offsetUnset', ['a']);
     }
 }

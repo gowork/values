@@ -2,6 +2,7 @@
 
 namespace GW\Value;
 
+use GW\Value\Stringable\ToStringValue;
 use Traversable;
 use InvalidArgumentException;
 use function in_array;
@@ -583,21 +584,7 @@ final class PlainStringsArray implements StringsArray
      */
     private function mapStringValues(ArrayValue $strings): ArrayValue
     {
-        return $strings
-            ->map(
-                /** @param mixed $string */
-                static function ($string): StringValue {
-                    if (is_scalar($string)) {
-                        return Wrap::string((string)$string);
-                    }
-
-                    if (!$string instanceof StringValue) {
-                        throw new InvalidArgumentException('StringsValue can contain only StringValue');
-                    }
-
-                    return $string;
-                }
-            );
+        return $strings->map(new ToStringValue());
     }
 
     private function toStringValue(): StringValue

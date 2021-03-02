@@ -12,8 +12,9 @@ use ArrayAccess;
  * @extends Collection<TValue>
  * @extends IteratorAggregate<TKey, TValue>
  * @extends ArrayAccess<TKey, TValue>
+ * @extends Associable<TKey, TValue>
  */
-interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess
+interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess, Associable
 {
     /**
      * @phpstan-param callable(TValue $value, TKey $key=):void $callback

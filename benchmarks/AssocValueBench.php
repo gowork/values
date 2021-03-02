@@ -3,6 +3,9 @@
 namespace bench\GW\Value;
 
 use GW\Value\Wrap;
+use function range;
+use function strpos;
+use function strrev;
 
 /**
  * @OutputTimeUnit("milliseconds", precision=2)
@@ -23,18 +26,18 @@ final class AssocValueBench
 
     public function __construct()
     {
-        $this->dataSet = array_map('md5', range(1, 10000));
+        $this->dataSet = array_map('\md5', range(1, 10000));
         $this->dataSet = array_combine($this->dataSet, $this->dataSet);
 
-        $this->mapper = function (string $value): string {
+        $this->mapper = static function (string $value): string {
             return strrev($value);
         };
 
-        $this->filter = function (string $value): bool {
+        $this->filter = static function (string $value): bool {
             return strpos($value, 'a') === 0;
         };
 
-        $this->sorter = function (string $a, string $b): int {
+        $this->sorter = static function (string $a, string $b): int {
             return $a <=> $b;
         };
     }
@@ -45,7 +48,7 @@ final class AssocValueBench
      */
     public function arrayMapWrapped(): void
     {
-        Wrap::assocArray($this->dataSet)->map($this->mapper);
+        Wrap::assocArray($this->dataSet)->map($this->mapper)->toAssocArray();
     }
 
     /**
@@ -54,7 +57,7 @@ final class AssocValueBench
      */
     public function arrayFilterWrapped(): void
     {
-        Wrap::assocArray($this->dataSet)->filter($this->filter);
+        Wrap::assocArray($this->dataSet)->filter($this->filter)->toAssocArray();
     }
 
     /**
@@ -63,7 +66,7 @@ final class AssocValueBench
      */
     public function arrayMapAndFilterWrapped(): void
     {
-        Wrap::assocArray($this->dataSet)->map($this->mapper)->filter($this->filter);
+        Wrap::assocArray($this->dataSet)->map($this->mapper)->filter($this->filter)->toAssocArray();
     }
 
     /**
@@ -72,7 +75,7 @@ final class AssocValueBench
      */
     public function arraySortWrapped(): void
     {
-        Wrap::assocArray($this->dataSet)->sort($this->sorter);
+        Wrap::assocArray($this->dataSet)->sort($this->sorter)->toAssocArray();
     }
 
     /**
@@ -93,6 +96,6 @@ final class AssocValueBench
      */
     public function arrayMapKeysWrapped(): void
     {
-        Wrap::assocArray($this->dataSet)->mapKeys($this->mapper);
+        Wrap::assocArray($this->dataSet)->mapKeys($this->mapper)->toAssocArray();
     }
 }

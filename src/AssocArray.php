@@ -2,14 +2,29 @@
 
 namespace GW\Value;
 
-use RuntimeException;
 use ArrayIterator;
 use BadMethodCallException;
-use function array_combine;
-use function array_keys;
-use function array_map;
-use function in_array;
+use GW\Value\Associable\Cache;
+use GW\Value\Associable\Filter;
+use GW\Value\Associable\JustAssoc;
+use GW\Value\Associable\Keys;
+use GW\Value\Associable\Map;
+use GW\Value\Associable\MapKeys;
+use GW\Value\Associable\Merge;
+use GW\Value\Associable\Only;
+use GW\Value\Associable\Reverse;
+use GW\Value\Associable\Shuffle;
+use GW\Value\Associable\Sort;
+use GW\Value\Associable\SortKeys;
+use GW\Value\Associable\UniqueByComparator;
+use GW\Value\Associable\UniqueByString;
+use GW\Value\Associable\Values;
+use GW\Value\Associable\WithItem;
+use GW\Value\Associable\Without;
+use function array_key_exists;
 use function count;
+use function in_array;
+use function is_array;
 
 /**
  * @template TKey
@@ -18,15 +33,15 @@ use function count;
  */
 final class AssocArray implements AssocValue
 {
-    /** @phpstan-var array<TKey, TValue> */
-    private array $items;
+    /** @var Associable<TKey,TValue> */
+    private Associable $items;
 
     /**
-     * @phpstan-param array<TKey, TValue> $items
+     * @param array<TKey,TValue>|Associable<TKey,TValue> $items
      */
-    public function __construct(array $items)
+    public function __construct($items)
     {
-        $this->items = $items;
+        $this->items = is_array($items) ? new JustAssoc($items) : new Cache($items);
     }
 
     /**
@@ -36,13 +51,7 @@ final class AssocArray implements AssocValue
      */
     public function map(callable $transformer): AssocArray
     {
-        $result = [];
-        foreach ($this->items as $key => $value) {
-            $result[$key] = $transformer($value, $key);
-        }
-
-        /** @phpstan-var array<TKey, TNewValue> $result */
-        return new self($result);
+        return new self(new Map($this->items, $transformer));
     }
 
     /**
@@ -50,7 +59,7 @@ final class AssocArray implements AssocValue
      */
     public function keys(): ArrayValue
     {
-        return Wrap::array(array_keys($this->items));
+        return new PlainArray(new Keys($this->items));
     }
 
     /**
@@ -60,14 +69,7 @@ final class AssocArray implements AssocValue
      */
     public function mapKeys(callable $transformer): AssocArray
     {
-        /** @var array<TNewKey, TValue>|false $combined */
-        $combined = array_combine(array_map($transformer, array_keys($this->items), $this->items), $this->items);
-
-        if ($combined === false) {
-            throw new RuntimeException('Cannot map keys - combined array is broken.');
-        }
-
-        return new self($combined);
+        return new self(new MapKeys($this->items, $transformer));
     }
 
     /**
@@ -84,7 +86,7 @@ final class AssocArray implements AssocValue
      */
     public function filter(callable $filter): AssocArray
     {
-        return new self(array_filter($this->items, $filter));
+        return new self(new Filter($this->items, $filter));
     }
 
     /**
@@ -93,10 +95,7 @@ final class AssocArray implements AssocValue
      */
     public function sort(callable $comparator): AssocArray
     {
-        $items = $this->items;
-        uasort($items, $comparator);
-
-        return new self($items);
+        return new self(new Sort($this->items, $comparator));
     }
 
     /**
@@ -104,7 +103,7 @@ final class AssocArray implements AssocValue
      */
     public function reverse(): AssocArray
     {
-        return new self(array_reverse($this->items, true));
+        return new self(new Reverse($this->items));
     }
 
     /**
@@ -112,22 +111,16 @@ final class AssocArray implements AssocValue
      */
     public function shuffle(): AssocArray
     {
-        $items = $this->items;
-        shuffle($items);
-
-        return new self($items);
+        return new self(new Shuffle($this->items));
     }
 
     /**
      * @param callable(TKey $keyA, TKey $keyB): int $comparator
-     * @phpstan-return AssocArray<TKey, TValue>
+     * @return AssocArray<TKey, TValue>
      */
     public function sortKeys(callable $comparator): AssocArray
     {
-        $items = $this->items;
-        uksort($items, $comparator);
-
-        return new self($items);
+        return new self(new SortKeys($this->items, $comparator));
     }
 
     /**
@@ -136,7 +129,7 @@ final class AssocArray implements AssocValue
      */
     public function each(callable $callback): AssocArray
     {
-        foreach ($this->items as $key => $item) {
+        foreach ($this->items->toAssocArray() as $key => $item) {
             $callback($item, $key);
         }
 
@@ -150,23 +143,10 @@ final class AssocArray implements AssocValue
     public function unique(?callable $comparator = null): AssocArray
     {
         if ($comparator === null) {
-            return new self(array_unique($this->items));
+            return new self(new UniqueByString($this->items));
         }
 
-        $result = [];
-        foreach ($this->items as $keyA => $valueA) {
-            foreach ($result as $valueB) {
-                if ($comparator($valueA, $valueB) === 0) {
-                    // item already in result
-                    continue 2;
-                }
-            }
-
-            $result[$keyA] = $valueA;
-        }
-
-        /** @phpstan-var array<TKey, TValue> $result */
-        return new self($result);
+        return new self(new UniqueByComparator($this->items, $comparator));
     }
 
     /**
@@ -176,10 +156,7 @@ final class AssocArray implements AssocValue
      */
     public function with($key, $value): AssocArray
     {
-        $items = $this->items;
-        $items[$key] = $value;
-
-        return new self($items);
+        return new self(new WithItem($this->items, $key, $value));
     }
 
     /**
@@ -188,25 +165,25 @@ final class AssocArray implements AssocValue
      */
     public function merge(AssocValue $other): AssocArray
     {
-        return new self(array_merge($this->items, $other->toAssocArray()));
+        return new self(new Merge($this->items, $other));
     }
 
     /**
-     * @phpstan-param array<int, TKey> $keys
+     * @phpstan-param TKey ...$keys
      * @phpstan-return AssocArray<TKey, TValue>
      */
     public function without(...$keys): AssocArray
     {
-        return new self(array_diff_key($this->items, array_flip($keys)));
+        return new self(new Without($this->items, ...$keys));
     }
 
     /**
-     * @phpstan-param array<int, TKey> $keys
-     * @phpstan-return AssocArray<TKey, TValue>
+     * @param TKey ...$keys
+     * @return AssocArray<TKey, TValue>
      */
     public function only(...$keys): AssocArray
     {
-        return new self(array_intersect_key($this->items, array_flip($keys)));
+        return new self(new Only($this->items, ...$keys));
     }
 
     /**
@@ -228,7 +205,7 @@ final class AssocArray implements AssocValue
     {
         $reduced = $start;
 
-        foreach ($this->items as $key => $value) {
+        foreach ($this->items->toAssocArray() as $key => $value) {
             $reduced = $transformer($reduced, $value, $key);
         }
 
@@ -242,7 +219,7 @@ final class AssocArray implements AssocValue
      */
     public function get($key, $default = null)
     {
-        return $this->items[$key] ?? $default;
+        return $this->items->toAssocArray()[$key] ?? $default;
     }
 
     /**
@@ -250,7 +227,7 @@ final class AssocArray implements AssocValue
      */
     public function has($key): bool
     {
-        return isset($this->items[$key]);
+        return array_key_exists($key, $this->items->toAssocArray());
     }
 
     /**
@@ -266,7 +243,7 @@ final class AssocArray implements AssocValue
      */
     public function values(): ArrayValue
     {
-        return Wrap::array($this->items);
+        return new PlainArray(new Values($this->items));
     }
 
     /**
@@ -300,7 +277,7 @@ final class AssocArray implements AssocValue
      */
     public function hasElement($element): bool
     {
-        return in_array($element, $this->items, true);
+        return in_array($element, $this->items->toAssocArray(), true);
     }
 
     public function any(callable $filter): bool
@@ -326,7 +303,7 @@ final class AssocArray implements AssocValue
      */
     public function toAssocArray(): array
     {
-        return $this->items;
+        return $this->items->toAssocArray();
     }
 
     /**
@@ -334,17 +311,17 @@ final class AssocArray implements AssocValue
      */
     public function getIterator(): ArrayIterator
     {
-        return new ArrayIterator($this->items);
+        return new ArrayIterator($this->items->toAssocArray());
     }
 
     public function count(): int
     {
-        return count($this->items);
+        return count($this->items->toAssocArray());
     }
 
     public function isEmpty(): bool
     {
-        return $this->items === [];
+        return $this->items->toAssocArray() === [];
     }
 
     /**
@@ -352,7 +329,7 @@ final class AssocArray implements AssocValue
      */
     public function offsetExists($offset): bool
     {
-        return isset($this->items[$offset]);
+        return isset($this->items->toAssocArray()[$offset]);
     }
 
     /**
@@ -361,7 +338,7 @@ final class AssocArray implements AssocValue
      */
     public function offsetGet($offset)
     {
-        return $this->items[$offset];
+        return $this->items->toAssocArray()[$offset];
     }
 
     public function offsetSet($offset, $value): void
