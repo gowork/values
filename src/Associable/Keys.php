@@ -7,7 +7,7 @@ use GW\Value\Associable;
 use function array_keys;
 
 /**
- * @template TKey
+ * @template TKey of int|string
  * @implements Arrayable<TKey>
  */
 final class Keys implements Arrayable

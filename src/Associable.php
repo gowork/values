@@ -3,7 +3,7 @@
 namespace GW\Value;
 
 /**
- * @template TKey
+ * @template TKey of int|string
  * @template TValue
  */
 interface Associable

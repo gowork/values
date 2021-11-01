@@ -5,7 +5,7 @@ namespace GW\Value\Associable;
 use GW\Value\Associable;
 
 /**
- * @template TKey
+ * @template TKey of int|string
  * @template TValue
  * @implements Associable<TKey,TValue>
  */
@@ -29,8 +29,15 @@ final class UniqueByComparator implements Associable
     /** @return array<TKey,TValue> */
     public function toAssocArray(): array
     {
+        /** @var array<TKey,TValue> $result */
         $result = [];
+
+        /**
+         * @var TKey $keyA
+         * @var TValue $valueA
+         */
         foreach ($this->associable->toAssocArray() as $keyA => $valueA) {
+            /** @var TValue $valueB */
             foreach ($result as $valueB) {
                 if (($this->comparator)($valueA, $valueB) === 0) {
                     // item already in result

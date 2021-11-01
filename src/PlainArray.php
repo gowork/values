@@ -67,7 +67,7 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @template TNewKey
+     * @template TNewKey of int|string
      * @phpstan-param callable(TValue $value):TNewKey $reducer
      * @phpstan-return AssocValue<TNewKey, ArrayValue<TValue>>
      */

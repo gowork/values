@@ -36,7 +36,7 @@ final class Wrap
     }
 
     /**
-     * @template TKey
+     * @template TKey of int|string
      * @template TValue
      * @phpstan-param array<TKey, TValue> $array
      * @phpstan-return AssocValue<TKey, TValue>

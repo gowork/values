@@ -57,7 +57,7 @@ interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayA
     public function flatMap(callable $transformer): ArrayValue;
 
     /**
-     * @template TNewKey
+     * @template TNewKey of int|string
      * @param callable(TValue $value):TNewKey $reducer
      * @phpstan-return AssocValue<TNewKey, ArrayValue<TValue>>
      */

@@ -32,10 +32,9 @@ final class Mappers
     }
 
     /**
-     * @template TKey
-     * @template TValue
+     * @template TKey of int|string
      * @phpstan-param TKey $index
-     * @phpstan-return callable(array<TKey,TValue>): TValue
+     * @phpstan-return callable(array<TKey,mixed>): mixed
      */
     public static function index($index): callable
     {

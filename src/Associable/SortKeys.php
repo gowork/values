@@ -6,7 +6,7 @@ use GW\Value\Associable;
 use function uksort;
 
 /**
- * @template TKey
+ * @template TKey of int|string
  * @template TValue
  * @implements Associable<TKey,TValue>
  */

@@ -19,6 +19,7 @@ final class ReadmeWriter
             ->map(
                 /** @param class-string<object> $classRef */
                 function (string $classRef): Template {
+                    /** @var class-string<object> $classRef */
                     $class = new ReflectionClass($classRef);
                     $classTemplate = $this->classTemplate($class);
 
@@ -87,12 +88,13 @@ final class ReadmeWriter
 
     private function methodDeclaration(\ReflectionMethod $method): StringValue
     {
-        if (empty($method->getFileName())) {
+        $fileName = $method->getFileName();
+        if (empty($fileName)) {
             return Wrap::string('');
         }
 
         return $this->getFileLines(
-            $method->getFileName(),
+            $fileName,
             $method->getStartLine() ?: 0,
             $method->getEndLine() ?: 0
         );

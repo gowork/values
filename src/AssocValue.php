@@ -7,7 +7,7 @@ use IteratorAggregate;
 use ArrayAccess;
 
 /**
- * @template TKey
+ * @template TKey of int|string
  * @template TValue
  * @extends Collection<TValue>
  * @extends IteratorAggregate<TKey, TValue>
@@ -106,7 +106,7 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess, 
     public function values(): ArrayValue;
 
     /**
-     * @template TNewKey
+     * @template TNewKey of int|string
      * @phpstan-param callable(TKey $key, TValue $value=): TNewKey $transformer
      * @phpstan-return AssocValue<TNewKey, TValue>
      */
@@ -126,13 +126,13 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess, 
     public function with($key, $value): AssocValue;
 
     /**
-     * @phpstan-param array<int, TKey> $keys
+     * @phpstan-param TKey ...$keys
      * @phpstan-return AssocValue<TKey, TValue>
      */
     public function without(...$keys): AssocValue;
 
     /**
-     * @phpstan-param array<int, TKey> $keys
+     * @param TKey ...$keys
      * @phpstan-return AssocValue<TKey, TValue>
      */
     public function only(...$keys): AssocValue;

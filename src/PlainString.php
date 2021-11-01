@@ -279,11 +279,16 @@ final class PlainString implements StringValue
      */
     public function explode($delimiter): PlainStringsArray
     {
+        $stringDelimiter = $this->castToString($delimiter);
+        if ($stringDelimiter === '') {
+            throw new RuntimeException("Cannot explode using delimiter: {$stringDelimiter}");
+        }
+
         /** @var string[]|false $strings */
-        $strings = explode($this->castToString($delimiter), $this->value);
+        $strings = explode($stringDelimiter, $this->value);
 
         if ($strings === false) {
-            throw new RuntimeException("Cannot explode using delimiter: {$delimiter}");
+            throw new RuntimeException("Cannot explode using delimiter: {$stringDelimiter}");
         }
 
         return new PlainStringsArray(Wrap::array($strings));
