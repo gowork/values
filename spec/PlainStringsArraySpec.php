@@ -12,6 +12,7 @@ use GW\Value\Wrap;
 use PhpSpec\Exception\Example\FailureException;
 use PhpSpec\ObjectBehavior;
 use PhpSpec\Wrapper\Collaborator;
+use PHPUnit\Framework\Assert;
 use Prophecy\Argument;
 
 final class PlainStringsArraySpec extends ObjectBehavior
@@ -309,8 +310,8 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $this[0]->shouldBeLike(Wrap::string('first'));
         $this->offsetGet(0)->shouldBeLike(Wrap::string('first'));
 
-        $this->offsetExists(0)->shouldReturn(true);
-        $this->offsetExists(2)->shouldReturn(false);
+        Assert::assertTrue($this->offsetExists(0));
+        Assert::assertFalse($this->offsetExists(2));
     }
 
     function it_is_like_array_but_immutable()

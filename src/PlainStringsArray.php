@@ -104,7 +104,6 @@ final class PlainStringsArray implements StringsArray
         // @phpstan-ignore-next-line shrug
         return $this->strings
             ->groupBy($reducer)
-            // @phpstan-ignore-next-line shrug
             ->map(
                 /** @return ArrayValue<StringValue> */
                 static fn(ArrayValue $value): ArrayValue => $value->toStringsArray()

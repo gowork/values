@@ -6,6 +6,7 @@ use GW\Value\Filters;
 use GW\Value\Wrap;
 use GW\Value\AssocArray;
 use PhpSpec\ObjectBehavior;
+use PHPUnit\Framework\Assert;
 
 final class AssocArraySpec extends ObjectBehavior
 {
@@ -408,7 +409,7 @@ final class AssocArraySpec extends ObjectBehavior
 
         $this->shouldImplement(\ArrayAccess::class);
 
-        $this->offsetExists('a')->shouldReturn(true);
+        Assert::assertTrue($this->offsetExists('a'));
         $this->offsetGet('b')->shouldReturn('item 2');
         $this['a']->shouldBe('item 1');
     }
