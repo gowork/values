@@ -18,6 +18,16 @@ interface StringsArray extends Value, IteratorAggregate, ArrayAccess, StringValu
     public function each(callable $callback): StringsArray;
 
     /**
+     * @param callable(StringValue):bool $filter
+     */
+    public function any(callable $filter): bool;
+
+    /**
+     * @param callable(StringValue):bool $filter
+     */
+    public function every(callable $filter): bool;
+
+    /**
      * @param (callable(StringValue, StringValue):int)|null $comparator
      */
     public function unique(?callable $comparator = null): StringsArray;
