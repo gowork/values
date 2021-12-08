@@ -84,7 +84,7 @@ interface Collection extends Filterable, Mappable, Sortable, Countable, Reversib
     public function map(callable $transformer): Collection;
 
     /**
-     * @param callable(TValue $valueA, TValue $valueB):int $comparator
+     * @param callable(TValue, TValue $valueB):int $comparator
      * @phpstan-return Collection<TValue>
      */
     public function sort(callable $comparator): Collection;

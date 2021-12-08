@@ -184,7 +184,7 @@ final class PlainArray implements ArrayValue
 
     /**
      * @phpstan-param ArrayValue<TValue> $other
-     * @param (callable(TValue $valueA, TValue $valueB):int)|null $comparator
+     * @param (callable(TValue,TValue):int)|null $comparator
      * @phpstan-return PlainArray<TValue>
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): PlainArray
@@ -198,7 +198,7 @@ final class PlainArray implements ArrayValue
 
     /**
      * @phpstan-param ArrayValue<TValue> $other
-     * @param (callable(TValue $valueA, TValue $valueB):int)|null $comparator
+     * @param (callable(TValue,TValue):int)|null $comparator
      * @phpstan-return PlainArray<TValue>
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): PlainArray

@@ -90,7 +90,7 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @param callable(TValue $valueA, TValue $valueB):int $comparator
+     * @param callable(TValue,TValue):int $comparator
      * @phpstan-return AssocArray<TKey, TValue>
      */
     public function sort(callable $comparator): AssocArray
@@ -137,7 +137,7 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @phpstan-param (callable(TValue $valueA, TValue $valueB):int)|null $comparator
+     * @phpstan-param (callable(TValue,TValue):int)|null $comparator
      * @phpstan-return AssocArray<TKey, TValue>
      */
     public function unique(?callable $comparator = null): AssocArray
