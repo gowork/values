@@ -55,7 +55,7 @@ interface Collection extends Filterable, Mappable, Sortable, Countable, Reversib
     public function each(callable $callback): Collection;
 
     /**
-     * @param (callable(TValue $valueA, TValue $valueB):int)|null $comparator
+     * @param (callable(TValue,TValue):int)|null $comparator
      * @phpstan-return Collection<TValue>
      */
     public function unique(?callable $comparator = null): Collection;

@@ -170,7 +170,7 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @param callable(TValue $valueA, TValue $valueB):int | null $comparator
+     * @param (callable(TValue,TValue):int) | null $comparator
      * @phpstan-return PlainArray<TValue>
      */
     public function unique(?callable $comparator = null): PlainArray
