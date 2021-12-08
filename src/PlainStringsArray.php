@@ -184,7 +184,7 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
-     * @param (callable(StringValue $valueA, StringValue $valueB):int)|null $comparator
+     * @param (callable(StringValue,StringValue):int)|null $comparator
      */
     public function unique(?callable $comparator = null): PlainStringsArray
     {
@@ -308,7 +308,7 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
-     * @param callable(string $value):(StringValue|string) $transformer
+     * @param callable(string):(StringValue|string) $transformer
      */
     public function transform(callable $transformer): PlainStringsArray
     {

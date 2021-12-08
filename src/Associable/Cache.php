@@ -14,7 +14,7 @@ final class Cache implements Associable
     /** @var Associable<TKey,TValue>|null */
     private ?Associable $arrayable;
     /** @var array<TKey,TValue> */
-    private array $array;
+    private array $array = [];
 
     /** @param Associable<TKey,TValue> $arrayable */
     public function __construct(Associable $arrayable)

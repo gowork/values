@@ -257,7 +257,7 @@ final class PlainArray implements ArrayValue
     }
 
     /**
-     * @phpstan-param TValue $value
+     * @phpstan-param TValue|null $value
      * @phpstan-return PlainArray<TValue>
      */
     public function pop(&$value = null): PlainArray

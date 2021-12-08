@@ -106,7 +106,7 @@ interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayA
     public function push($value): ArrayValue;
 
     /**
-     * @phpstan-param TValue $value
+     * @phpstan-param TValue|null $value
      * @phpstan-return ArrayValue<TValue>
      */
     public function pop(&$value = null): ArrayValue;
