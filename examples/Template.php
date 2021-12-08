@@ -2,6 +2,7 @@
 
 namespace doc\GW\Value;
 
+use GW\Value\AssocArray;
 use GW\Value\AssocValue;
 use GW\Value\StringValue;
 use GW\Value\Wrap;
@@ -13,11 +14,12 @@ final class Template
     /** @var AssocValue<string, string> */
     private AssocValue $params;
 
-    /** @param AssocValue<string, string> $params */
-    public function __construct(StringValue $template, AssocValue $params = null)
+    public function __construct(StringValue $template)
     {
         $this->template = $template;
-        $this->params =  ($params ?? Wrap::assocArray())->map('strval');
+        /** @phpstan-var array<string, string> $a :(( */
+        $a = [];
+        $this->params = new AssocArray($a);
     }
 
     public static function fromFile(string $path): self

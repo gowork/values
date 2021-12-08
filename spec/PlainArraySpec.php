@@ -9,6 +9,7 @@ use GW\Value\StringsArray;
 use GW\Value\Wrap;
 use PhpSpec\Exception\Example\FailureException;
 use PhpSpec\ObjectBehavior;
+use PHPUnit\Framework\Assert;
 
 final class PlainArraySpec extends ObjectBehavior
 {
@@ -652,7 +653,8 @@ final class PlainArraySpec extends ObjectBehavior
 
         $this->shouldImplement(\ArrayAccess::class);
 
-        $this->offsetExists(0)->shouldReturn(true);
+        Assert::assertTrue($this->offsetExists(0));
+        Assert::assertFalse($this->offsetExists(66));
         $this->offsetGet(0)->shouldReturn('item 1');
         $this[0]->shouldBe('item 1');
     }

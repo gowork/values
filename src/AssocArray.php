@@ -27,7 +27,7 @@ use function in_array;
 use function is_array;
 
 /**
- * @template TKey
+ * @template TKey of int|string
  * @template TValue
  * @implements AssocValue<TKey, TValue>
  */
@@ -63,7 +63,7 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @template TNewKey
+     * @template TNewKey of int|string
      * @param callable(TKey $key, TValue $value=): TNewKey $transformer
      * @phpstan-return AssocArray<TNewKey, TValue>
      */
@@ -197,7 +197,7 @@ final class AssocArray implements AssocValue
 
     /**
      * @template TNewValue
-     * @param callable(TNewValue $reduced, TValue $value, string $key):TNewValue $transformer
+     * @param callable(TNewValue,TValue,TKey):TNewValue $transformer
      * @phpstan-param TNewValue $start
      * @phpstan-return TNewValue
      */
@@ -307,11 +307,11 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @return ArrayIterator<TKey, TValue>
+     * @return iterable<TKey, TValue>
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): iterable
     {
-        return new ArrayIterator($this->items->toAssocArray());
+        yield from $this->items->toAssocArray();
     }
 
     public function count(): int

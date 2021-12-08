@@ -5,7 +5,7 @@ namespace GW\Value\Associable;
 use GW\Value\Associable;
 
 /**
- * @template TKey
+ * @template TKey of int|string
  * @template TValue
  * @template TNewValue
  * @implements Associable<TKey,TNewValue>

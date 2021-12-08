@@ -7,7 +7,7 @@ use function array_flip;
 use function array_intersect_key;
 
 /**
- * @template TKey
+ * @template TKey of int|string
  * @template TValue
  * @implements Associable<TKey,TValue>
  */
@@ -15,7 +15,7 @@ final class Only implements Associable
 {
     /** @var Associable<TKey,TValue> */
     private Associable $associable;
-    /** @var string[] */
+    /** @var TKey[] */
     private array $keys;
 
     /**

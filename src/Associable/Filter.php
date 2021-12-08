@@ -6,7 +6,7 @@ use GW\Value\Associable;
 use function array_filter;
 
 /**
- * @template TKey
+ * @template TKey of int|string
  * @template TValue
  * @implements Associable<TKey,TValue>
  */

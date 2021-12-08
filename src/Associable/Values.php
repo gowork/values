@@ -12,10 +12,10 @@ use function array_values;
  */
 final class Values implements Arrayable
 {
-    /** @var Associable<mixed,TValue> */
+    /** @var Associable<int|string,TValue> */
     private Associable $associable;
 
-    /** @param Associable<mixed,TValue> $associable */
+    /** @param Associable<int|string,TValue> $associable */
     public function __construct(Associable $associable)
     {
         $this->associable = $associable;

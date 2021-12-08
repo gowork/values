@@ -7,7 +7,7 @@ use function array_merge;
 use function array_replace;
 
 /**
- * @template TKey
+ * @template TKey of int|string
  * @template TValue
  * @implements Associable<TKey,TValue>
  */

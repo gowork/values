@@ -13,7 +13,7 @@ $payments = Wrap::array([
 ]);
 
 $get = function (string $key): \Closure {
-    return function (array $payment) use ($key) {
+    return function (array $payment) use ($key): string {
         return $payment[$key];
     };
 };

@@ -96,16 +96,14 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
-     * @param callable(StringValue $value):string $reducer
-     * @phpstan-return AssocValue<string, ArrayValue<StringValue>>
-     * @phpstan-ignore-next-line shrug
+     * @param callable(StringValue $value):(string|int) $reducer
+     * @phpstan-return AssocValue<int|string, ArrayValue<StringValue>>
      */
     public function groupBy(callable $reducer): AssocValue
     {
         // @phpstan-ignore-next-line shrug
         return $this->strings
             ->groupBy($reducer)
-            // @phpstan-ignore-next-line shrug
             ->map(
                 /** @return ArrayValue<StringValue> */
                 static fn(ArrayValue $value): ArrayValue => $value->toStringsArray()
@@ -114,7 +112,6 @@ final class PlainStringsArray implements StringsArray
 
     /**
      * @return ArrayValue<array<int, StringValue>>
-     * @phpstan-ignore-next-line shrug
      */
     public function chunk(int $size): ArrayValue
     {

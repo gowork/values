@@ -49,7 +49,7 @@ interface StringsArray extends ArrayValue, StringValue
     public function flatMap(callable $transformer): StringsArray;
 
     /**
-     * @template TNewKey
+     * @template TNewKey of int|string
      * @param callable(StringValue $value):TNewKey $reducer
      * @phpstan-return AssocValue<TNewKey, ArrayValue<StringValue>>
      */

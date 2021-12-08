@@ -7,7 +7,7 @@ use function array_diff_key;
 use function array_flip;
 
 /**
- * @template TKey
+ * @template TKey of int|string
  * @template TValue
  * @implements Associable<TKey,TValue>
  */
