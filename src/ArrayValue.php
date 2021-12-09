@@ -9,6 +9,7 @@ use ArrayAccess;
 /**
  * @template TValue
  * @extends Collection<TValue>
+ * @extends Stack<TValue>
  * @extends IteratorAggregate<int, TValue>
  * @extends ArrayAccess<int, TValue>
  */
@@ -21,7 +22,7 @@ interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayA
     public function each(callable $callback): ArrayValue;
 
     /**
-     * @param (callable(TValue $valueA, TValue $valueB):int)|null $comparator
+     * @param (callable(TValue,TValue):int)|null $comparator
      * @phpstan-return ArrayValue<TValue>
      */
     public function unique(?callable $comparator = null): ArrayValue;
@@ -69,7 +70,7 @@ interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayA
     public function chunk(int $size): ArrayValue;
 
     /**
-     * @param callable(TValue $valueA, TValue $valueB): int $comparator
+     * @param callable(TValue,TValue):int $comparator
      * @phpstan-return ArrayValue<TValue>
      */
     public function sort(callable $comparator): ArrayValue;
@@ -105,7 +106,7 @@ interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayA
     public function push($value): ArrayValue;
 
     /**
-     * @phpstan-param TValue $value
+     * @phpstan-param TValue|null $value
      * @phpstan-return ArrayValue<TValue>
      */
     public function pop(&$value = null): ArrayValue;

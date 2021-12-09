@@ -7,7 +7,7 @@ final class Mappers
     /**
      * @deprecated use method() instead
      * @param array<int, mixed> $args
-     * @return callable(object $item): mixed
+     * @return callable(object):mixed
      */
     public static function callMethod(string $method, ...$args): callable
     {
@@ -16,7 +16,7 @@ final class Mappers
 
     /**
      * @param array<int, mixed> $args
-     * @return callable(object $item): mixed
+     * @return callable(object):mixed
      */
     public static function method(string $method, ...$args): callable
     {
@@ -24,7 +24,7 @@ final class Mappers
     }
 
     /**
-     * @return callable(object $item): mixed
+     * @return callable(object):mixed
      */
     public static function property(string $propertyName): callable
     {

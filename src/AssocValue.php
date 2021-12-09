@@ -17,19 +17,19 @@ use ArrayAccess;
 interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess, Associable
 {
     /**
-     * @phpstan-param callable(TValue $value, TKey $key=):void $callback
+     * @phpstan-param callable(TValue, TKey $key=):void $callback
      * @phpstan-return AssocValue<TKey, TValue>
      */
     public function each(callable $callback): AssocValue;
 
     /**
-     * @phpstan-param (callable(TValue $valueA, TValue $valueB):int)|null $comparator
+     * @phpstan-param (callable(TValue,TValue):int)|null $comparator
      * @phpstan-return AssocValue<TKey, TValue>
      */
     public function unique(?callable $comparator = null): AssocValue;
 
     /**
-     * @phpstan-param callable(TValue $value):bool $filter
+     * @phpstan-param callable(TValue):bool $filter
      * @phpstan-return AssocValue<TKey, TValue>
      */
     public function filter(callable $filter): AssocValue;
@@ -47,7 +47,7 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess, 
     public function map(callable $transformer): AssocValue;
 
     /**
-     * @param callable(TValue $valueA, TValue $valueB):int $comparator
+     * @param callable(TValue,TValue):int $comparator
      * @phpstan-return AssocValue<TKey, TValue>
      */
     public function sort(callable $comparator): AssocValue;

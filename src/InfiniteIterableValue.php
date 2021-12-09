@@ -49,7 +49,7 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @param callable(TValue $valueA, TValue $valueB):int | null $comparator
+     * @param (callable(TValue $lueA,TValue):int) | null $comparator
      * @phpstan-return InfiniteIterableValue<TKey, TValue>
      */
     public function unique(?callable $comparator = null): InfiniteIterableValue
@@ -248,7 +248,7 @@ final class InfiniteIterableValue implements IterableValue
 
     /**
      * @phpstan-param ArrayValue<TValue> $other
-     * @param callable(TValue $valueA, TValue $valueB):int | null $comparator
+     * @param (callable(TValue,TValue):int) | null $comparator
      * @phpstan-return InfiniteIterableValue<TKey, TValue>
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): InfiniteIterableValue
