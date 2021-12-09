@@ -55,7 +55,7 @@ final class PlainArraySpec extends ObjectBehavior
     {
         $this->beConstructedWith(['100', '50.12', '', true, false]);
 
-        $mapped = $this->map(fn(mixed $value): int => (int)$value);
+        $mapped = $this->map(fn($value): int => (int)$value);
 
         $mapped->shouldNotBe($this);
         $mapped->toArray()->shouldBeLike([100, 50, 0, 1, 0]);
