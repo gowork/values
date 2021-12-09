@@ -124,6 +124,10 @@ interface StringsArray extends Value, IteratorAggregate, ArrayAccess, StringValu
 
     public function slice(int $offset, int $length): StringsArray;
 
+    public function skip(int $length): StringsArray;
+
+    public function take(int $length): StringsArray;
+
     public function splice(int $offset, int $length, ?StringsArray $replacement = null): StringsArray;
 
     /**

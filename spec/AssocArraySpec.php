@@ -422,4 +422,11 @@ final class AssocArraySpec extends ObjectBehavior
         $this->shouldThrow(\BadMethodCallException::class)->during('offsetSet', ['a', 'mutated 1']);
         $this->shouldThrow(\BadMethodCallException::class)->during('offsetUnset', ['a']);
     }
+
+    function it_handles_numeric_strings_key_as_int_from_array()
+    {
+        $this->beConstructedWith(['0' => 'zero', '1' => 'one']);
+        $this->map(fn(string $val, int $key): string => $val)
+            ->keys()->toArray()->shouldEqual([0, 1]);
+    }
 }

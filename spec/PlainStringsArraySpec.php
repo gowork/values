@@ -51,12 +51,23 @@ final class PlainStringsArraySpec extends ObjectBehavior
         $strings = ['string 1', 'string 2', 'string 3', 'string 4'];
         $this->beConstructedWithStrings(...$strings);
 
-        $this->slice(0, 1)->shouldNotBe($this);
+        $this->slice(0, 1)->toNativeStrings()->shouldNotBe($this->toNativeStrings());
         $this->slice(0, 1)->toNativeStrings()->shouldBeLike(['string 1']);
         $this->slice(3, 1)->toNativeStrings()->shouldBeLike(['string 4']);
         $this->slice(1, 2)->toNativeStrings()->shouldBeLike(['string 2', 'string 3']);
         $this->slice(0, 4)->toNativeStrings()->shouldBeLike($strings);
         $this->slice(0, 500)->toNativeStrings()->shouldBeLike($strings);
+    }
+
+    function it_skips_and_takes_given_part()
+    {
+        $strings = ['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6'];
+        $this->beConstructedWithStrings(...$strings);
+
+        $this->take(1)->toNativeStrings()->shouldNotBe($this->toNativeStrings());
+        $this->take(1)->toNativeStrings()->shouldBeLike(['item 1']);
+        $this->skip(1)->take(4)->toNativeStrings()->shouldBeLike(['item 2', 'item 3', 'item 4', 'item 5']);
+        $this->skip(5)->take(1)->toNativeStrings()->shouldBeLike(['item 6']);
     }
 
     function it_can_be_spliced()

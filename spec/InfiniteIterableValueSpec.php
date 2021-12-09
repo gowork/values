@@ -9,6 +9,7 @@ use GW\Value\Sorts;
 use GW\Value\Wrap;
 use PhpSpec\Exception\Example\FailureException;
 use PhpSpec\ObjectBehavior;
+use function range;
 
 final class InfiniteIterableValueSpec extends ObjectBehavior
 {
@@ -19,11 +20,43 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $this->toArrayValue()->shouldBeLike(Wrap::array($items));
     }
 
+    function it_can_be_converted_to_simple_assoc_array()
+    {
+        $items = ['item 1', 'item 2', 'item 3'];
+        $this->beConstructedWith($items);
+        $this->toAssocArray()->shouldBeLike([0 => 'item 1', 1 => 'item 2', 2 => 'item 3']);
+    }
+
+    function it_can_be_converted_to_keyed_assoc_array()
+    {
+        $items = ['foo' => 'item 1', 'bar' => 'item 2'];
+        $this->beConstructedWith($items);
+        $this->toAssocArray()->shouldBeLike(['foo' => 'item 1', 'bar' => 'item 2']);
+    }
+
+    function it_can_be_converted_to_keyed_assoc_array_with_map_filter()
+    {
+        $items = ['foo' => 'item 1', 'bar' => 'item 2'];
+        $this->beConstructedWith($items);
+        $this
+            ->map(fn(string $value, string $key): string => "{$value} mod")
+            ->filter(fn(string $value): bool => true)
+            ->toAssocArray()
+            ->shouldBeLike(['foo' => 'item 1 mod', 'bar' => 'item 2 mod']);
+    }
+
     function it_returns_items()
     {
         $items = ['item 1', 'item 2', 'item 3'];
         $this->beConstructedWith($items);
         $this->toArray()->shouldReturn($items);
+    }
+
+    function it_returns_keys()
+    {
+        $items = ['item 1', 'item 2', 'item 3'];
+        $this->beConstructedWith($items);
+        $this->keys()->toArray()->shouldReturn([0, 1, 2]);
     }
 
     function it_maps_string_items_with_closure()
@@ -41,8 +74,7 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
     function it_maps_items_with_php_callable()
     {
         $this->beConstructedWith(['100', '50.12', '', true, false]);
-
-        $mapped = $this->map('intval');
+        $mapped = $this->map(fn(mixed $value): int => (int)$value);
 
         $mapped->shouldNotBe($this);
         $mapped->toArray()->shouldBeLike([100, 50, 0, 1, 0]);
@@ -184,10 +216,20 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
     {
         $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
 
-        $this->slice(0, 1)->shouldNotBe($this);
+        $this->slice(0, 1)->toArray()->shouldNotBe($this->toArray());
         $this->slice(0, 1)->toArray()->shouldBeLike(['item 1']);
         $this->slice(1, 4)->toArray()->shouldBeLike(['item 2', 'item 3', 'item 4', 'item 5']);
         $this->slice(5, 1)->toArray()->shouldBeLike(['item 6']);
+    }
+
+    function it_skips_and_takes_given_part()
+    {
+        $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
+
+        $this->take(1)->toArray()->shouldNotBe($this->toArray());
+        $this->take(1)->toArray()->shouldBeLike(['item 1']);
+        $this->skip(1)->take(4)->toArray()->shouldBeLike(['item 2', 'item 3', 'item 4', 'item 5']);
+        $this->skip(5)->take(1)->toArray()->shouldBeLike(['item 6']);
     }
 
     function it_slice_and_do_not_take_elements_above_end_index()
@@ -516,6 +558,88 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
                 return strpos($item, 'x') !== false;
             })
             ->shouldReturn(null);
+    }
+
+    function it_handles_repeated_keys_properly_with_toArray()
+    {
+        $iterator = function () {
+            foreach (range(0, 5) as $item) {
+                yield 0 => $item;
+            }
+        };
+
+        $this->beConstructedWith($iterator());
+        $this->toArray()->shouldEqual([0, 1, 2, 3, 4, 5]);
+    }
+
+    function it_handles_repeated_keys_properly_with_toAssocArray()
+    {
+        $iterator = function () {
+            foreach (range(0, 5) as $item) {
+                yield 0 => $item;
+            }
+        };
+
+        $this->beConstructedWith($iterator());
+        $this->toAssocArray()->shouldEqual([0 => 5]);
+    }
+
+    function it_handles_repeated_keys_properly_with_keys()
+    {
+        $iterator = function () {
+            foreach (range(0, 5) as $item) {
+                yield 0 => $item;
+            }
+        };
+
+        $this->beConstructedWith($iterator());
+        $this->keys()->toArray()->shouldEqual([0, 0, 0, 0, 0, 0]);
+    }
+
+    function it_handles_repeated_keys_properly_with_map()
+    {
+        $iterator = function () {
+            foreach (range(0, 5) as $item) {
+                yield 0 => $item;
+            }
+        };
+
+        $this->beConstructedWith($iterator());
+        $this->map(fn(int $value, int $key): int => $key)->toArray()->shouldEqual([0, 0, 0, 0, 0, 0]);
+    }
+
+    function it_handles_repeated_keys_properly_with_slice()
+    {
+        $iterator = function () {
+            foreach (range(0, 5) as $item) {
+                yield 0 => $item;
+            }
+        };
+
+        $this->beConstructedWith($iterator());
+        $this->slice(1, 2)->toArray()->shouldEqual([1, 2]);
+    }
+
+    function it_handles_numeric_strings_key_as_int_from_array()
+    {
+        $this->beConstructedWith(['0' => 'zero', '1' => 'one']);
+        $this->map(fn(string $val, int $key): string => $val)
+            ->keys()->toArray()->shouldEqual([0, 1]);
+    }
+
+    function it_handles_numeric_strings_key_as_string_from_iterator()
+    {
+        $pairs = [['0', 'zero'], ['1', 'one'], ['1', 'one one']];
+
+        $iterator = function () use ($pairs) {
+            foreach ($pairs as [$key, $item]) {
+                yield $key => $item;
+            }
+        };
+
+        $this->beConstructedWith($iterator());
+        $this->map(fn(string $val, string $key): string => $val)
+            ->keys()->toArray()->shouldEqual(['0', '1', '1']);
     }
 
     private function entityComparator(): \Closure

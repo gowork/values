@@ -14,13 +14,13 @@ interface IterableValue extends IteratorAggregate
     // IterableValue own
 
     /**
-     * @phpstan-param callable(TValue $value):void $callback
+     * @phpstan-param callable(TValue):void $callback
      * @phpstan-return IterableValue<TKey, TValue>
      */
     public function each(callable $callback): IterableValue;
 
     /**
-     * @phpstan-param callable(TValue $value):bool $filter
+     * @phpstan-param callable(TValue):bool $filter
      * @phpstan-return IterableValue<TKey, TValue>
      */
     public function filter(callable $filter): IterableValue;
@@ -32,14 +32,14 @@ interface IterableValue extends IteratorAggregate
 
     /**
      * @template TNewValue
-     * @phpstan-param callable(TValue $value): TNewValue $transformer
+     * @param callable(TValue,TKey $key=):TNewValue $transformer
      * @phpstan-return IterableValue<TKey, TNewValue>
      */
     public function map(callable $transformer): IterableValue;
 
     /**
      * @phpstan-template TNewValue
-     * @phpstan-param callable(TValue $value): iterable<TNewValue> $transformer
+     * @phpstan-param callable(TValue):iterable<TNewValue> $transformer
      * @phpstan-return IterableValue<TKey, TNewValue>
      */
     public function flatMap(callable $transformer): IterableValue;
@@ -56,14 +56,24 @@ interface IterableValue extends IteratorAggregate
     public function slice(int $offset, int $length): IterableValue;
 
     /**
-     * @phpstan-param callable(TValue $valueA, TValue $valueB):int | null $comparator
+     * @phpstan-return IterableValue<TKey, TValue>
+     */
+    public function skip(int $length): IterableValue;
+
+    /**
+     * @phpstan-return IterableValue<TKey, TValue>
+     */
+    public function take(int $length): IterableValue;
+
+    /**
+     * @phpstan-param (callable(TValue,TValue):int) | null $comparator
      * @phpstan-return IterableValue<TKey, TValue>
      */
     public function unique(?callable $comparator = null): IterableValue;
 
     /**
      * @template TNewValue
-     * @phpstan-param callable(TNewValue $reduced, TValue $value): TNewValue $transformer
+     * @phpstan-param callable(TNewValue,TValue):TNewValue $transformer
      * @phpstan-param TNewValue $start
      * @phpstan-return TNewValue
      */
@@ -88,14 +98,14 @@ interface IterableValue extends IteratorAggregate
 
     /**
      * @phpstan-param ArrayValue<TValue> $other
-     * @phpstan-param callable(TValue $valueA, TValue $valueB):int | null $comparator
+     * @phpstan-param (callable(TValue,TValue):int) | null $comparator
      * @phpstan-return IterableValue<TKey, TValue>
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): IterableValue;
 
     /**
      * @phpstan-param ArrayValue<TValue> $other
-     * @phpstan-param callable(TValue $valueA, TValue $valueB):int | null $comparator
+     * @phpstan-param (callable(TValue,TValue):int) | null $comparator
      * @phpstan-return IterableValue<TKey, TValue>
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): IterableValue;
@@ -116,6 +126,16 @@ interface IterableValue extends IteratorAggregate
     public function toArrayValue(): ArrayValue;
 
     /**
+     * @phpstan-return array<int|string, TValue>
+     */
+    public function toAssocArray(): array;
+
+    /**
+     * @phpstan-return AssocValue<int|string, TValue>
+     */
+    public function toAssocValue(): AssocValue;
+
+    /**
      * @phpstan-return TValue[]
      */
     public function toArray(): array;
@@ -131,24 +151,29 @@ interface IterableValue extends IteratorAggregate
     public function flatten(): IterableValue;
 
     /**
-     * @param callable(TValue $value):bool $filter
+     * @param callable(TValue):bool $filter
      */
     public function any(callable $filter): bool;
 
     /**
-     * @param callable(TValue $value):bool $filter
+     * @param callable(TValue):bool $filter
      */
     public function every(callable $filter): bool;
 
     /**
-     * @param callable(TValue $value):bool $filter
+     * @param callable(TValue):bool $filter
      * @phpstan-return ?TValue
      */
     public function find(callable $filter);
 
     /**
-     * @param callable(TValue $value):bool $filter
+     * @param callable(TValue):bool $filter
      * @phpstan-return ?TValue
      */
     public function findLast(callable $filter);
+
+    /**
+     * @phpstan-return IterableValue<int, TKey>
+     */
+    public function keys(): IterableValue;
 }

@@ -37,6 +37,16 @@ final class PlainStringsArray implements StringsArray
         return new self($this->strings->slice($offset, $length));
     }
 
+    public function skip(int $length): PlainStringsArray
+    {
+        return $this->slice($length, $this->count() - $length);
+    }
+
+    public function take(int $length): PlainStringsArray
+    {
+        return $this->slice(0, $length);
+    }
+
     public function splice(int $offset, int $length, ?StringsArray $replacement = null): PlainStringsArray
     {
         return new self(
