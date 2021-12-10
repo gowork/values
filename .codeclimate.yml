@@ -11,3 +11,9 @@ engines:
                 enabled: false
             CleanCode/StaticAccess:
                 enabled: false
+
+    sonar-php:
+        enabled: true
+        checks:
+            php:S1448:
+                enabled: false
