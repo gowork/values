@@ -661,6 +661,21 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
             ->keys()->toArray()->shouldEqual(['0', '1', '1']);
     }
 
+    function it_handles_object_keys()
+    {
+        $pairs = [[(object)['foo' => 'bar'], 'zero'], [(object)['foo' => 'baz'], 'one one']];
+
+        $iterator = function () use ($pairs) {
+            foreach ($pairs as [$key, $item]) {
+                yield $key => $item;
+            }
+        };
+
+        $this->beConstructedWith($iterator());
+        $this->map(fn(string $val, object $key): string => $val)
+            ->keys()->toArray()->shouldBeLike([(object)['foo' => 'bar'], (object)['foo' => 'baz']]);
+    }
+
     private function entityComparator(): \Closure
     {
         return function (DummyEntity $entityA, DummyEntity $entityB): int {
