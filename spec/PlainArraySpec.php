@@ -55,7 +55,7 @@ final class PlainArraySpec extends ObjectBehavior
     {
         $this->beConstructedWith(['100', '50.12', '', true, false]);
 
-        $mapped = $this->map('intval');
+        $mapped = $this->map(fn($value): int => (int)$value);
 
         $mapped->shouldNotBe($this);
         $mapped->toArray()->shouldBeLike([100, 50, 0, 1, 0]);
@@ -341,10 +341,20 @@ final class PlainArraySpec extends ObjectBehavior
     {
         $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
 
-        $this->slice(0, 1)->shouldNotBe($this);
+        $this->slice(0, 1)->toArray()->shouldNotBe($this->toArray());
         $this->slice(0, 1)->toArray()->shouldBeLike(['item 1']);
         $this->slice(1, 4)->toArray()->shouldBeLike(['item 2', 'item 3', 'item 4', 'item 5']);
         $this->slice(5, 1)->toArray()->shouldBeLike(['item 6']);
+    }
+
+    function it_skips_and_takes_given_part()
+    {
+        $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
+
+        $this->take(1)->toArray()->shouldNotBe($this->toArray());
+        $this->take(1)->toArray()->shouldBeLike(['item 1']);
+        $this->skip(1)->take(4)->toArray()->shouldBeLike(['item 2', 'item 3', 'item 4', 'item 5']);
+        $this->skip(5)->take(1)->toArray()->shouldBeLike(['item 6']);
     }
 
     function it_allows_to_remove_slice_from_array_with_splice()

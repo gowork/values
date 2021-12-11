@@ -1,0 +1,19 @@
+engines:
+    phpcodesniffer:
+        enabled: true
+        checks:
+            Generic WhiteSpace ScopeIndent IncorrectExact:
+                enabled: false
+    phpmd:
+        enabled: true
+        checks:
+            UnusedLocalVariable:
+                enabled: false
+            CleanCode/StaticAccess:
+                enabled: false
+
+    sonar-php:
+        enabled: true
+        checks:
+            php:S1448:
+                enabled: false

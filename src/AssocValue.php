@@ -41,7 +41,7 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess, 
 
     /**
      * @template TNewValue
-     * @param callable(TValue $value, TKey $key=):TNewValue $transformer
+     * @param callable(TValue,TKey $key=):TNewValue $transformer
      * @phpstan-return AssocValue<TKey, TNewValue>
      */
     public function map(callable $transformer): AssocValue;

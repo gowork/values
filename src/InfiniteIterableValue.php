@@ -3,6 +3,7 @@
 namespace GW\Value;
 
 use function count;
+use const PHP_INT_MAX;
 
 /**
  * @template TKey
@@ -36,7 +37,7 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @param callable(TValue $value):void $callback
+     * @param callable(TValue):void $callback
      * @phpstan-return InfiniteIterableValue<TKey, TValue>
      */
     public function each(callable $callback): InfiniteIterableValue
@@ -49,7 +50,7 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @param (callable(TValue $lueA,TValue):int) | null $comparator
+     * @param (callable(TValue,TValue):int) | null $comparator
      * @phpstan-return InfiniteIterableValue<TKey, TValue>
      */
     public function unique(?callable $comparator = null): InfiniteIterableValue
@@ -90,7 +91,7 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @phpstan-param callable(TValue $value):bool $filter
+     * @phpstan-param callable(TValue):bool $filter
      * @phpstan-return InfiniteIterableValue<TKey, TValue>
      */
     public function filter(callable $filter): InfiniteIterableValue
@@ -101,9 +102,9 @@ final class InfiniteIterableValue implements IterableValue
              * @phpstan-return iterable<TKey, TValue>
              */
             static function (iterable $iterable) use ($filter): iterable {
-                foreach ($iterable as $value) {
+                foreach ($iterable as $key => $value) {
                     if ($filter($value)) {
-                        yield $value;
+                        yield $key => $value;
                     }
                 }
             }
@@ -120,7 +121,7 @@ final class InfiniteIterableValue implements IterableValue
 
     /**
      * @template TNewValue
-     * @param callable(TValue $value): TNewValue $transformer
+     * @param callable(TValue,TKey $key=):TNewValue $transformer
      * @phpstan-return InfiniteIterableValue<TKey, TNewValue>
      */
     public function map(callable $transformer): InfiniteIterableValue
@@ -131,8 +132,8 @@ final class InfiniteIterableValue implements IterableValue
              * @phpstan-return iterable<TKey, TNewValue>
              */
             static function (iterable $iterable) use ($transformer): iterable {
-                foreach ($iterable as $value) {
-                    yield $transformer($value);
+                foreach ($iterable as $key => $value) {
+                    yield $key => $transformer($value, $key);
                 }
             }
         ));
@@ -140,7 +141,7 @@ final class InfiniteIterableValue implements IterableValue
 
     /**
      * @template TNewValue
-     * @param callable(TValue $value): iterable<TNewValue> $transformer
+     * @param callable(TValue):iterable<TNewValue> $transformer
      * @phpstan-return InfiniteIterableValue<TKey, TNewValue>
      */
     public function flatMap(callable $transformer): InfiniteIterableValue
@@ -164,6 +165,28 @@ final class InfiniteIterableValue implements IterableValue
     public function toArrayValue(): ArrayValue
     {
         return Wrap::array($this->toArray());
+    }
+
+    /**
+     * @phpstan-return array<int|string, TValue>
+     */
+    public function toAssocArray(): array
+    {
+        $return = [];
+
+        foreach ($this->stack->iterate() as $key => $value) {
+            $return[$key] = $value;
+        }
+
+        return $return;
+    }
+
+    /**
+     * @phpstan-return AssocValue<int|string, TValue>
+     */
+    public function toAssocValue(): AssocValue
+    {
+        return Wrap::assocArray($this->toAssocArray());
     }
 
     /**
@@ -223,22 +246,33 @@ final class InfiniteIterableValue implements IterableValue
     /**
      * @phpstan-return InfiniteIterableValue<TKey, TValue>
      */
-    public function slice(int $offset, int $length): InfiniteIterableValue
+    public function slice(int $offset, ?int $length = null): InfiniteIterableValue
     {
+        if ($offset < 0) {
+            throw new \InvalidArgumentException('Start offset must be non-negative');
+        }
+        if ($length < 0) {
+            throw new \InvalidArgumentException('Length must be non-negative');
+        }
+        if ($length === 0) {
+            return new self([]);
+        }
+        $offsetSet = $offset > 0;
+
         return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
              */
-            static function (iterable $iterable) use ($offset, $length): iterable {
-                foreach ($iterable as $value) {
-                    if ($offset-- > 0) {
+            static function (iterable $iterable) use ($offsetSet, $offset, $length): iterable {
+                foreach ($iterable as $key => $value) {
+                    if ($offsetSet && $offset-- > 0) {
                         continue;
                     }
 
-                    yield $value;
+                    yield $key => $value;
 
-                    if (--$length <= 0) {
+                    if ($length !== null && --$length <= 0) {
                         break;
                     }
                 }
@@ -247,8 +281,24 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
+     * @phpstan-return InfiniteIterableValue<TKey, TValue>
+     */
+    public function skip(int $length): InfiniteIterableValue
+    {
+        return $this->slice($length);
+    }
+
+    /**
+     * @phpstan-return InfiniteIterableValue<TKey, TValue>
+     */
+    public function take(int $length): InfiniteIterableValue
+    {
+        return $this->slice(0, $length);
+    }
+
+    /**
      * @phpstan-param ArrayValue<TValue> $other
-     * @param (callable(TValue,TValue):int) | null $comparator
+     * @phpstan-param (callable(TValue,TValue):int) | null $comparator
      * @phpstan-return InfiniteIterableValue<TKey, TValue>
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): InfiniteIterableValue
@@ -278,7 +328,7 @@ final class InfiniteIterableValue implements IterableValue
 
     /**
      * @phpstan-param ArrayValue<TValue> $other
-     * @param callable(TValue $valueA, TValue $valueB):int | null $comparator
+     * @phpstan-param (callable(TValue,TValue):int) | null $comparator
      * @phpstan-return InfiniteIterableValue<TKey, TValue>
      */
     public function intersect(ArrayValue $other, ?callable $comparator = null): InfiniteIterableValue
@@ -457,6 +507,24 @@ final class InfiniteIterableValue implements IterableValue
         foreach ($this->stack->iterate() as $value) {}
 
         return $value;
+    }
+
+    /**
+     * @phpstan-return InfiniteIterableValue<int, TKey>
+     */
+    public function keys(): InfiniteIterableValue
+    {
+        return self::fromStack($this->stack->push(
+            /**
+             * @phpstan-param iterable<TKey, TValue> $iterable
+             * @phpstan-return iterable<int, TKey>
+             */
+            static function (iterable $iterable): iterable {
+                foreach ($iterable as $key => $value) {
+                    yield $key;
+                }
+            }
+        ));
     }
 
     /**
