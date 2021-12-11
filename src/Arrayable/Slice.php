@@ -17,7 +17,7 @@ final class Slice implements Arrayable
     private ?int $length;
 
     /** @param Arrayable<TValue> $arrayable */
-    public function __construct(Arrayable $arrayable, int $offset, int $length = null)
+    public function __construct(Arrayable $arrayable, int $offset, ?int $length = null)
     {
         $this->arrayable = $arrayable;
         $this->offset = $offset;

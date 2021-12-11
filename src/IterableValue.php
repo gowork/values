@@ -54,7 +54,7 @@ interface IterableValue extends IteratorAggregate
     /**
      * @phpstan-return IterableValue<TKey, TValue>
      */
-    public function slice(int $offset, int $length = null): IterableValue;
+    public function slice(int $offset, ?int $length = null): IterableValue;
 
     /**
      * @phpstan-return IterableValue<TKey, TValue>

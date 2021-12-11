@@ -120,7 +120,7 @@ interface StringsArray extends Value, IteratorAggregate, ArrayAccess, StringValu
 
     public function join(StringsArray $other): StringsArray;
 
-    public function slice(int $offset, int $length = null): StringsArray;
+    public function slice(int $offset, ?int $length = null): StringsArray;
 
     public function skip(int $length): StringsArray;
 
