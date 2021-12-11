@@ -246,7 +246,7 @@ final class InfiniteIterableValue implements IterableValue
     /**
      * @phpstan-return InfiniteIterableValue<TKey, TValue>
      */
-    public function slice(int $offset, int $length = PHP_INT_MAX): InfiniteIterableValue
+    public function slice(int $offset, int $length = null): InfiniteIterableValue
     {
         if ($offset < 0) {
             throw new \InvalidArgumentException('Start offset must be non-negative');
@@ -265,13 +265,13 @@ final class InfiniteIterableValue implements IterableValue
              */
             static function (iterable $iterable) use ($offset, $length): iterable {
                 foreach ($iterable as $key => $value) {
-                    if ($offset-- > 0) {
+                    if ($offset !== 0 && $offset-- > 0) {
                         continue;
                     }
 
                     yield $key => $value;
 
-                    if (--$length <= 0) {
+                    if ($length !== null && --$length <= 0) {
                         break;
                     }
                 }
