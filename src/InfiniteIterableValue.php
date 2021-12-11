@@ -257,15 +257,16 @@ final class InfiniteIterableValue implements IterableValue
         if ($length === 0) {
             return new self([]);
         }
+        $offsetSet = $offset > 0;
 
         return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
              * @phpstan-return iterable<TKey, TValue>
              */
-            static function (iterable $iterable) use ($offset, $length): iterable {
+            static function (iterable $iterable) use ($offsetSet, $offset, $length): iterable {
                 foreach ($iterable as $key => $value) {
-                    if ($offset !== 0 && $offset-- > 0) {
+                    if ($offsetSet && $offset-- > 0) {
                         continue;
                     }
 
