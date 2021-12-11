@@ -3,6 +3,7 @@
 namespace GW\Value;
 
 use function count;
+use const PHP_INT_MAX;
 
 /**
  * @template TKey
@@ -245,8 +246,18 @@ final class InfiniteIterableValue implements IterableValue
     /**
      * @phpstan-return InfiniteIterableValue<TKey, TValue>
      */
-    public function slice(int $offset, int $length): InfiniteIterableValue
+    public function slice(int $offset, int $length = PHP_INT_MAX): InfiniteIterableValue
     {
+        if ($offset < 0) {
+            throw new \InvalidArgumentException('Start offset must be non-negative');
+        }
+        if ($length < 0) {
+            throw new \InvalidArgumentException('Length must be non-negative');
+        }
+        if ($length === 0) {
+            return new self([]);
+        }
+
         return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
@@ -273,21 +284,7 @@ final class InfiniteIterableValue implements IterableValue
      */
     public function skip(int $length): InfiniteIterableValue
     {
-        return self::fromStack($this->stack->push(
-            /**
-             * @phpstan-param iterable<TKey, TValue> $iterable
-             * @phpstan-return iterable<TKey, TValue>
-             */
-            static function (iterable $iterable) use ($length): iterable {
-                foreach ($iterable as $key => $value) {
-                    if ($length-- > 0) {
-                        continue;
-                    }
-
-                    yield $key => $value;
-                }
-            }
-        ));
+        return $this->slice($length);
     }
 
     /**
@@ -519,7 +516,7 @@ final class InfiniteIterableValue implements IterableValue
         return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
-             * @phpstan-return iterable<TKey, TValue>
+             * @phpstan-return iterable<int, TValue>
              */
             static function (iterable $iterable): iterable {
                 foreach ($iterable as $key => $value) {

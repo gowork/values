@@ -108,21 +108,19 @@ interface StringsArray extends Value, IteratorAggregate, ArrayAccess, StringValu
     /**
      * @param int $offset
      * @param StringValue|string $value
-     * @return void
      * @throws BadMethodCallException For immutable types.
      */
     public function offsetSet($offset, $value): void;
 
     /**
      * @param int $offset
-     * @return void
      * @throws BadMethodCallException For immutable types.
      */
     public function offsetUnset($offset): void;
 
     public function join(StringsArray $other): StringsArray;
 
-    public function slice(int $offset, int $length): StringsArray;
+    public function slice(int $offset, int $length = null): StringsArray;
 
     public function skip(int $length): StringsArray;
 
@@ -166,7 +164,7 @@ interface StringsArray extends Value, IteratorAggregate, ArrayAccess, StringValu
     public function last(): ?StringValue;
 
     /**
-     * @param callable(StringValue $value): bool $filter
+     * @param callable(StringValue):bool $filter
      */
     public function find(callable $filter): ?StringValue;
 

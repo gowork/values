@@ -3,6 +3,7 @@
 namespace GW\Value;
 
 use IteratorAggregate;
+use const PHP_INT_MAX;
 
 /**
  * @template TKey
@@ -53,7 +54,7 @@ interface IterableValue extends IteratorAggregate
     /**
      * @phpstan-return IterableValue<TKey, TValue>
      */
-    public function slice(int $offset, int $length): IterableValue;
+    public function slice(int $offset, int $length = PHP_INT_MAX): IterableValue;
 
     /**
      * @phpstan-return IterableValue<TKey, TValue>

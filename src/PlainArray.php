@@ -155,7 +155,7 @@ final class PlainArray implements ArrayValue
     /**
      * @phpstan-return PlainArray<TValue>
      */
-    public function slice(int $offset, int $length): PlainArray
+    public function slice(int $offset, int $length = null): PlainArray
     {
         return new self(new Slice($this->items, $offset, $length));
     }
@@ -165,7 +165,7 @@ final class PlainArray implements ArrayValue
      */
     public function skip(int $length): PlainArray
     {
-        return $this->slice($length, $this->count() - $length);
+        return $this->slice($length);
     }
 
     /**

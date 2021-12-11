@@ -222,6 +222,25 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
         $this->slice(5, 1)->toArray()->shouldBeLike(['item 6']);
     }
 
+    function it_returns_empty_set_for_slice_with_zero_length()
+    {
+        $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
+
+        $this->slice(0, 0)->toArray()->shouldBeLike([]);
+        $this->slice(1, 0)->toArray()->shouldBeLike([]);
+        $this->slice(4, 0)->toArray()->shouldBeLike([]);
+        $this->slice(55, 0)->toArray()->shouldBeLike([]);
+    }
+
+    function it_throws_when_used_on_negative_offset_or_length_in_slice()
+    {
+        $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);
+
+        $this->shouldThrow()->during('slice', [-1, 10]);
+        $this->shouldThrow()->during('slice', [-1, -110]);
+        $this->shouldThrow()->during('slice', [1, -110]);
+    }
+
     function it_skips_and_takes_given_part()
     {
         $this->beConstructedWith(['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']);

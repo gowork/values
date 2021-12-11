@@ -32,7 +32,7 @@ final class PlainStringsArray implements StringsArray
         return new self($this->strings->join($other->toArrayValue()));
     }
 
-    public function slice(int $offset, int $length): PlainStringsArray
+    public function slice(int $offset, int $length = null): PlainStringsArray
     {
         return new self($this->strings->slice($offset, $length));
     }
