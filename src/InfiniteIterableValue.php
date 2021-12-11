@@ -516,7 +516,7 @@ final class InfiniteIterableValue implements IterableValue
         return self::fromStack($this->stack->push(
             /**
              * @phpstan-param iterable<TKey, TValue> $iterable
-             * @phpstan-return iterable<int, TValue>
+             * @phpstan-return iterable<int, TKey>
              */
             static function (iterable $iterable): iterable {
                 foreach ($iterable as $key => $value) {
