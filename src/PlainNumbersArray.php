@@ -135,9 +135,7 @@ final class PlainNumbersArray implements NumbersArray
     {
         // @phpstan-ignore-next-line shrug
         return $this->numbers
-            // @phpstan-ignore-next-line shrug
             ->groupBy($reducer)
-            // @phpstan-ignore-next-line shrug
             ->map(static fn(ArrayValue $numbers) => new self($numbers));
     }
 
@@ -239,9 +237,19 @@ final class PlainNumbersArray implements NumbersArray
         return new self($this->numbers->join($other));
     }
 
-    public function slice(int $offset, int $length): NumbersArray
+    public function slice(int $offset, ?int $length = null): NumbersArray
     {
         return new self($this->numbers->slice($offset, $length));
+    }
+
+    public function skip(int $length): NumbersArray
+    {
+        return new self($this->numbers->skip($length));
+    }
+
+    public function take(int $length): NumbersArray
+    {
+        return new self($this->numbers->take($length));
     }
 
     /**

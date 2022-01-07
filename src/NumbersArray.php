@@ -55,7 +55,7 @@ interface NumbersArray extends ArrayValue
     public function flatMap(callable $transformer): ArrayValue;
 
     /**
-     * @template TNewKey
+     * @template TNewKey of int|string
      * @param callable(NumberValue):TNewKey $reducer
      * @return AssocValue<TNewKey, ArrayValue<NumberValue>>
      */
@@ -100,7 +100,11 @@ interface NumbersArray extends ArrayValue
      */
     public function join(ArrayValue $other): NumbersArray;
 
-    public function slice(int $offset, int $length): NumbersArray;
+    public function slice(int $offset, ?int $length = null): NumbersArray;
+
+    public function skip(int $length): NumbersArray;
+
+    public function take(int $length): NumbersArray;
 
     /**
      * @param ArrayValue<NumberValue>|null $replacement

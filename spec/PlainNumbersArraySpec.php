@@ -277,8 +277,11 @@ final class PlainNumbersArraySpec extends ObjectBehavior
         $this->beConstructedThrough('just', [1, 2, 3, 4, 5]);
 
         $this->slice(0, 2)->toNativeNumbers()->shouldBe([1, 2]);
+        $this->take(2)->toNativeNumbers()->shouldBe([1, 2]);
         $this->slice(1, 2)->toNativeNumbers()->shouldBe([2, 3]);
         $this->slice(-2, 2)->toNativeNumbers()->shouldBe([4, 5]);
+        $this->slice(2)->toNativeNumbers()->shouldBe([3, 4, 5]);
+        $this->skip(2)->toNativeNumbers()->shouldBe([3, 4, 5]);
     }
 
     function it_splices_numbers_array()
