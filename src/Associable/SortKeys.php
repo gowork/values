@@ -31,6 +31,7 @@ final class SortKeys implements Associable
     public function toAssocArray(): array
     {
         $items = $this->associable->toAssocArray();
+        /** @phpstan-ignore-next-line  */
         uksort($items, $this->comparator);
 
         return $items;

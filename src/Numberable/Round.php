@@ -19,8 +19,7 @@ final class Round implements Numberable
         $this->mode = $mode;
     }
 
-    /** @return int|float */
-    public function toNumber()
+    public function toNumber(): float
     {
         return round($this->numberable->toNumber(), $this->precision, $this->mode ?? PHP_ROUND_HALF_UP);
     }

@@ -3,22 +3,21 @@
 namespace GW\Value\Numberable;
 
 use GW\Value\Numberable;
-use function array_reduce;
 
 final class Multiply implements Numberable
 {
-    private Numberable $factor;
-    /** @var Numberable[] */
-    private array $factors;
+    private Numberable $right;
+    private Numberable $left;
 
-    public function __construct(Numberable $factor, Numberable ...$factors)
+    public function __construct(Numberable $left, Numberable $right)
     {
-        $this->factor = $factor;
-        $this->factors = $factors;
+        $this->left = $left;
+        $this->right = $right;
     }
 
+    /** @return int|float */
     public function toNumber()
     {
-        return array_reduce($this->factors, new MultiplyReducer(), $this->factor->toNumber());
+        return $this->left->toNumber() * $this->right->toNumber();
     }
 }

@@ -129,8 +129,9 @@ interface NumbersArray extends ArrayValue
 
     /**
      * @param callable(NumberValue $reduced, NumberValue $item):NumberValue $transformer
+     * @param int|float|numeric-string|Numberable $start
      */
-    public function reduceNumber(callable $transformer, NumberValue $start): NumberValue;
+    public function reduceNumber(callable $transformer, $start): NumberValue;
 
     public function implode(string $glue): StringValue;
 

@@ -23,6 +23,10 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use function range;
 
+/**
+ * @method void shouldHaveOffset(int $key)
+ * @method void shouldNotHaveOffset(int $key)
+ */
 final class PlainNumbersArraySpec extends ObjectBehavior
 {
     function it_calculates_sum_of_integers()
@@ -517,8 +521,8 @@ final class PlainNumbersArraySpec extends ObjectBehavior
 
         $this[0]->shouldBe($one);
         $this[1]->shouldBe($two);
-        $this->offsetExists(0)->shouldBe(true);
-        $this->offsetExists(2)->shouldBe(false);
+        $this->shouldHaveOffset(0);
+        $this->shouldNotHaveOffset(2);
 
         $this->shouldThrow(BadMethodCallException::class)->during('offsetSet', [1, PlainNumber::from(3)]);
         $this->shouldThrow(BadMethodCallException::class)->during('offsetUnset', [1]);
@@ -564,6 +568,13 @@ final class PlainNumbersArraySpec extends ObjectBehavior
         $this->toStringsArray()->toNativeStrings()->shouldBe(['1', '2.5', '3.6', '4', '5']);
     }
 
+    function it_returns_self_on_toNumbersArray()
+    {
+        $this->beConstructedThrough('just', [1, 2.5, 3.6, 4, 5]);
+
+        $this->toNumbersArray()->shouldBe($this);
+    }
+
     private function isEven(): Closure
     {
         return static fn(NumberValue $number) => $number->toNumber() % 2 === 0;
@@ -572,5 +583,12 @@ final class PlainNumbersArraySpec extends ObjectBehavior
     private function isGreater(int $than): Closure
     {
         return static fn(NumberValue $number) => $number->toNumber() > $than;
+    }
+
+    public function getMatchers(): array
+    {
+        return [
+            'haveOffset' => fn (PlainNumbersArray $subject, int $key): bool => $subject->offsetExists($key),
+        ];
     }
 }

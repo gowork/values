@@ -3,22 +3,21 @@
 namespace GW\Value\Numberable;
 
 use GW\Value\Numberable;
-use function array_reduce;
 
 final class Divide implements Numberable
 {
     private Numberable $dividend;
-    /** @var Numberable[] */
-    private array $divisors;
+    private Numberable $divisor;
 
-    public function __construct(Numberable $dividend, Numberable ...$divisors)
+    public function __construct(Numberable $dividend, Numberable $divisor)
     {
         $this->dividend = $dividend;
-        $this->divisors = $divisors;
+        $this->divisor = $divisor;
     }
 
+    /** @return int|float */
     public function toNumber()
     {
-        return array_reduce($this->divisors, new DivideReducer(), $this->dividend->toNumber());
+        return $this->dividend->toNumber() / $this->divisor->toNumber();
     }
 }

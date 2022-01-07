@@ -5,7 +5,6 @@ namespace GW\Value\Numberable;
 use GW\Value\Arrayable;
 use GW\Value\Arrayable\Map;
 use GW\Value\Numberable;
-use GW\Value\NumberValue;
 use LogicException;
 use function count;
 use function min;

@@ -2,22 +2,22 @@
 
 namespace GW\Value\Numberable;
 
-use GW\Value\Arrayable\JustArray;
 use GW\Value\Numberable;
-use function array_values;
 
 final class Add implements Numberable
 {
-    private Sum $sum;
+    private Numberable $leftTerm;
+    private Numberable $rightTerm;
 
-    public function __construct(Numberable $term, Numberable ...$terms)
+    public function __construct(Numberable $leftTerm, Numberable $rightTerm)
     {
-        $this->sum = new Sum(new JustArray([$term, ...array_values($terms)]));
+        $this->leftTerm = $leftTerm;
+        $this->rightTerm = $rightTerm;
     }
 
     /** @return int|float */
     public function toNumber()
     {
-        return $this->sum->toNumber();
+        return $this->leftTerm->toNumber() + $this->rightTerm->toNumber();
     }
 }

@@ -17,42 +17,42 @@ final class Math
 
     public static function cos(): self
     {
-        return new self('cos');
+        return new self('\cos');
     }
 
     public static function acos(): self
     {
-        return new self('acos');
+        return new self('\acos');
     }
 
     public static function sin(): self
     {
-        return new self('sin');
+        return new self('\sin');
     }
 
     public static function asin(): self
     {
-        return new self('asin');
+        return new self('\asin');
     }
 
     public static function tan(): self
     {
-        return new self('tan');
+        return new self('\tan');
     }
 
     public static function atan(): self
     {
-        return new self('atan');
+        return new self('\atan');
     }
 
     public static function exp(): self
     {
-        return new self('exp');
+        return new self('\exp');
     }
 
     public static function sqrt(): self
     {
-        return new self('sqrt');
+        return new self('\sqrt');
     }
 
     public function __invoke(Numberable $numberable): Numberable

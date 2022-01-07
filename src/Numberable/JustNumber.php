@@ -24,6 +24,6 @@ final class JustNumber implements Numberable
     /** @return int|float */
     public function toNumber()
     {
-        return $this->number + 0;
+        return $this->number;
     }
 }

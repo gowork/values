@@ -11,7 +11,7 @@ use GW\Value\NumberValue;
 /**
  * @implements Arrayable<NumberValue>
  */
-final class JustNumbers implements Arrayable
+final class WrapNumbers implements Arrayable
 {
     /** @var Arrayable<NumberValue> */
     private Arrayable $numbers;

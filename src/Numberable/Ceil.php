@@ -14,9 +14,8 @@ final class Ceil implements Numberable
         $this->numberable = $numberable;
     }
 
-    /** @return int|float */
-    public function toNumber()
+    public function toNumber(): float
     {
-        return ceil($this->numberable->toNumber());
+        return (float)ceil($this->numberable->toNumber());
     }
 }

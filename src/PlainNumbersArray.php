@@ -4,7 +4,7 @@ namespace GW\Value;
 
 use BadMethodCallException;
 use GW\Value\Numberable\Average;
-use GW\Value\Numberable\JustNumbers;
+use GW\Value\Numberable\WrapNumbers;
 use GW\Value\Numberable\Max;
 use GW\Value\Numberable\Min;
 use GW\Value\Numberable\Sum;
@@ -31,7 +31,7 @@ final class PlainNumbersArray implements NumbersArray
     /** @param int|float|numeric-string|Numberable ...$numbers */
     public static function just(...$numbers): self
     {
-        return self::fromArrayable(new JustNumbers(...$numbers));
+        return self::fromArrayable(new WrapNumbers(...$numbers));
     }
 
     public function sum(): NumberValue
@@ -143,7 +143,6 @@ final class PlainNumbersArray implements NumbersArray
 
     /**
      * @return ArrayValue<array<int, NumberValue>>
-     * @phpstan-ignore-next-line shrug
      */
     public function chunk(int $size): ArrayValue
     {
@@ -220,7 +219,7 @@ final class PlainNumbersArray implements NumbersArray
      */
     public function offsetSet($offset, $value): void
     {
-        $this->numbers->offsetSet($offset, $value);
+        throw new BadMethodCallException('PlainNumbersArray is immutable');
     }
 
     /**
@@ -229,7 +228,7 @@ final class PlainNumbersArray implements NumbersArray
      */
     public function offsetUnset($offset): void
     {
-        $this->numbers->offsetUnset($offset);
+        throw new BadMethodCallException('PlainNumbersArray is immutable');
     }
 
     /**
@@ -284,10 +283,11 @@ final class PlainNumbersArray implements NumbersArray
 
     /**
      * @param callable(NumberValue $reduced, NumberValue $item):NumberValue $transformer
+     * @param int|float|numeric-string|Numberable $start
      */
-    public function reduceNumber(callable $transformer, NumberValue $start): NumberValue
+    public function reduceNumber(callable $transformer, $start): NumberValue
     {
-        return $this->reduce($transformer, $start);
+        return $this->numbers->reduce($transformer, Wrap::number($start));
     }
 
     public function implode(string $glue): StringValue

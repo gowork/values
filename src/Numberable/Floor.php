@@ -14,9 +14,8 @@ final class Floor implements Numberable
         $this->numberable = $numberable;
     }
 
-    /** @return int|float */
-    public function toNumber()
+    public function toNumber(): float
     {
-        return floor($this->numberable->toNumber());
+        return (float)floor($this->numberable->toNumber());
     }
 }

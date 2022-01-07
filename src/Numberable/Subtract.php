@@ -3,23 +3,21 @@
 namespace GW\Value\Numberable;
 
 use GW\Value\Numberable;
-use function array_reduce;
 
 final class Subtract implements Numberable
 {
-    private Numberable $term;
-    /** @var Numberable[] */
-    private array $terms;
+    private Numberable $minuend;
+    private Numberable $subtrahend;
 
-    public function __construct(Numberable $term, Numberable ...$terms)
+    public function __construct(Numberable $minuend, Numberable $subtrahend)
     {
-        $this->term = $term;
-        $this->terms = $terms;
+        $this->minuend = $minuend;
+        $this->subtrahend = $subtrahend;
     }
 
     /** @return int|float */
     public function toNumber()
     {
-        return array_reduce($this->terms, new SubtractReducer(), $this->term->toNumber());
+        return $this->minuend->toNumber() - $this->subtrahend->toNumber();
     }
 }
