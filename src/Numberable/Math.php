@@ -7,12 +7,12 @@ use GW\Value\Numberable;
 final class Math
 {
     /** @var callable(int|float):(int|float) */
-    private $fn;
+    private $function;
 
     /** @param callable(int|float):(int|float) $fn */
-    public function __construct(callable $fn)
+    public function __construct(callable $function)
     {
-        $this->fn = $fn;
+        $this->function = $function;
     }
 
     public static function cos(): self
@@ -57,6 +57,6 @@ final class Math
 
     public function __invoke(Numberable $numberable): Numberable
     {
-        return new Formula($numberable, $this->fn);
+        return new Formula($numberable, $this->function);
     }
 }
