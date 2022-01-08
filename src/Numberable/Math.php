@@ -9,7 +9,7 @@ final class Math
     /** @var callable(int|float):(int|float) */
     private $function;
 
-    /** @param callable(int|float):(int|float) $fn */
+    /** @param callable(int|float):(int|float) $function */
     public function __construct(callable $function)
     {
         $this->function = $function;
