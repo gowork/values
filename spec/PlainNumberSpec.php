@@ -4,11 +4,12 @@ namespace spec\GW\Value;
 
 use DivisionByZeroError;
 use GW\Value\Numberable;
+use GW\Value\Numberable\Add;
 use GW\Value\Numberable\Divide;
 use GW\Value\Numberable\JustFloat;
 use GW\Value\Numberable\JustInteger;
-use GW\Value\Numberable\JustNumber;
-use GW\Value\Numberable\Add;
+use GW\Value\Numberable\JustNumbers;
+use GW\Value\Numberable\Sum;
 use GW\Value\Numberable\Zero;
 use GW\Value\PlainNumber;
 use PhpSpec\ObjectBehavior;
@@ -377,7 +378,7 @@ final class PlainNumberSpec extends ObjectBehavior
         $this->beConstructedWith(new JustInteger(100));
 
         $formula = fn(int $number): Numberable => new Divide(
-            new Add(new JustNumber($number), new JustInteger(700)),
+            new Sum(new JustNumbers($number, 300, 400)),
             new JustInteger(2)
         );
 
