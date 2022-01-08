@@ -7,7 +7,7 @@ use GW\Value\Numberable;
 use GW\Value\Numberable\Divide;
 use GW\Value\Numberable\JustFloat;
 use GW\Value\Numberable\JustInteger;
-use GW\Value\Numberable\Math;
+use GW\Value\Numberable\JustNumber;
 use GW\Value\Numberable\Add;
 use GW\Value\Numberable\Zero;
 use GW\Value\PlainNumber;
@@ -376,8 +376,8 @@ final class PlainNumberSpec extends ObjectBehavior
     {
         $this->beConstructedWith(new JustInteger(100));
 
-        $formula = fn(Numberable $number): Numberable => new Divide(
-            new Add($number, new JustInteger(700)),
+        $formula = fn(int $number): Numberable => new Divide(
+            new Add(new JustNumber($number), new JustInteger(700)),
             new JustInteger(2)
         );
 
@@ -388,13 +388,13 @@ final class PlainNumberSpec extends ObjectBehavior
     {
         $this->beConstructedWith(new JustInteger(90));
 
-        $this->calculate(Math::cos())->toNumber()->shouldBe(cos(90));
-        $this->divide(new JustInteger(100))->calculate(Math::acos())->toNumber()->shouldBe(acos(.90));
-        $this->calculate(Math::sin())->toNumber()->shouldBe(sin(90));
-        $this->divide(new JustInteger(100))->calculate(Math::asin())->toNumber()->shouldBe(asin(.90));
-        $this->calculate(Math::tan())->toNumber()->shouldBe(tan(90));
-        $this->divide(new JustInteger(100))->calculate(Math::atan())->toNumber()->shouldBe(atan(.90));
-        $this->calculate(Math::exp())->toNumber()->shouldBe(exp(90));
-        $this->calculate(Math::sqrt())->toNumber()->shouldBe(sqrt(90));
+        $this->calculate('cos')->toNumber()->shouldBe(cos(90));
+        $this->divide(new JustInteger(100))->calculate('acos')->toNumber()->shouldBe(acos(.90));
+        $this->calculate('sin')->toNumber()->shouldBe(sin(90));
+        $this->divide(new JustInteger(100))->calculate('asin')->toNumber()->shouldBe(asin(.90));
+        $this->calculate('tan')->toNumber()->shouldBe(tan(90));
+        $this->divide(new JustInteger(100))->calculate('atan')->toNumber()->shouldBe(atan(.90));
+        $this->calculate('exp')->toNumber()->shouldBe(exp(90));
+        $this->calculate('sqrt')->toNumber()->shouldBe(sqrt(90));
     }
 }

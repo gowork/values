@@ -4,6 +4,7 @@ namespace GW\Value;
 
 use GW\Value\Numberable\Absolute;
 use GW\Value\Numberable\Add;
+use GW\Value\Numberable\Calculate;
 use GW\Value\Numberable\Ceil;
 use GW\Value\Numberable\Divide;
 use GW\Value\Numberable\Floor;
@@ -98,10 +99,10 @@ final class PlainNumber implements NumberValue
         return new self(new Ceil($this->number));
     }
 
-    /** @param callable(Numberable):Numberable $formula */
+    /** @param callable(int|float):(int|float|Numberable) $formula */
     public function calculate(callable $formula): NumberValue
     {
-        return new self($formula($this->number));
+        return new self(new Calculate($this->number, $formula));
     }
 
     public function isEmpty(): bool

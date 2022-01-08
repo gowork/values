@@ -54,7 +54,7 @@ interface NumberValue extends Value, Numberable
 
     public function ceil(): NumberValue;
 
-    /** @param callable(Numberable):Numberable $formula */
+    /** @param callable(int|float):(int|float|Numberable) $formula */
     public function calculate(callable $formula): NumberValue;
 
     // value

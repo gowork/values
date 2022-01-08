@@ -216,7 +216,6 @@ Object wrapping number (float or int).
 ```php
 <?php
 
-use GW\Value\Numberable\Math;
 use GW\Value\Wrap;
 
 $number = Wrap::number(100)
@@ -225,7 +224,7 @@ $number = Wrap::number(100)
     ->multiply(2)
     ->divide(3)
     ->modulo(100)
-    ->calculate(Math::sqrt())
+    ->calculate('sqrt')
     ->round(2);
 // ...
 
