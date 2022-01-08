@@ -2,6 +2,7 @@
 
 namespace GW\Value\Numberable;
 
+use DivisionByZeroError;
 use GW\Value\Numberable;
 
 final class Divide implements Numberable
@@ -18,6 +19,13 @@ final class Divide implements Numberable
     /** @return int|float */
     public function toNumber()
     {
-        return $this->dividend->toNumber() / $this->divisor->toNumber();
+        $divisor = $this->divisor->toNumber();
+
+        if ($divisor === 0) {
+            // bypass warning triggered by PHP 7.4 before throwing DivisionByZeroError
+            throw new DivisionByZeroError('Division by zero');
+        }
+
+        return $this->dividend->toNumber() / $divisor;
     }
 }

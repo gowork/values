@@ -4,7 +4,7 @@ namespace GW\Value;
 
 use BadMethodCallException;
 use GW\Value\Numberable\Average;
-use GW\Value\Numberable\WrapNumbers;
+use GW\Value\Numberable\NumberValues;
 use GW\Value\Numberable\Max;
 use GW\Value\Numberable\Min;
 use GW\Value\Numberable\Sum;
@@ -31,7 +31,7 @@ final class PlainNumbersArray implements NumbersArray
     /** @param int|float|numeric-string|Numberable ...$numbers */
     public static function just(...$numbers): self
     {
-        return self::fromArrayable(new WrapNumbers(...$numbers));
+        return self::fromArrayable(new NumberValues(...$numbers));
     }
 
     public function sum(): NumberValue
