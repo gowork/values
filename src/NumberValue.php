@@ -64,7 +64,7 @@ interface NumberValue extends Value, Numberable
 
     // casting
 
-    public function format(int $decimals = 0, string $separator = '.' , string $thousandsSeparator = ','): StringValue;
+    public function format(int $decimals = 0, string $separator = '.', string $thousandsSeparator = ','): StringValue;
 
     public function toStringValue(): StringValue;
 

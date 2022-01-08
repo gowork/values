@@ -10,7 +10,7 @@ $number = Wrap::number(100);
 
 echo "100 * 12 = ";
 echo $number
-    ->calculate(fn (Numberable $number): Numberable => new Multiply($number, new JustInteger(12)))
+    ->calculate(fn(Numberable $number): Numberable => new Multiply($number, new JustInteger(12)))
     ->toNumber();
 echo "\n";
 

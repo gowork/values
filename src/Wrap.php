@@ -91,7 +91,7 @@ final class Wrap
             return PlainNumbersArray::fromArrayable($numbers);
         }
 
-        return PlainNumbersArray::just(...$numbers);
+        return PlainNumbersArray::fromNumbers(...$numbers);
     }
 
     private function __construct()

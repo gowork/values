@@ -29,7 +29,7 @@ final class PlainNumbersArray implements NumbersArray
     }
 
     /** @param int|float|numeric-string|Numberable ...$numbers */
-    public static function just(...$numbers): self
+    public static function fromNumbers(...$numbers): self
     {
         return self::fromArrayable(new NumberValues(...$numbers));
     }
@@ -54,7 +54,7 @@ final class PlainNumbersArray implements NumbersArray
         return new PlainNumber(new Max($this));
     }
 
-    /** @return int[]|float[] */
+    /** @return (int|float)[] */
     public function toNativeNumbers(): array
     {
         return $this->map(new ToScalarNumber())->toArray();

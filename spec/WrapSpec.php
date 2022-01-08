@@ -78,7 +78,7 @@ final class WrapSpec extends ObjectBehavior
 
     function it_should_return_NumbersArray_of_itself()
     {
-        $this->beConstructedThrough('numbersArray', [PlainNumbersArray::just(1, 2, 3.0)]);
+        $this->beConstructedThrough('numbersArray', [PlainNumbersArray::fromNumbers(1, 2, 3.0)]);
         $this->shouldHaveType(NumbersArray::class);
     }
 }

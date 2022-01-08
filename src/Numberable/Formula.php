@@ -8,20 +8,20 @@ final class Formula implements Numberable
 {
     private Numberable $numberable;
     /** @var callable(int|float):(int|float) */
-    private $fn;
+    private $calculation;
 
     /**
-     * @param callable(int|float):(int|float) $fn
+     * @param callable(int|float):(int|float) $calculation
      */
-    public function __construct(Numberable $numberable, callable $fn)
+    public function __construct(Numberable $numberable, callable $calculation)
     {
         $this->numberable = $numberable;
-        $this->fn = $fn;
+        $this->calculation = $calculation;
     }
 
     /** @return int|float */
     public function toNumber()
     {
-        return ($this->fn)($this->numberable->toNumber());
+        return ($this->calculation)($this->numberable->toNumber());
     }
 }
