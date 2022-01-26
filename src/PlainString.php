@@ -247,7 +247,7 @@ final class PlainString implements StringValue
 
     /**
      * @param string|StringValue $pattern
-     * @return ArrayValue<array<int, string>>
+     * @return ArrayValue<array<int|string, string>>
      */
     public function matchAllPatterns($pattern): ArrayValue
     {
