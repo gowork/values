@@ -89,6 +89,7 @@ final class PlainArray implements ArrayValue
     }
 
     /**
+     * @param int<1, max> $size
      * @phpstan-return PlainArray<array<int, TValue>>
      */
     public function chunk(int $size): PlainArray

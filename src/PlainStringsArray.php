@@ -113,6 +113,7 @@ final class PlainStringsArray implements StringsArray
     }
 
     /**
+     * @param int<1, max> $size
      * @return ArrayValue<array<int, StringValue>>
      */
     public function chunk(int $size): ArrayValue
