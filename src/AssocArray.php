@@ -21,6 +21,7 @@ use GW\Value\Associable\UniqueByString;
 use GW\Value\Associable\Values;
 use GW\Value\Associable\WithItem;
 use GW\Value\Associable\Without;
+use Traversable;
 use function array_key_exists;
 use function count;
 use function in_array;
@@ -313,9 +314,9 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @return iterable<TKey, TValue>
+     * @return Traversable<TKey, TValue>
      */
-    public function getIterator(): iterable
+    public function getIterator(): Traversable
     {
         yield from $this->items->toAssocArray();
     }

@@ -13,9 +13,13 @@ final class Chunk implements Arrayable
 {
     /** @var Arrayable<TValue> */
     private Arrayable $arrayable;
+    /** @var int<1, max> */
     private int $size;
 
-    /** @param Arrayable<TValue> $arrayable */
+    /**
+     * @param Arrayable<TValue> $arrayable
+     * @param int<1, max> $size
+     */
     public function __construct(Arrayable $arrayable, int $size)
     {
         $this->arrayable = $arrayable;

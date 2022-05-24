@@ -2,6 +2,7 @@
 
 namespace GW\Value;
 
+use Traversable;
 use function count;
 use const PHP_INT_MAX;
 
@@ -528,9 +529,9 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @phpstan-return iterable<TKey, TValue>
+     * @phpstan-return Traversable<TKey, TValue>
      */
-    public function getIterator(): iterable
+    public function getIterator(): Traversable
     {
         yield from $this->stack->iterate();
     }

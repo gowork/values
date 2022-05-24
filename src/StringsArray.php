@@ -280,6 +280,7 @@ interface StringsArray extends Value, IteratorAggregate, ArrayAccess, StringValu
     public function toAssocValue(): AssocValue;
 
     /**
+     * @param int<1, max> $size
      * @phpstan-return ArrayValue<array<int, StringValue>>
      */
     public function chunk(int $size): ArrayValue;

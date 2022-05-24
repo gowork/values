@@ -65,6 +65,7 @@ interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayA
     public function groupBy(callable $reducer): AssocValue;
 
     /**
+     * @param int<1, max> $size
      * @phpstan-return ArrayValue<array<int, TValue>>
      */
     public function chunk(int $size): ArrayValue;

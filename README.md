@@ -6,14 +6,13 @@
 [![License](https://poser.pugx.org/gowork/values/license)](https://packagist.org/packages/gowork/values)
 [![Latest Stable Version](https://poser.pugx.org/gowork/values/v)](//packagist.org/packages/gowork/values)
 [![Maintainability](https://api.codeclimate.com/v1/badges/b4fde36fad9d09cce9eb/maintainability)](https://codeclimate.com/github/gowork/values/maintainability)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/gowork/values/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/gowork/values/?branch=master)
 
 ## Installation
 
-It works on PHP >=7.4. This library is available on Composer/Packagist as `gowork/values`. To install it execute:
+It works on PHP >=8.0. This library is available on Composer/Packagist as `gowork/values`. To install it execute:
 
 ```shell
-composer require gowork/values ^0.4
+composer require gowork/values ^0.6
 ```
 
 or manually update your `composer.json` with:
@@ -21,7 +20,7 @@ or manually update your `composer.json` with:
 {
     (...)
     "require": {
-        "gowork/values": "^0.4"
+        "gowork/values": "^0.6"
     }
     (...)
 }

@@ -85,10 +85,12 @@ final class PlainArray implements ArrayValue
         /** @phpstan-var array<TNewKey, ArrayValue<TValue>> $groupsWrapped */
         $groupsWrapped = array_map([Wrap::class, 'array'], $groups);
 
+        /** @phpstan-ignore-next-line it looks like false-positive */
         return Wrap::assocArray($groupsWrapped);
     }
 
     /**
+     * @param int<1, max> $size
      * @phpstan-return PlainArray<array<int, TValue>>
      */
     public function chunk(int $size): PlainArray
