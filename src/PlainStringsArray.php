@@ -259,7 +259,7 @@ final class PlainStringsArray implements StringsArray
     /**
      * @param int $offset
      */
-    public function offsetGet($offset): StringValue
+    public function offsetGet($offset): ?StringValue
     {
         return $this->strings->offsetGet($offset);
     }

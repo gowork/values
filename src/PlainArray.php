@@ -259,7 +259,7 @@ final class PlainArray implements ArrayValue
         $items = $this->toArray();
         $value = array_shift($items);
 
-        return new self(new JustArray($items));;
+        return new self(new JustArray($items));
     }
 
     /**
@@ -413,7 +413,7 @@ final class PlainArray implements ArrayValue
      * @param int $offset
      * @return ?TValue
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->items->toArray()[$offset];
     }

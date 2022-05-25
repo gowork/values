@@ -51,7 +51,7 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
-     * @param (callable(TValue,TValue):int) | null $comparator
+     * @phpstan-param (callable(TValue,TValue):int) | null $comparator
      * @phpstan-return InfiniteIterableValue<TKey, TValue>
      */
     public function unique(?callable $comparator = null): InfiniteIterableValue
@@ -505,7 +505,9 @@ final class InfiniteIterableValue implements IterableValue
     public function last()
     {
         $value = null;
-        foreach ($this->stack->iterate() as $value) {}
+        foreach ($this->stack->iterate() as $value) {
+            // iterating until the end
+        }
 
         return $value;
     }

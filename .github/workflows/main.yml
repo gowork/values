@@ -36,3 +36,6 @@ jobs:
 
             -   name: "Psalm"
                 run: ./bin/psalm
+
+            -   name: "CodeSniffer"
+                run: ./bin/phpcs

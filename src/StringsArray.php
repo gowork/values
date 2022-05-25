@@ -103,7 +103,7 @@ interface StringsArray extends Value, IteratorAggregate, ArrayAccess, StringValu
     /**
      * @param int $offset
      */
-    public function offsetGet($offset): StringValue;
+    public function offsetGet($offset): ?StringValue;
 
     /**
      * @param int $offset
