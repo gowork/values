@@ -1,4 +1,6 @@
-engines:
+version: "2"
+
+plugins:
     phpcodesniffer:
         enabled: true
         checks:
@@ -17,3 +19,9 @@ engines:
         checks:
             php:S1448:
                 enabled: false
+
+exclude_patterns:
+    - "examples/"
+    - "tests/"
+    - "spec/"
+    - "benchmarks/"
