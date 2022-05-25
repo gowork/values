@@ -121,9 +121,9 @@ interface ArrayValue extends Value, Collection, Stack, IteratorAggregate, ArrayA
 
     /**
      * @param int $offset
-     * @phpstan-return TValue
+     * @return ?TValue
      */
-    public function offsetGet($offset);
+    public function offsetGet($offset): mixed;
 
     /**
      * @param int $offset

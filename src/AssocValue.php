@@ -70,10 +70,10 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess, 
     public function offsetExists($offset): bool;
 
     /**
-     * @phpstan-param TKey $offset
+     * @param TKey $offset
      * @return ?TValue
      */
-    public function offsetGet($offset);
+    public function offsetGet($offset): mixed;
 
     /**
      * @phpstan-param TKey $offset

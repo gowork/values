@@ -343,7 +343,7 @@ final class AssocArray implements AssocValue
      * @param TKey $offset
      * @return ?TValue
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->items->toAssocArray()[$offset];
     }
