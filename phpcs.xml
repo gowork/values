@@ -2,8 +2,6 @@
 <ruleset name="Gowork">
     <description>The coding standard of Gowork.</description>
 
-    <config name="testVersion" value="8.0-"/>
-
     <file>src</file>
 
     <rule ref="PSR1"/>
@@ -15,6 +13,5 @@
         <exclude name="PSR12.Files.OpenTag" />
         <exclude name="PSR12.Files.FileHeader" />
     </rule>
-    <rule ref="PHPCompatibility"/>
 
 </ruleset>

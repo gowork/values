@@ -29,8 +29,7 @@
         "phpstan/extension-installer": "^1.0",
         "vimeo/psalm": "^4.0",
         "friends-of-phpspec/phpspec-code-coverage": "^6.0",
-        "squizlabs/php_codesniffer": "^3.6",
-        "phpcompatibility/php-compatibility": "^9.3"
+        "squizlabs/php_codesniffer": "^3.6"
     },
     "autoload": {
         "psr-4": {
@@ -46,10 +45,6 @@
     },
     "config": {
         "bin-dir": "bin"
-    },
-    "scripts": {
-        "post-install-cmd": "bin/phpcs --config-set installed_paths vendor/phpcompatibility/php-compatibility",
-        "post-update-cmd" : "bin/phpcs --config-set installed_paths vendor/phpcompatibility/php-compatibility"
     },
     "extra": {
         "phpstan": {
