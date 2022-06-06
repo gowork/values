@@ -31,6 +31,9 @@ jobs:
             -   name: "PHPStan"
                 run: ./bin/phpstan analyze -l 8 src examples tests/GenericCases
 
+            -   name: "PHPStan"
+                run: ./bin/phpstan analyze -l 9 tests/GenericCases
+
             -   name: "PHPUnit"
                 run: ./bin/phpunit tests
 
