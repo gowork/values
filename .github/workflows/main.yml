@@ -29,10 +29,10 @@ jobs:
                 run: ./bin/phpspec run
 
             -   name: "PHPStan"
-                run: ./bin/phpstan analyze -l 8 src examples tests/GenericCases
+                run: ./bin/phpstan analyze -l 8 src
 
             -   name: "PHPStan"
-                run: ./bin/phpstan analyze -l 9 tests/GenericCases
+                run: ./bin/phpstan analyze -l 9 tests/GenericCases examples
 
             -   name: "PHPUnit"
                 run: ./bin/phpunit tests
