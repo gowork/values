@@ -9,8 +9,7 @@ use function is_scalar;
 
 final class ToStringValue
 {
-    /** @param mixed $string */
-    public function __invoke($string): StringValue
+    public function __invoke(mixed $string): StringValue
     {
         if (is_scalar($string)) {
             return Wrap::string((string)$string);

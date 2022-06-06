@@ -51,7 +51,7 @@ function iterableValue3(): iterable
         ->notEmpty();
 }
 
-/** @return iterable<int, object[][]> */
+/** @return iterable<int, object[]> */
 function iterableValue4(): iterable
 {
     $numbersOrNulls = Wrap::iterable(['a' => 1, 'b' => 2, 'c' => 3, 'd' => null]);
