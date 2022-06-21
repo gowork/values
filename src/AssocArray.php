@@ -228,7 +228,7 @@ final class AssocArray implements AssocValue
     /**
      * @phpstan-return AssocArray<TKey, TValue>
      */
-    public function swap($keyA, $keyB): AssocArray
+    public function swap(int|string $keyA, int|string $keyB): AssocArray
     {
         return new self(new Swap($this->items, $keyA, $keyB));
     }

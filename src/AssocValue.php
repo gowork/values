@@ -3,6 +3,7 @@
 namespace GW\Value;
 
 use BadMethodCallException;
+use GW\Value\Associable\Flip;
 use IteratorAggregate;
 use ArrayAccess;
 
@@ -142,6 +143,16 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess, 
      * @phpstan-return AssocValue<TKey, TValue>
      */
     public function withoutElement($value): AssocValue;
+
+    /**
+     * @phpstan-return AssocArray<TKey, TValue>
+     */
+    public function flip(): AssocArray;
+
+    /**
+     * @phpstan-return AssocArray<TKey, TValue>
+     */
+    public function swap(int|string $keyA, int|string $keyB): AssocArray;
 
     /**
      * @deprecated use join() or replace() instead
