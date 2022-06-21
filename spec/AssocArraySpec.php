@@ -517,4 +517,50 @@ final class AssocArraySpec extends ObjectBehavior
         $this->map(fn(string $val, int $key): string => $val)
             ->keys()->toArray()->shouldEqual([0, 1]);
     }
+
+    function it_can_be_flipped()
+    {
+        $this->beConstructedWith(['foo' => 'zero', 'bar' => 'one']);
+        $this->flip()
+            ->keys()->toArray()->shouldEqual(['zero', 'one']);
+        $this->flip()
+            ->values()->toArray()->shouldEqual(['foo', 'bar']);
+    }
+
+    function it_can_be_flipped_numeric_keys()
+    {
+        $this->beConstructedWith(['0' => 'zero', '1' => 'one']);
+        $this->flip()
+            ->keys()->toArray()->shouldEqual(['zero', 'one']);
+        $this->flip()
+            ->values()->toArray()->shouldEqual([0, 1]);
+    }
+
+    function it_is_possible_to_swap_keys()
+    {
+        $this->beConstructedWith(['foo' => 'zero', 'bar' => 'one']);
+        $this->swap('foo', 'bar')
+            ->toAssocArray()->shouldEqual(['foo' => 'one', 'bar' => 'zero']);
+    }
+
+    function it_is_possible_to_swap_keys_undefined_a()
+    {
+        $this->beConstructedWith(['foo' => 'zero', 'bar' => 'one']);
+        $this->swap('baz', 'bar')
+            ->toAssocArray()->shouldEqual(['foo' => 'zero', 'bar' => null, 'baz' => 'one']);
+    }
+
+    function it_is_possible_to_swap_keys_undefined_b()
+    {
+        $this->beConstructedWith(['foo' => 'zero', 'bar' => 'one']);
+        $this->swap('bar', 'baz')
+            ->toAssocArray()->shouldEqual(['foo' => 'zero', 'bar' => null, 'baz' => 'one']);
+    }
+
+    function it_is_possible_to_swap_keys_numeric_arrays()
+    {
+        $this->beConstructedWith(['0' => 'zero', '1' => 'one']);
+        $this->swap(0, 1)
+            ->toAssocArray()->shouldEqual([0 => 'one', 1 => 'zero']);
+    }
 }
