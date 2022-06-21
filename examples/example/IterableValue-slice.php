@@ -11,9 +11,6 @@ $range = function (int $start, int $end): iterable {
 var_export(Wrap::iterable($range(0, PHP_INT_MAX))->slice(2, 4)->toArray());
 echo PHP_EOL;
 
-var_export(Wrap::iterable($range(0, PHP_INT_MAX))->slice(-1, 1)->toArray());
-echo PHP_EOL;
-
 var_export(Wrap::iterable($range(0, PHP_INT_MAX))->slice(0, 3)->toArray());
 echo PHP_EOL;
 

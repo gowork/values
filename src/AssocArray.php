@@ -6,12 +6,14 @@ use ArrayIterator;
 use BadMethodCallException;
 use GW\Value\Associable\Cache;
 use GW\Value\Associable\Filter;
+use GW\Value\Associable\Join;
 use GW\Value\Associable\JustAssoc;
 use GW\Value\Associable\Keys;
 use GW\Value\Associable\Map;
 use GW\Value\Associable\MapKeys;
 use GW\Value\Associable\Merge;
 use GW\Value\Associable\Only;
+use GW\Value\Associable\Replace;
 use GW\Value\Associable\Reverse;
 use GW\Value\Associable\Shuffle;
 use GW\Value\Associable\Sort;
@@ -167,6 +169,24 @@ final class AssocArray implements AssocValue
     public function merge(AssocValue $other): AssocArray
     {
         return new self(new Merge($this->items, $other));
+    }
+
+    /**
+     * @phpstan-param AssocValue<TKey, TValue> $other
+     * @phpstan-return AssocArray<TKey, TValue>
+     */
+    public function join(AssocValue $other): AssocValue
+    {
+        return new self(new Join($this->items, $other));
+    }
+
+    /**
+     * @phpstan-param AssocValue<TKey, TValue> $other
+     * @phpstan-return AssocArray<TKey, TValue>
+     */
+    public function replace(AssocValue $other): AssocArray
+    {
+        return new self(new Replace($this->items, $other));
     }
 
     /**

@@ -128,6 +128,94 @@ final class AssocArraySpec extends ObjectBehavior
         );
     }
 
+    function it_can_join_two_arrays_with_string_keys()
+    {
+        $joined = $this->join(new AssocArray(['c' => 'christopher', 'd' => 'dummy']));
+        $joined->shouldNotBe($this);
+        $joined->toAssocArray()->shouldBeLike(
+            [
+                'a' => 'alf',
+                'b' => 'berni',
+                'c' => 'clifford',
+                'd' => 'dummy'
+            ]
+        );
+    }
+
+    function it_can_join_two_arrays_with_int_keys()
+    {
+        $this->beConstructedWith([0 => 'a', 1 => 'b', 2 => 'c']);
+
+        $joined = $this->join(new AssocArray([2 => 'e', 3 => 'd']));
+        $joined->shouldNotBe($this);
+        $joined->toAssocArray()->shouldBeLike(
+            [
+                0 => 'a',
+                1 => 'b',
+                2 => 'c',
+                3 => 'd',
+            ]
+        );
+    }
+
+    function it_can_join_two_arrays_with_mixed_keys()
+    {
+        $this->beConstructedWith([0 => 'a', 'one' => 'x', 2 => 'c']);
+
+        $joined = $this->join(new AssocArray([2 => 'e', 'one' => 'z', 'two' => 'y', 3 => 'd']));
+        $joined->shouldNotBe($this);
+        $joined->toAssocArray()->shouldBeLike(
+            [
+                0 => 'a',
+                'one' => 'x',
+                2 => 'c',
+                'two' => 'y',
+                3 => 'd',
+            ]
+        );
+    }
+
+    function it_can_replace_values_of_some_numeric_keys()
+    {
+        $this->beConstructedWith([1 => 'foo', 3 => 'xyz']);
+        $this
+            ->replace(new AssocArray([2 => 'bar', 3 => 'baz']))
+            ->toAssocArray()
+            ->shouldBeLike([
+                1 => 'foo',
+                2 => 'bar',
+                3 => 'baz',
+            ]);
+    }
+
+    function it_can_replace_values_of_some_string_keys()
+    {
+        $this->beConstructedWith(['a' => 'foo', 'c' => 'xyz']);
+        $this
+            ->replace(new AssocArray(['b' => 'bar', 'c' => 'baz']))
+            ->toAssocArray()
+            ->shouldBeLike([
+                'a' => 'foo',
+                'b' => 'bar',
+                'c' => 'baz',
+            ]);
+    }
+
+    function it_can_replace_values_of_some_mixed_keys()
+    {
+        $this->beConstructedWith([0 => 'abc', 'a' => 'foo', 'c' => 'xyz', 1 => 'xyz']);
+        $this
+            ->replace(new AssocArray(['b' => 'bar', 1 => 'def', 'c' => 'baz']))
+            ->toAssocArray()
+            ->shouldBeLike([
+                0 => 'abc',
+                1 => 'def',
+                'a' => 'foo',
+                'b' => 'bar',
+                'c' => 'baz',
+            ]);
+    }
+
     function it_can_add_element()
     {
         $this->beConstructedWith(['a' => 'foo', 'b' => 'bar']);
