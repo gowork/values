@@ -5,6 +5,7 @@ namespace spec\GW\Value;
 use GW\Value\Filters;
 use GW\Value\Wrap;
 use GW\Value\AssocArray;
+use InvalidArgumentException;
 use PhpSpec\ObjectBehavior;
 use PHPUnit\Framework\Assert;
 
@@ -543,18 +544,20 @@ final class AssocArraySpec extends ObjectBehavior
             ->toAssocArray()->shouldEqual(['foo' => 'one', 'bar' => 'zero']);
     }
 
-    function it_is_possible_to_swap_keys_undefined_a()
+    function it_is_impossible_to_swap_keys_undefined_a()
     {
         $this->beConstructedWith(['foo' => 'zero', 'bar' => 'one']);
-        $this->swap('baz', 'bar')
-            ->toAssocArray()->shouldEqual(['foo' => 'zero', 'bar' => null, 'baz' => 'one']);
+        $swapped = $this->swap('baz', 'bar');
+        $swapped->shouldThrow(InvalidArgumentException::class)
+            ->during('toAssocArray');
     }
 
-    function it_is_possible_to_swap_keys_undefined_b()
+    function it_is_impossible_to_swap_keys_undefined_b()
     {
         $this->beConstructedWith(['foo' => 'zero', 'bar' => 'one']);
-        $this->swap('bar', 'baz')
-            ->toAssocArray()->shouldEqual(['foo' => 'zero', 'bar' => null, 'baz' => 'one']);
+        $swapped = $this->swap('bar', 'baz');
+        $swapped->shouldThrow(InvalidArgumentException::class)
+            ->during('toAssocArray');
     }
 
     function it_is_possible_to_swap_keys_numeric_arrays()

@@ -4,6 +4,7 @@ namespace GW\Value;
 
 use Traversable;
 use function count;
+use function var_dump;
 use const PHP_INT_MAX;
 
 /**
@@ -513,6 +514,24 @@ final class InfiniteIterableValue implements IterableValue
     }
 
     /**
+     * @phpstan-return InfiniteIterableValue<int, TValue>
+     */
+    public function values(): InfiniteIterableValue
+    {
+        return self::fromStack($this->stack->push(
+            /**
+             * @phpstan-param iterable<TKey, TValue> $iterable
+             * @phpstan-return iterable<int, TValue>
+             */
+            static function (iterable $iterable): iterable {
+                foreach ($iterable as $value) {
+                    yield $value;
+                }
+            }
+        ));
+    }
+
+    /**
      * @phpstan-return InfiniteIterableValue<int, TKey>
      */
     public function keys(): InfiniteIterableValue
@@ -525,6 +544,24 @@ final class InfiniteIterableValue implements IterableValue
             static function (iterable $iterable): iterable {
                 foreach ($iterable as $key => $value) {
                     yield $key;
+                }
+            }
+        ));
+    }
+
+    /**
+     * @phpstan-return IterableValue<TValue, TKey>
+     */
+    public function flip(): IterableValue
+    {
+        return self::fromStack($this->stack->push(
+            /**
+             * @phpstan-param iterable<TKey, TValue> $iterable
+             * @phpstan-return iterable<TValue, TKey>
+             */
+            static function (iterable $iterable): iterable {
+                foreach ($iterable as $key => $item) {
+                    yield $item => $key;
                 }
             }
         ));

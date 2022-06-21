@@ -7,16 +7,16 @@ use function array_flip;
 
 /**
  * @template TKey of int|string
- * @template TValue
+ * @template TValue of int|string
  * @implements Associable<TKey,TValue>
  */
 final class Flip implements Associable
 {
-    /** @var Associable<TKey,TValue> */
+    /** @var Associable<TValue,TKey> */
     private Associable $associable;
 
     /**
-     * @param Associable<TKey,TValue> $associable
+     * @param Associable<TValue,TKey> $associable
      */
     public function __construct(Associable $associable)
     {

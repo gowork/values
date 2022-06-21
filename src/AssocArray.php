@@ -218,17 +218,27 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @phpstan-return AssocArray<TKey, TValue>
+     * @phpstan-return IterableValue<TKey, TValue>
      */
-    public function flip(): AssocArray
+    public function toIterableValue(): IterableValue
     {
-        return new self(new Flip($this->items));
+        return new InfiniteIterableValue($this->toAssocArray());
     }
 
     /**
+     * @phpstan-return IterableValue<TValue, TKey>
+     */
+    public function flip(): IterableValue
+    {
+        return $this->toIterableValue()->flip();
+    }
+
+    /**
+     * @param TKey $keyA
+     * @param TKey $keyB
      * @phpstan-return AssocArray<TKey, TValue>
      */
-    public function swap(int|string $keyA, int|string $keyB): AssocArray
+    public function swap($keyA, $keyB): AssocArray
     {
         return new self(new Swap($this->items, $keyA, $keyB));
     }

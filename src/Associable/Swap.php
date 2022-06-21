@@ -3,6 +3,7 @@
 namespace GW\Value\Associable;
 
 use GW\Value\Associable;
+use InvalidArgumentException;
 
 /**
  * @template TKey of int|string
@@ -14,16 +15,16 @@ final class Swap implements Associable
     /** @var Associable<TKey,TValue> */
     private Associable $associable;
     /** @var TKey */
-    private int|string $keyA;
+    private $keyA;
     /** @var TKey */
-    private int|string $keyB;
+    private $keyB;
 
     /**
      * @param Associable<TKey,TValue> $associable
      * @param TKey $keyA
      * @param TKey $keyB
      */
-    public function __construct(Associable $associable, int|string $keyA, int|string $keyB)
+    public function __construct(Associable $associable, $keyA, $keyB)
     {
         $this->associable = $associable;
         $this->keyA = $keyA;
@@ -34,8 +35,8 @@ final class Swap implements Associable
     public function toAssocArray(): array
     {
         $items = $this->associable->toAssocArray();
-        $valueA = $items[$this->keyA] ?? null;
-        $valueB = $items[$this->keyB] ?? null;
+        $valueA = $items[$this->keyA] ?? throw new InvalidArgumentException("Undefined key {$this->keyA}");
+        $valueB = $items[$this->keyB] ?? throw new InvalidArgumentException("Undefined key {$this->keyB}");
         $items[$this->keyA] = $valueB;
         $items[$this->keyB] = $valueA;
 
