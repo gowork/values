@@ -129,7 +129,7 @@ interface StringsArray extends Value, IteratorAggregate, ArrayAccess, StringValu
     public function splice(int $offset, int $length, ?StringsArray $replacement = null): StringsArray;
 
     /**
-     * @param (callable(StringValue, StringValue):int)|null $comparator
+     * @param (callable(StringValue, StringValue):int<-1,1>)|null $comparator
      */
     public function diff(StringsArray $other, ?callable $comparator = null): StringsArray;
 

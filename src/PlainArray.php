@@ -202,7 +202,7 @@ final class PlainArray implements ArrayValue
 
     /**
      * @phpstan-param ArrayValue<TValue> $other
-     * @param (callable(TValue,TValue):int)|null $comparator
+     * @param (callable(TValue,TValue):int<-1,1>)|null $comparator
      * @phpstan-return PlainArray<TValue>
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): PlainArray

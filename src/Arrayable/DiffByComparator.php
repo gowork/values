@@ -16,13 +16,13 @@ final class DiffByComparator implements Arrayable
     private Arrayable $left;
     /** @var Arrayable<TValue> */
     private Arrayable $right;
-    /** @var callable(TValue,TValue):int */
+    /** @var callable(TValue,TValue):int<-1,1> */
     private $comparator;
 
     /**
      * @param Arrayable<TValue> $left
      * @param Arrayable<TValue> $right
-     * @param callable(TValue,TValue):int $comparator
+     * @param callable(TValue,TValue):int<-1,1> $comparator
      */
     public function __construct(Arrayable $left, Arrayable $right, callable $comparator)
     {

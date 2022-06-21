@@ -128,6 +128,46 @@ final class AssocArraySpec extends ObjectBehavior
         );
     }
 
+    function it_can_join_two_arrays()
+    {
+        $joined = $this->join(new AssocArray(['c' => 'christopher', 'd' => 'dummy']));
+        $joined->shouldNotBe($this);
+        $joined->toAssocArray()->shouldBeLike(
+            [
+                'a' => 'alf',
+                'b' => 'berni',
+                'c' => 'clifford',
+                'd' => 'dummy'
+            ]
+        );
+    }
+
+    function it_should_preserve_numeric_keys_during_join()
+    {
+        $this->beConstructedWith([1 => 'foo', 3 => 'baz']);
+        $this
+            ->join(new AssocArray([2 => 'bar', 3 => 'xyz']))
+            ->toAssocArray()
+            ->shouldBeLike([
+                1 => 'foo',
+                2 => 'bar',
+                3 => 'baz',
+            ]);
+    }
+
+    function it_should_replace_values_of_some_keys()
+    {
+        $this->beConstructedWith([1 => 'foo', 3 => 'xyz']);
+        $this
+            ->replace(new AssocArray([2 => 'bar', 3 => 'baz']))
+            ->toAssocArray()
+            ->shouldBeLike([
+                1 => 'foo',
+                2 => 'bar',
+                3 => 'baz',
+            ]);
+    }
+
     function it_can_add_element()
     {
         $this->beConstructedWith(['a' => 'foo', 'b' => 'bar']);

@@ -9,7 +9,7 @@ $keys = $assoc
     ->keys()
     ->toArray();
 
-var_dump($keys);
+var_export($keys);
 
 $pairs = [['0', 'zero'], ['1', 'one'], ['1', 'one one']];
 
@@ -26,4 +26,4 @@ $keys = $assoc
     ->keys()
     ->toArray();
 
-var_dump($keys);
+var_export($keys);

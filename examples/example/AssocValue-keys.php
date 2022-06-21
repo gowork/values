@@ -9,4 +9,4 @@ $keys = $assoc
     ->keys()
     ->toArray();
 
-var_dump($keys);
+var_export($keys);

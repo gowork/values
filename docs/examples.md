@@ -30,10 +30,10 @@ foreach ($array as $item) {
 ```php
 <?php
 /**
- * @param callable $callback function(mixed $value): void
- * @return ArrayValue
+ * @param callable(TValue $value):void $callback
+ * @phpstan-return ArrayValue<TValue>
  */
-public function each(callable $callback);
+public function each(callable $callback): ArrayValue;
 ```
 
 Call some callback on each item of `ArrayValue` and return this `ArrayValue`. 
@@ -62,10 +62,10 @@ abc
 ```php
 <?php
 /**
- * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
- * @return ArrayValue
+ * @param (callable(TValue,TValue):int)|null $comparator
+ * @phpstan-return ArrayValue<TValue>
  */
-public function unique(?callable $comparator = null);
+public function unique(?callable $comparator = null): ArrayValue;
 ```
 
 Filter `ArrayValue` items removing duplicated items.
@@ -111,7 +111,7 @@ unique by callback = array (
 ```php
 <?php
 /**
- * @return mixed[]
+ * @phpstan-return array<int, TValue>
  */
 public function toArray(): array;
 ```
@@ -123,10 +123,10 @@ Return primitive `array` from subject `ArrayValue`.
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool
- * @return ArrayValue
+ * @param callable(TValue $value):bool $filter
+ * @phpstan-return ArrayValue<TValue>
  */
-public function filter(callable $filter);
+public function filter(callable $filter): ArrayValue;
 ```
 
 Create new `ArrayValue` with items filtered by callback.
@@ -158,9 +158,9 @@ array (
 ```php
 <?php
 /**
- * @return ArrayValue
+ * @phpstan-return ArrayValue<TValue>
  */
-public function filterEmpty();
+public function filterEmpty(): ArrayValue;
 ```
 
 Filter out empty items from `ArrayValue`.
@@ -191,10 +191,11 @@ array (
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $value): mixed
- * @return ArrayValue
+ * @template TNewValue
+ * @param callable(TValue $value):TNewValue $transformer
+ * @phpstan-return ArrayValue<TNewValue>
  */
-public function map(callable $transformer);
+public function map(callable $transformer): ArrayValue;
 ```
 
 Create new `ArrayValue` with items mapped by callback.
@@ -227,10 +228,11 @@ array (
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $value): iterable
- * @return ArrayValue
+ * @template TNewValue
+ * @param callable(TValue $value):iterable<TNewValue> $transformer
+ * @phpstan-return ArrayValue<TNewValue>
  */
-public function flatMap(callable $transformer);
+public function flatMap(callable $transformer): ArrayValue;
 ```
 
 ### ArrayValue::groupBy
@@ -238,8 +240,9 @@ public function flatMap(callable $transformer);
 ```php
 <?php
 /**
- * @param callable $reducer function(mixed $value): string|int|bool
- * @return AssocValue AssocValue<ArrayValue>
+ * @template TNewKey of int|string
+ * @param callable(TValue $value):TNewKey $reducer
+ * @phpstan-return AssocValue<TNewKey, ArrayValue<TValue>>
  */
 public function groupBy(callable $reducer): AssocValue;
 ```
@@ -266,7 +269,7 @@ $payments = Wrap::array([
 ]);
 
 $get = function (string $key): \Closure {
-    return function (array $payment) use ($key) {
+    return function (array $payment) use ($key): string {
         return $payment[$key];
     };
 };
@@ -303,18 +306,18 @@ grouped expenses:
 array (
   'food' => 
   array (
-    0 => 10,
-    1 => 20,
-    2 => 50,
+    0 => '10',
+    1 => '20',
+    2 => '50',
   ),
   'drinks' => 
   array (
-    0 => 10,
-    1 => 20,
+    0 => '10',
+    1 => '20',
   ),
   'travel' => 
   array (
-    0 => 500,
+    0 => '500',
   ),
 )
 
@@ -345,9 +348,9 @@ array (
 ```php
 <?php
 /**
- * @return ArrayValue
+ * @phpstan-return ArrayValue<array<int, TValue>>
  */
-public function chunk(int $size);
+public function chunk(int $size): ArrayValue;
 ```
 
 #### Examples
@@ -395,10 +398,10 @@ array (
 ```php
 <?php
 /**
- * @param callable $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
- * @return ArrayValue
+ * @param callable(TValue,TValue):int $comparator
+ * @phpstan-return ArrayValue<TValue>
  */
-public function sort(callable $comparator);
+public function sort(callable $comparator): ArrayValue;
 ```
 
 Create new `ArrayValue` with items sorted by callback.
@@ -454,9 +457,9 @@ descending = array (
 ```php
 <?php
 /**
- * @return ArrayValue
+ * @phpstan-return ArrayValue<TValue>
  */
-public function shuffle();
+public function shuffle(): ArrayValue;
 ```
 
 #### Examples
@@ -472,7 +475,7 @@ echo $words->shuffle()->implode(' ')->toString();
 ```
 
 ```
-no do or there not do try is
+no or there do try do not is
 ```
 
 ### ArrayValue::reverse
@@ -480,9 +483,9 @@ no do or there not do try is
 ```php
 <?php
 /**
- * @return ArrayValue
+ * @phpstan-return ArrayValue<TValue>
  */
-public function reverse();
+public function reverse(): ArrayValue;
 ```
 
 #### Examples
@@ -506,10 +509,10 @@ try no is there not do or do
 ```php
 <?php
 /**
- * @param mixed $value
- * @return ArrayValue
+ * @phpstan-param TValue $value
+ * @phpstan-return ArrayValue<TValue>
  */
-public function unshift($value);
+public function unshift($value): ArrayValue;
 ```
 
 #### Examples
@@ -538,10 +541,10 @@ array (
 ```php
 <?php
 /**
- * @param mixed $value
- * @return ArrayValue
+ * @phpstan-param TValue $value
+ * @phpstan-return ArrayValue<TValue>
  */
-public function shift(&$value = null);
+public function shift(&$value = null): ArrayValue;
 ```
 
 #### Examples
@@ -571,10 +574,10 @@ x: a
 ```php
 <?php
 /**
- * @param mixed $value
- * @return ArrayValue
+ * @phpstan-param TValue $value
+ * @phpstan-return ArrayValue<TValue>
  */
-public function push($value);
+public function push($value): ArrayValue;
 ```
 
 #### Examples
@@ -603,10 +606,10 @@ array (
 ```php
 <?php
 /**
- * @param mixed $value
- * @return ArrayValue
+ * @phpstan-param TValue|null $value
+ * @phpstan-return ArrayValue<TValue>
  */
-public function pop(&$value = null);
+public function pop(&$value = null): ArrayValue;
 ```
 
 #### Examples
@@ -647,7 +650,7 @@ public function offsetExists($offset): bool;
 <?php
 /**
  * @param int $offset
- * @return mixed
+ * @phpstan-return TValue
  */
 public function offsetGet($offset);
 ```
@@ -658,11 +661,10 @@ public function offsetGet($offset);
 <?php
 /**
  * @param int $offset
- * @param mixed $value
- * @return void
- * @throws \BadMethodCallException For immutable types.
+ * @phpstan-param TValue $value
+ * @throws BadMethodCallException For immutable types.
  */
-public function offsetSet($offset, $value);
+public function offsetSet($offset, $value): void;
 ```
 
 ### ArrayValue::offsetUnset
@@ -672,9 +674,9 @@ public function offsetSet($offset, $value);
 /**
  * @param int $offset
  * @return void
- * @throws \BadMethodCallException For immutable types.
+ * @throws BadMethodCallException For immutable types.
  */
-public function offsetUnset($offset);
+public function offsetUnset($offset): void;
 ```
 
 ### ArrayValue::join
@@ -682,9 +684,10 @@ public function offsetUnset($offset);
 ```php
 <?php
 /**
- * @return ArrayValue
+ * @phpstan-param ArrayValue<TValue> $other
+ * @phpstan-return ArrayValue<TValue>
  */
-public function join(ArrayValue $other);
+public function join(ArrayValue $other): ArrayValue;
 ```
 
 #### Examples
@@ -716,9 +719,9 @@ array (
 ```php
 <?php
 /**
- * @return ArrayValue
+ * @phpstan-return ArrayValue<TValue>
  */
-public function slice(int $offset, int $length);
+public function slice(int $offset, ?int $length = null): ArrayValue;
 ```
 
 #### Examples
@@ -769,14 +772,100 @@ array (
 )
 ```
 
+### ArrayValue::skip
+
+```php
+<?php
+/**
+ * @phpstan-return ArrayValue<TValue>
+ */
+public function skip(int $length): ArrayValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$letters = Wrap::array(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
+
+var_export($letters->skip(2)->toArray());
+echo PHP_EOL;
+```
+
+```
+array (
+  0 => 'c',
+  1 => 'd',
+  2 => 'e',
+  3 => 'f',
+  4 => 'g',
+)
+```
+
+### ArrayValue::take
+
+```php
+<?php
+/**
+ * @phpstan-return ArrayValue<TValue>
+ */
+public function take(int $length): ArrayValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$letters = Wrap::array(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
+
+var_export($letters->skip(2)->take(4)->toArray());
+echo PHP_EOL;
+
+var_export($letters->take(3)->toArray());
+echo PHP_EOL;
+
+var_export($letters->take(100)->toArray());
+echo PHP_EOL;
+```
+
+```
+array (
+  0 => 'c',
+  1 => 'd',
+  2 => 'e',
+  3 => 'f',
+)
+array (
+  0 => 'a',
+  1 => 'b',
+  2 => 'c',
+)
+array (
+  0 => 'a',
+  1 => 'b',
+  2 => 'c',
+  3 => 'd',
+  4 => 'e',
+  5 => 'f',
+  6 => 'g',
+)
+```
+
 ### ArrayValue::splice
 
 ```php
 <?php
 /**
- * @return ArrayValue
+ * @phpstan-param ArrayValue<TValue> $replacement
+ * @phpstan-return ArrayValue<TValue>
  */
-public function splice(int $offset, int $length, ?ArrayValue $replacement = null);
+public function splice(int $offset, int $length, ?ArrayValue $replacement = null): ArrayValue;
 ```
 
 Remove or replace slice of `ArrayValue` items.
@@ -856,10 +945,11 @@ array (
 ```php
 <?php
 /**
- * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
- * @return ArrayValue
+ * @phpstan-param ArrayValue<TValue> $other
+ * @param (callable(TValue,TValue):int)|null $comparator
+ * @phpstan-return ArrayValue<TValue>
  */
-public function diff(ArrayValue $other, ?callable $comparator = null);
+public function diff(ArrayValue $other, ?callable $comparator = null): ArrayValue;
 ```
 
 #### Examples
@@ -901,10 +991,11 @@ array (
 ```php
 <?php
 /**
- * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
- * @return ArrayValue
+ * @phpstan-param ArrayValue<TValue> $other
+ * @param (callable(TValue,TValue):int)|null $comparator
+ * @phpstan-return ArrayValue<TValue>
  */
-public function intersect(ArrayValue $other, ?callable $comparator = null);
+public function intersect(ArrayValue $other, ?callable $comparator = null): ArrayValue;
 ```
 
 #### Examples
@@ -944,9 +1035,10 @@ array (
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $reduced, mixed $value): mixed
- * @param mixed $start
- * @return mixed
+ * @template TNewValue
+ * @param callable(TNewValue, TValue):TNewValue $transformer
+ * @phpstan-param TNewValue $start
+ * @phpstan-return TNewValue
  */
 public function reduce(callable $transformer, $start);
 ```
@@ -1009,16 +1101,18 @@ a / b / c / d
 ```php
 <?php
 /**
- * @return ArrayValue
+ * @phpstan-return ArrayValue<TValue>
  */
-public function notEmpty();
+public function notEmpty(): ArrayValue;
 ```
 
 ### ArrayValue::toAssocValue
 
 ```php
 <?php
-
+/**
+ * @phpstan-return AssocValue<int, TValue>
+ */
 public function toAssocValue(): AssocValue;
 ```
 
@@ -1033,7 +1127,7 @@ $array = Wrap::array(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
 
 var_export(
     $array->toAssocValue()
-        ->mapKeys(function (string $oldKey, string $value): string {
+        ->mapKeys(function (int $oldKey, string $value): string {
             return "{$oldKey}:{$value}";
         })
         ->toAssocArray()
@@ -1094,7 +1188,7 @@ echo PHP_EOL;
 ```php
 <?php
 /**
- * @return mixed
+ * @phpstan-return TValue|null
  */
 public function first();
 ```
@@ -1120,7 +1214,7 @@ array first: a
 ```php
 <?php
 /**
- * @return mixed
+ * @phpstan-return TValue|null
  */
 public function last();
 ```
@@ -1146,8 +1240,8 @@ array last: c
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool
- * @return mixed
+ * @param callable(TValue $value):bool $filter
+ * @phpstan-return TValue|null
  */
 public function find(callable $filter);
 ```
@@ -1157,8 +1251,8 @@ public function find(callable $filter);
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool
- * @return mixed
+ * @param callable(TValue $value): bool $filter
+ * @phpstan-return TValue|null
  */
 public function findLast(callable $filter);
 ```
@@ -1168,7 +1262,7 @@ public function findLast(callable $filter);
 ```php
 <?php
 /**
- * @param mixed $element
+ * @phpstan-param TValue $element
  */
 public function hasElement($element): bool;
 ```
@@ -1178,7 +1272,7 @@ public function hasElement($element): bool;
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool
+ * @param callable(TValue $value):bool $filter
  */
 public function any(callable $filter): bool;
 ```
@@ -1188,7 +1282,7 @@ public function any(callable $filter): bool;
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool
+ * @param callable(TValue $value):bool $filter
  */
 public function every(callable $filter): bool;
 ```
@@ -1253,10 +1347,10 @@ foreach ($array as $key => $value) {
 ```php
 <?php
 /**
- * @param callable $callback function(mixed $value): void
- * @return AssocValue
+ * @phpstan-param callable(TValue, TKey $key=):void $callback
+ * @phpstan-return AssocValue<TKey, TValue>
  */
-public function each(callable $callback);
+public function each(callable $callback): AssocValue;
 ```
 
 ### AssocValue::unique
@@ -1264,10 +1358,10 @@ public function each(callable $callback);
 ```php
 <?php
 /**
- * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
- * @return AssocValue
+ * @phpstan-param (callable(TValue,TValue):int)|null $comparator
+ * @phpstan-return AssocValue<TKey, TValue>
  */
-public function unique(?callable $comparator = null);
+public function unique(?callable $comparator = null): AssocValue;
 ```
 
 ### AssocValue::filter
@@ -1275,10 +1369,10 @@ public function unique(?callable $comparator = null);
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool
- * @return AssocValue
+ * @phpstan-param callable(TValue):bool $filter
+ * @phpstan-return AssocValue<TKey, TValue>
  */
-public function filter(callable $filter);
+public function filter(callable $filter): AssocValue;
 ```
 
 ### AssocValue::filterEmpty
@@ -1286,9 +1380,9 @@ public function filter(callable $filter);
 ```php
 <?php
 /**
- * @return AssocValue
+ * @phpstan-return AssocValue<TKey, TValue>
  */
-public function filterEmpty();
+public function filterEmpty(): AssocValue;
 ```
 
 ### AssocValue::map
@@ -1296,10 +1390,11 @@ public function filterEmpty();
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $value[, string $key]): mixed
- * @return AssocValue
+ * @template TNewValue
+ * @param callable(TValue,TKey $key=):TNewValue $transformer
+ * @phpstan-return AssocValue<TKey, TNewValue>
  */
-public function map(callable $transformer);
+public function map(callable $transformer): AssocValue;
 ```
 
 ### AssocValue::sort
@@ -1307,10 +1402,10 @@ public function map(callable $transformer);
 ```php
 <?php
 /**
- * @param callable $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
- * @return AssocValue
+ * @param callable(TValue,TValue):int $comparator
+ * @phpstan-return AssocValue<TKey, TValue>
  */
-public function sort(callable $comparator);
+public function sort(callable $comparator): AssocValue;
 ```
 
 ### AssocValue::shuffle
@@ -1318,9 +1413,9 @@ public function sort(callable $comparator);
 ```php
 <?php
 /**
- * @return AssocValue
+ * @phpstan-return AssocValue<TKey, TValue>
  */
-public function shuffle();
+public function shuffle(): AssocValue;
 ```
 
 ### AssocValue::reverse
@@ -1328,9 +1423,9 @@ public function shuffle();
 ```php
 <?php
 /**
- * @return AssocValue
+ * @phpstan-return AssocValue<TKey, TValue>
  */
-public function reverse();
+public function reverse(): AssocValue;
 ```
 
 ### AssocValue::offsetExists
@@ -1338,7 +1433,7 @@ public function reverse();
 ```php
 <?php
 /**
- * @param string $offset
+ * @phpstan-param TKey $offset
  */
 public function offsetExists($offset): bool;
 ```
@@ -1348,8 +1443,8 @@ public function offsetExists($offset): bool;
 ```php
 <?php
 /**
- * @param string $offset
- * @return mixed
+ * @phpstan-param TKey $offset
+ * @return ?TValue
  */
 public function offsetGet($offset);
 ```
@@ -1359,12 +1454,11 @@ public function offsetGet($offset);
 ```php
 <?php
 /**
- * @param string $offset
- * @param mixed $value
- * @return void
- * @throws \BadMethodCallException For immutable types.
+ * @phpstan-param TKey $offset
+ * @phpstan-param TValue $value
+ * @throws BadMethodCallException For immutable types.
  */
-public function offsetSet($offset, $value);
+public function offsetSet($offset, $value): void;
 ```
 
 ### AssocValue::offsetUnset
@@ -1372,18 +1466,19 @@ public function offsetSet($offset, $value);
 ```php
 <?php
 /**
- * @param string $offset
- * @return void
- * @throws \BadMethodCallException For immutable types.
+ * @phpstan-param TKey $offset
+ * @throws BadMethodCallException For immutable types.
  */
-public function offsetUnset($offset);
+public function offsetUnset($offset): void;
 ```
 
 ### AssocValue::toAssocArray
 
 ```php
 <?php
-
+/**
+ * @phpstan-return array<TKey, TValue>
+ */
 public function toAssocArray(): array;
 ```
 
@@ -1391,15 +1486,43 @@ public function toAssocArray(): array;
 
 ```php
 <?php
+/**
+ * @phpstan-return ArrayValue<TKey>
+ */
+public function keys(): ArrayValue;
+```
 
-public function keys(): StringsArray;
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$assoc = Wrap::assocArray(['0' => 'zero', '1' => 'one']);
+
+$keys = $assoc
+    ->map(fn(string $val, int $key): string => $val)
+    ->keys()
+    ->toArray();
+
+var_export($keys);
+```
+
+```
+array (
+  0 => 0,
+  1 => 1,
+)
 ```
 
 ### AssocValue::values
 
 ```php
 <?php
-
+/**
+ * @phpstan-return ArrayValue<TValue>
+ */
 public function values(): ArrayValue;
 ```
 
@@ -1408,10 +1531,11 @@ public function values(): ArrayValue;
 ```php
 <?php
 /**
- * @param callable $transformer function(string $key[, mixed $value]): string
- * @return AssocValue
+ * @template TNewKey of int|string
+ * @phpstan-param callable(TKey $key, TValue $value=): TNewKey $transformer
+ * @phpstan-return AssocValue<TNewKey, TValue>
  */
-public function mapKeys(callable $transformer);
+public function mapKeys(callable $transformer): AssocValue;
 ```
 
 ### AssocValue::sortKeys
@@ -1419,10 +1543,10 @@ public function mapKeys(callable $transformer);
 ```php
 <?php
 /**
- * @param callable $comparator function(string $keyA, string $keyB): int{-1, 1}
- * @return AssocValue
+ * @phpstan-param callable(TKey $keyA, TKey $keyB): int $comparator
+ * @phpstan-return AssocValue<TKey, TValue>
  */
-public function sortKeys(callable $comparator);
+public function sortKeys(callable $comparator): AssocValue;
 ```
 
 ### AssocValue::with
@@ -1430,10 +1554,11 @@ public function sortKeys(callable $comparator);
 ```php
 <?php
 /**
- * @param mixed $value
- * @return AssocValue
+ * @phpstan-param TKey $key
+ * @phpstan-param TValue $value
+ * @phpstan-return AssocValue<TKey, TValue>
  */
-public function with(string $key, $value);
+public function with($key, $value): AssocValue;
 ```
 
 ### AssocValue::without
@@ -1441,9 +1566,10 @@ public function with(string $key, $value);
 ```php
 <?php
 /**
- * @return AssocValue
+ * @phpstan-param TKey ...$keys
+ * @phpstan-return AssocValue<TKey, TValue>
  */
-public function without(string ...$keys);
+public function without(...$keys): AssocValue;
 ```
 
 ### AssocValue::only
@@ -1451,9 +1577,10 @@ public function without(string ...$keys);
 ```php
 <?php
 /**
- * @return AssocValue
+ * @param TKey ...$keys
+ * @phpstan-return AssocValue<TKey, TValue>
  */
-public function only(string ...$keys);
+public function only(...$keys): AssocValue;
 ```
 
 ### AssocValue::withoutElement
@@ -1461,10 +1588,10 @@ public function only(string ...$keys);
 ```php
 <?php
 /**
- * @param mixed $value
- * @return AssocValue
+ * @phpstan-param TValue $value
+ * @phpstan-return AssocValue<TKey, TValue>
  */
-public function withoutElement($value);
+public function withoutElement($value): AssocValue;
 ```
 
 ### AssocValue::merge
@@ -1472,10 +1599,81 @@ public function withoutElement($value);
 ```php
 <?php
 /**
- * @param AssocValue $other
- * @return AssocValue
+ * @deprecated use join() or replace() instead
+ * @phpstan-param AssocValue<TKey, TValue> $other
+ * @phpstan-return AssocValue<TKey, TValue>
  */
-public function merge(AssocValue $other);
+public function merge(AssocValue $other): AssocValue;
+```
+
+### AssocValue::join
+
+```php
+<?php
+/**
+ * Joins other AssocValue by adding the keys from other not present in self
+ *
+ * @phpstan-param AssocValue<TKey, TValue> $other
+ * @phpstan-return AssocValue<TKey, TValue>
+ */
+public function join(AssocValue $other): AssocValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$one = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
+$two = Wrap::assocArray(['c' => 5, 'd' => 4]);
+
+var_export($one->join($two)->toAssocArray());
+```
+
+```
+array (
+  'a' => 1,
+  'b' => 2,
+  'c' => 3,
+  'd' => 4,
+)
+```
+
+### AssocValue::replace
+
+```php
+<?php
+/**
+ * Joins other AssocValue by replacing values in self of the same keys from other
+ *
+ * @phpstan-param AssocValue<TKey, TValue> $other
+ * @phpstan-return AssocValue<TKey, TValue>
+ */
+public function replace(AssocValue $other): AssocValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$one = Wrap::assocArray(['a' => 1, 'b' => 2, 'c' => 3]);
+$two = Wrap::assocArray(['c' => 5, 'd' => 4]);
+
+var_export($one->replace($two)->toAssocArray());
+```
+
+```
+array (
+  'a' => 1,
+  'b' => 2,
+  'c' => 5,
+  'd' => 4,
+)
 ```
 
 ### AssocValue::reduce
@@ -1483,9 +1681,10 @@ public function merge(AssocValue $other);
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $reduced, mixed $value, string $key): mixed
- * @param mixed $start
- * @return mixed
+ * @template TNewValue
+ * @param callable(TNewValue $reduced, TValue $value, string $key):TNewValue $transformer
+ * @phpstan-param TNewValue $start
+ * @phpstan-return TNewValue
  */
 public function reduce(callable $transformer, $start);
 ```
@@ -1495,18 +1694,21 @@ public function reduce(callable $transformer, $start);
 ```php
 <?php
 /**
- * @param mixed $default
- * @return mixed
+ * @phpstan-param TKey $key
+ * @phpstan-param ?TValue $default
+ * @phpstan-return ?TValue
  */
-public function get(string $key, $default = null);
+public function get($key, $default = null);
 ```
 
 ### AssocValue::has
 
 ```php
 <?php
-
-public function has(string $key): bool;
+/**
+ * @phpstan-param TKey $key
+ */
+public function has($key): bool;
 ```
 
 ### AssocValue::isEmpty
@@ -1522,7 +1724,7 @@ public function isEmpty(): bool;
 ```php
 <?php
 /**
- * @return mixed
+ * @phpstan-return TValue|null
  */
 public function first();
 ```
@@ -1548,7 +1750,7 @@ assoc first: 1
 ```php
 <?php
 /**
- * @return mixed
+ * @phpstan-return TValue|null
  */
 public function last();
 ```
@@ -1574,8 +1776,8 @@ assoc last: 3
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool
- * @return mixed
+ * @param callable(TValue $value):bool $filter
+ * @phpstan-return TValue|null
  */
 public function find(callable $filter);
 ```
@@ -1585,8 +1787,8 @@ public function find(callable $filter);
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool
- * @return mixed
+ * @param callable(TValue $value): bool $filter
+ * @phpstan-return TValue|null
  */
 public function findLast(callable $filter);
 ```
@@ -1596,7 +1798,7 @@ public function findLast(callable $filter);
 ```php
 <?php
 /**
- * @param mixed $element
+ * @phpstan-param TValue $element
  */
 public function hasElement($element): bool;
 ```
@@ -1606,7 +1808,7 @@ public function hasElement($element): bool;
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool
+ * @param callable(TValue $value):bool $filter
  */
 public function any(callable $filter): bool;
 ```
@@ -1616,7 +1818,7 @@ public function any(callable $filter): bool;
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool
+ * @param callable(TValue $value):bool $filter
  */
 public function every(callable $filter): bool;
 ```
@@ -1626,7 +1828,7 @@ public function every(callable $filter): bool;
 ```php
 <?php
 /**
- * @return mixed[]
+ * @phpstan-return array<int, TValue>
  */
 public function toArray(): array;
 ```
@@ -1650,10 +1852,10 @@ public function count(): int;
 ```php
 <?php
 /**
- * @param callable $transformer function(string $value): string
+ * @param callable(string $value):(StringValue|string) $transformer
  * @return StringValue
  */
-public function transform(callable $transformer);
+public function transform(callable $transformer): StringValue;
 ```
 
 ### StringValue::stripTags
@@ -1663,7 +1865,7 @@ public function transform(callable $transformer);
 /**
  * @return StringValue
  */
-public function stripTags();
+public function stripTags(): StringValue;
 ```
 
 #### Examples
@@ -1688,8 +1890,9 @@ Html is cool but not always...
 <?php
 /**
  * @return StringValue
+ * @param string|StringValue $characterMask
  */
-public function trim(string $characterMask = self::TRIM_MASK);
+public function trim($characterMask = self::TRIM_MASK): StringValue;
 ```
 
 #### Examples
@@ -1716,8 +1919,9 @@ I ♡ SPACE
 <?php
 /**
  * @return StringValue
+ * @param string|StringValue $characterMask
  */
-public function trimRight(string $characterMask = self::TRIM_MASK);
+public function trimRight($characterMask = self::TRIM_MASK): StringValue;
 ```
 
 #### Examples
@@ -1744,8 +1948,9 @@ echo $text->trimRight(' .:')->toString() . PHP_EOL;
 <?php
 /**
  * @return StringValue
+ * @param string|StringValue $characterMask
  */
-public function trimLeft(string $characterMask = self::TRIM_MASK);
+public function trimLeft($characterMask = self::TRIM_MASK): StringValue;
 ```
 
 #### Examples
@@ -1773,7 +1978,7 @@ I ♡ SPACE :.:
 /**
  * @return StringValue
  */
-public function lower();
+public function lower(): StringValue;
 ```
 
 #### Examples
@@ -1799,7 +2004,7 @@ sometimes i wanna scream!
 /**
  * @return StringValue
  */
-public function upper();
+public function upper(): StringValue;
 ```
 
 #### Examples
@@ -1825,7 +2030,7 @@ IT`S SO QUIET...
 /**
  * @return StringValue
  */
-public function lowerFirst();
+public function lowerFirst(): StringValue;
 ```
 
 #### Examples
@@ -1851,7 +2056,7 @@ camelCaseMethod()
 /**
  * @return StringValue
  */
-public function upperFirst();
+public function upperFirst(): StringValue;
 ```
 
 #### Examples
@@ -1877,7 +2082,7 @@ Words don`t come easy
 /**
  * @return StringValue
  */
-public function upperWords();
+public function upperWords(): StringValue;
 ```
 
 #### Examples
@@ -1902,8 +2107,9 @@ Words Don`t Come Easy
 <?php
 /**
  * @return StringValue
+ * @param string|StringValue $string
  */
-public function padRight(int $length, string $string = ' ');
+public function padRight(int $length, $string = ' '): StringValue;
 ```
 
 #### Examples
@@ -1928,8 +2134,9 @@ cut here ☞----
 <?php
 /**
  * @return StringValue
+ * @param string|StringValue $string
  */
-public function padLeft(int $length, string $string = ' ');
+public function padLeft(int $length, $string = ' '): StringValue;
 ```
 
 #### Examples
@@ -1954,8 +2161,9 @@ echo $text->padLeft(16, '-')->toString();
 <?php
 /**
  * @return StringValue
+ * @param string|StringValue $string
  */
-public function padBoth(int $length, string $string = ' ');
+public function padBoth(int $length, $string = ' '): StringValue;
 ```
 
 #### Examples
@@ -1980,8 +2188,10 @@ echo $text->padBoth(24, '-')->toString();
 <?php
 /**
  * @return StringValue
+ * @param string|StringValue $search
+ * @param string|StringValue $replace
  */
-public function replace(string $search, string $replace);
+public function replace($search, $replace): StringValue;
 ```
 
 #### Examples
@@ -2000,14 +2210,71 @@ echo $text->replace('pink', 'blue')->toString();
 My favourite color is blue!
 ```
 
+### StringValue::replaceAll
+
+```php
+<?php
+/**
+ * @return StringValue
+ * @param array<int,string>|ArrayValue<string> $search
+ * @param string|StringValue $replace
+ */
+public function replaceAll($search, $replace): StringValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::string('Your favourite colors are red and black');
+
+echo $text->replaceAll(['red', 'black'], 'blue')->toString();
+```
+
+```
+Your favourite colors are blue and blue
+```
+
+### StringValue::replacePairs
+
+```php
+<?php
+/**
+ * @return StringValue
+ * @param array<string,string>|AssocValue<string,string> $pairs
+ */
+public function replacePairs($pairs): StringValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::string('Your favourite colors are red and black');
+
+echo $text->replacePairs(['red' => 'orange', 'black' => 'white'])->toString();
+```
+
+```
+Your favourite colors are orange and white
+```
+
 ### StringValue::replacePattern
 
 ```php
 <?php
 /**
  * @return StringValue
+ * @param string|StringValue $pattern
+ * @param string|StringValue $replacement
  */
-public function replacePattern(string $pattern, string $replacement);
+public function replacePattern($pattern, $replacement): StringValue;
 ```
 
 #### Examples
@@ -2032,8 +2299,9 @@ Y r lkng gd! Rll!
 <?php
 /**
  * @return StringValue
+ * @param string|StringValue $pattern
  */
-public function replacePatternCallback(string $pattern, callable $callback);
+public function replacePatternCallback($pattern, callable $callback): StringValue;
 ```
 
 #### Examples
@@ -2073,8 +2341,9 @@ Yai ori laaking gaad! Riolli!
 <?php
 /**
  * @return StringValue
+ * @param string|StringValue $postfix
  */
-public function truncate(int $length, string $postfix = '...');
+public function truncate(int $length, $postfix = '...'): StringValue;
 ```
 
 #### Examples
@@ -2102,7 +2371,7 @@ This one i+
 /**
  * @return StringValue
  */
-public function substring(int $start, ?int $length = null);
+public function substring(int $start, ?int $length = null): StringValue;
 ```
 
 ### StringValue::postfix
@@ -2111,8 +2380,9 @@ public function substring(int $start, ?int $length = null);
 <?php
 /**
  * @return StringValue
+ * @param string|StringValue $other
  */
-public function postfix(StringValue $other);
+public function postfix($other): StringValue;
 ```
 
 ### StringValue::prefix
@@ -2121,8 +2391,9 @@ public function postfix(StringValue $other);
 <?php
 /**
  * @return StringValue
+ * @param string|StringValue $other
  */
-public function prefix(StringValue $other);
+public function prefix($other): StringValue;
 ```
 
 ### StringValue::length
@@ -2137,16 +2408,20 @@ public function length(): int;
 
 ```php
 <?php
-
-public function position(string $needle): ?int;
+/**
+ * @param string|StringValue $needle
+ */
+public function position($needle): ?int;
 ```
 
 ### StringValue::positionLast
 
 ```php
 <?php
-
-public function positionLast(string $needle): ?int;
+/**
+ * @param string|StringValue $needle
+ */
+public function positionLast($needle): ?int;
 ```
 
 ### StringValue::matchAllPatterns
@@ -2154,9 +2429,10 @@ public function positionLast(string $needle): ?int;
 ```php
 <?php
 /**
- * @return ArrayValue
+ * @param string|StringValue $pattern
+ * @return ArrayValue<array<int, string>>
  */
-public function matchAllPatterns(string $pattern);
+public function matchAllPatterns($pattern): ArrayValue;
 ```
 
 ### StringValue::matchPatterns
@@ -2164,17 +2440,40 @@ public function matchAllPatterns(string $pattern);
 ```php
 <?php
 /**
+ * @param string|StringValue $pattern
  * @return StringsArray
  */
-public function matchPatterns(string $pattern);
+public function matchPatterns($pattern): StringsArray;
 ```
 
 ### StringValue::isMatching
 
 ```php
 <?php
+/**
+ * @param string|StringValue $pattern
+ */
+public function isMatching($pattern): bool;
+```
 
-public function isMatching(string $pattern): bool;
+### StringValue::startsWith
+
+```php
+<?php
+/**
+ * @param string|StringValue $pattern
+ */
+public function startsWith($pattern): bool;
+```
+
+### StringValue::endsWith
+
+```php
+<?php
+/**
+ * @param string|StringValue $pattern
+ */
+public function endsWith($pattern): bool;
 ```
 
 ### StringValue::splitByPattern
@@ -2183,8 +2482,9 @@ public function isMatching(string $pattern): bool;
 <?php
 /**
  * @return StringsArray
+ * @param string|StringValue $pattern
  */
-public function splitByPattern(string $pattern);
+public function splitByPattern($pattern): StringsArray;
 ```
 
 ### StringValue::explode
@@ -2193,16 +2493,19 @@ public function splitByPattern(string $pattern);
 <?php
 /**
  * @return StringsArray
+ * @param string|StringValue $delimiter
  */
-public function explode(string $delimiter);
+public function explode($delimiter): StringsArray;
 ```
 
 ### StringValue::contains
 
 ```php
 <?php
-
-public function contains(string $substring): bool;
+/**
+ * @param string|StringValue $substring
+ */
+public function contains($substring): bool;
 ```
 
 ### StringValue::toString
@@ -2258,10 +2561,29 @@ echo PHP_EOL;
 ```php
 <?php
 /**
- * @param callable $callback function(StringValue $value): void
- * @return StringsArray
+ * @param callable(StringValue $value): void $callback
  */
-public function each(callable $callback);
+public function each(callable $callback): StringsArray;
+```
+
+### StringsArray::any
+
+```php
+<?php
+/**
+ * @param callable(StringValue):bool $filter
+ */
+public function any(callable $filter): bool;
+```
+
+### StringsArray::every
+
+```php
+<?php
+/**
+ * @param callable(StringValue):bool $filter
+ */
+public function every(callable $filter): bool;
 ```
 
 ### StringsArray::unique
@@ -2269,10 +2591,9 @@ public function each(callable $callback);
 ```php
 <?php
 /**
- * @param callable|null $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
- * @return StringsArray
+ * @param (callable(StringValue, StringValue):int)|null $comparator
  */
-public function unique(?callable $comparator = null);
+public function unique(?callable $comparator = null): StringsArray;
 ```
 
 ### StringsArray::toArray
@@ -2280,9 +2601,19 @@ public function unique(?callable $comparator = null);
 ```php
 <?php
 /**
- * @return string[]
+ * @return array<int, StringValue>
  */
 public function toArray(): array;
+```
+
+### StringsArray::toNativeStrings
+
+```php
+<?php
+/**
+ * @return string[]
+ */
+public function toNativeStrings(): array;
 ```
 
 ### StringsArray::filter
@@ -2290,20 +2621,17 @@ public function toArray(): array;
 ```php
 <?php
 /**
- * @param callable $filter function(StringValue $value): bool
- * @return StringsArray
+ * @param callable(StringValue):bool $filter
  */
-public function filter(callable $filter);
+public function filter(callable $filter): StringsArray;
 ```
 
 ### StringsArray::filterEmpty
 
 ```php
 <?php
-/**
- * @return StringsArray
- */
-public function filterEmpty();
+
+public function filterEmpty(): StringsArray;
 ```
 
 ### StringsArray::map
@@ -2311,10 +2639,9 @@ public function filterEmpty();
 ```php
 <?php
 /**
- * @param callable $transformer function(StringValue $value): StringValue|string
- * @return StringsArray
+ * @param callable(StringValue):StringValue $transformer
  */
-public function map(callable $transformer);
+public function map(callable $transformer): StringsArray;
 ```
 
 ### StringsArray::flatMap
@@ -2322,10 +2649,9 @@ public function map(callable $transformer);
 ```php
 <?php
 /**
- * @param callable $transformer function(StringValue $value): iterable
- * @return StringsArray
+ * @param callable(StringValue):iterable<StringValue> $transformer
  */
-public function flatMap(callable $transformer);
+public function flatMap(callable $transformer): StringsArray;
 ```
 
 ### StringsArray::groupBy
@@ -2333,8 +2659,9 @@ public function flatMap(callable $transformer);
 ```php
 <?php
 /**
- * @param callable $reducer function(StringValue $value): string|int|bool
- * @return AssocValue AssocValue<StringsArray>
+ * @template TNewKey of int|string
+ * @param callable(StringValue):TNewKey $reducer
+ * @phpstan-return AssocValue<TNewKey, StringsArray>
  */
 public function groupBy(callable $reducer): AssocValue;
 ```
@@ -2345,6 +2672,7 @@ public function groupBy(callable $reducer): AssocValue;
 <?php
 
 use GW\Value\StringsArray;
+use GW\Value\StringValue;
 use GW\Value\Wrap;
 
 $text = 'I would like to ask a question about the meaning of life';
@@ -2354,7 +2682,7 @@ $wordGroups = Wrap::string($text)
     ->lower()
     ->explode(' ')
     ->groupBy(function (StringValue $word) use ($stopwords): string {
-        return in_array($word, $stopwords, true) ? 'stopwords' : 'words';
+        return in_array($word->toString(), $stopwords, true) ? 'stopwords' : 'words';
     });
 
 /** @var StringsArray $stopwords */
@@ -2376,30 +2704,25 @@ words: would, like, ask, question, about, meaning, life
 ```php
 <?php
 /**
- * @param callable $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
- * @return StringsArray
+ * @param callable(StringValue,StringValue):int $comparator
  */
-public function sort(callable $comparator);
+public function sort(callable $comparator): StringsArray;
 ```
 
 ### StringsArray::shuffle
 
 ```php
 <?php
-/**
- * @return StringsArray
- */
-public function shuffle();
+
+public function shuffle(): StringsArray;
 ```
 
 ### StringsArray::reverse
 
 ```php
 <?php
-/**
- * @return StringsArray
- */
-public function reverse();
+
+public function reverse(): StringsArray;
 ```
 
 ### StringsArray::unshift
@@ -2408,9 +2731,8 @@ public function reverse();
 <?php
 /**
  * @param StringValue|string $value
- * @return StringsArray
  */
-public function unshift($value);
+public function unshift($value): StringsArray;
 ```
 
 ### StringsArray::shift
@@ -2418,10 +2740,9 @@ public function unshift($value);
 ```php
 <?php
 /**
- * @param mixed $value
- * @return StringsArray
+ * @param StringValue|null $value
  */
-public function shift(&$value = null);
+public function shift(&$value = null): StringsArray;
 ```
 
 ### StringsArray::push
@@ -2430,9 +2751,8 @@ public function shift(&$value = null);
 <?php
 /**
  * @param StringValue|string $value
- * @return StringsArray
  */
-public function push($value);
+public function push($value): StringsArray;
 ```
 
 ### StringsArray::pop
@@ -2440,10 +2760,9 @@ public function push($value);
 ```php
 <?php
 /**
- * @param mixed $value
- * @return StringsArray
+ * @param StringValue|null $value
  */
-public function pop(&$value = null);
+public function pop(&$value = null): StringsArray;
 ```
 
 ### StringsArray::offsetExists
@@ -2462,9 +2781,8 @@ public function offsetExists($offset): bool;
 <?php
 /**
  * @param int $offset
- * @return StringValue
  */
-public function offsetGet($offset);
+public function offsetGet($offset): StringValue;
 ```
 
 ### StringsArray::offsetSet
@@ -2474,10 +2792,9 @@ public function offsetGet($offset);
 /**
  * @param int $offset
  * @param StringValue|string $value
- * @return void
- * @throws \BadMethodCallException For immutable types.
+ * @throws BadMethodCallException For immutable types.
  */
-public function offsetSet($offset, $value);
+public function offsetSet($offset, $value): void;
 ```
 
 ### StringsArray::offsetUnset
@@ -2486,41 +2803,49 @@ public function offsetSet($offset, $value);
 <?php
 /**
  * @param int $offset
- * @return void
- * @throws \BadMethodCallException For immutable types.
+ * @throws BadMethodCallException For immutable types.
  */
-public function offsetUnset($offset);
+public function offsetUnset($offset): void;
 ```
 
 ### StringsArray::join
 
 ```php
 <?php
-/**
- * @return StringsArray
- */
-public function join(ArrayValue $other);
+
+public function join(StringsArray $other): StringsArray;
 ```
 
 ### StringsArray::slice
 
 ```php
 <?php
-/**
- * @return StringsArray
- */
-public function slice(int $offset, int $length);
+
+public function slice(int $offset, ?int $length = null): StringsArray;
+```
+
+### StringsArray::skip
+
+```php
+<?php
+
+public function skip(int $length): StringsArray;
+```
+
+### StringsArray::take
+
+```php
+<?php
+
+public function take(int $length): StringsArray;
 ```
 
 ### StringsArray::splice
 
 ```php
 <?php
-/**
- * @param ArrayValue $replacement ArrayValue<string>|ArrayValue<StringValue>
- * @return StringsArray
- */
-public function splice(int $offset, int $length, ?ArrayValue $replacement = null);
+
+public function splice(int $offset, int $length, ?StringsArray $replacement = null): StringsArray;
 ```
 
 ### StringsArray::diff
@@ -2528,10 +2853,9 @@ public function splice(int $offset, int $length, ?ArrayValue $replacement = null
 ```php
 <?php
 /**
- * @param callable|null $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
- * @return StringsArray
+ * @param (callable(StringValue, StringValue):int)|null $comparator
  */
-public function diff(ArrayValue $other, ?callable $comparator = null);
+public function diff(StringsArray $other, ?callable $comparator = null): StringsArray;
 ```
 
 ### StringsArray::intersect
@@ -2539,10 +2863,9 @@ public function diff(ArrayValue $other, ?callable $comparator = null);
 ```php
 <?php
 /**
- * @param callable|null $comparator function(StringValue $valueA, StringValue $valueB): int{-1, 0, 1}
- * @return StringsArray
+ * @param (callable(StringValue, StringValue):int)|null $comparator
  */
-public function intersect(ArrayValue $other, ?callable $comparator = null);
+public function intersect(StringsArray $other, ?callable $comparator = null): StringsArray;
 ```
 
 ### StringsArray::reduce
@@ -2550,9 +2873,10 @@ public function intersect(ArrayValue $other, ?callable $comparator = null);
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $reduced, StringValue $value): mixed
- * @param mixed $start
- * @return mixed
+ * @template TNewValue
+ * @phpstan-param callable(TNewValue, StringValue):TNewValue $transformer
+ * @phpstan-param TNewValue $start
+ * @phpstan-return TNewValue
  */
 public function reduce(callable $transformer, $start);
 ```
@@ -2572,7 +2896,7 @@ public function implode(string $glue): StringValue;
 /**
  * @return StringsArray
  */
-public function notEmpty();
+public function notEmpty(): StringsArray;
 ```
 
 ### StringsArray::first
@@ -2582,7 +2906,7 @@ public function notEmpty();
 /**
  * @return StringValue|null
  */
-public function first();
+public function first(): ?StringValue;
 ```
 
 ### StringsArray::last
@@ -2592,14 +2916,16 @@ public function first();
 /**
  * @return StringValue|null
  */
-public function last();
+public function last(): ?StringValue;
 ```
 
 ### StringsArray::find
 
 ```php
 <?php
-
+/**
+ * @param callable(StringValue):bool $filter
+ */
 public function find(callable $filter): ?StringValue;
 ```
 
@@ -2607,7 +2933,9 @@ public function find(callable $filter): ?StringValue;
 
 ```php
 <?php
-
+/**
+ * @param callable(StringValue):bool $filter
+ */
 public function findLast(callable $filter): ?StringValue;
 ```
 
@@ -2616,20 +2944,17 @@ public function findLast(callable $filter): ?StringValue;
 ```php
 <?php
 /**
- * @param callable $transformer function(string $value): string
- * @return StringsArray
+ * @param callable(string):(StringValue|string) $transformer
  */
-public function transform(callable $transformer);
+public function transform(callable $transformer): StringsArray;
 ```
 
 ### StringsArray::stripTags
 
 ```php
 <?php
-/**
- * @return StringsArray
- */
-public function stripTags();
+
+public function stripTags(): StringsArray;
 ```
 
 #### Examples
@@ -2646,9 +2971,18 @@ var_export($text->stripTags()->toArray());
 
 ```
 array (
-  0 => 'Story',
-  1 => 'Chapter 1',
-  2 => 'Once upon a time...',
+  0 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'Story',
+  )),
+  1 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'Chapter 1',
+  )),
+  2 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'Once upon a time...',
+  )),
 )
 ```
 
@@ -2657,9 +2991,9 @@ array (
 ```php
 <?php
 /**
- * @return StringsArray
+ * @param string|StringValue $characterMask
  */
-public function trim(string $characterMask = self::TRIM_MASK);
+public function trim($characterMask = self::TRIM_MASK): StringsArray;
 ```
 
 ### StringsArray::trimRight
@@ -2667,9 +3001,9 @@ public function trim(string $characterMask = self::TRIM_MASK);
 ```php
 <?php
 /**
- * @return StringsArray
+ * @param string|StringValue $characterMask
  */
-public function trimRight(string $characterMask = self::TRIM_MASK);
+public function trimRight($characterMask = self::TRIM_MASK): StringsArray;
 ```
 
 ### StringsArray::trimLeft
@@ -2677,19 +3011,17 @@ public function trimRight(string $characterMask = self::TRIM_MASK);
 ```php
 <?php
 /**
- * @return StringsArray
+ * @param string|StringValue $characterMask
  */
-public function trimLeft(string $characterMask = self::TRIM_MASK);
+public function trimLeft($characterMask = self::TRIM_MASK): StringsArray;
 ```
 
 ### StringsArray::lower
 
 ```php
 <?php
-/**
- * @return StringsArray
- */
-public function lower();
+
+public function lower(): StringsArray;
 ```
 
 #### Examples
@@ -2706,10 +3038,22 @@ var_export($text->lower()->toArray());
 
 ```
 array (
-  0 => 'sometimes',
-  1 => 'i',
-  2 => 'wanna',
-  3 => 'scream!',
+  0 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'sometimes',
+  )),
+  1 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'i',
+  )),
+  2 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'wanna',
+  )),
+  3 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'scream!',
+  )),
 )
 ```
 
@@ -2717,10 +3061,8 @@ array (
 
 ```php
 <?php
-/**
- * @return StringsArray
- */
-public function upper();
+
+public function upper(): StringsArray;
 ```
 
 #### Examples
@@ -2737,8 +3079,14 @@ var_export($text->upper()->toArray());
 
 ```
 array (
-  0 => 'IT`S SO QUIET',
-  1 => 'AND PEACEFUL',
+  0 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'IT`S SO QUIET',
+  )),
+  1 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'AND PEACEFUL',
+  )),
 )
 ```
 
@@ -2746,10 +3094,8 @@ array (
 
 ```php
 <?php
-/**
- * @return StringsArray
- */
-public function lowerFirst();
+
+public function lowerFirst(): StringsArray;
 ```
 
 #### Examples
@@ -2766,8 +3112,14 @@ var_export($text->lowerFirst()->toArray());
 
 ```
 array (
-  0 => 'camelCaseMethod',
-  1 => 'anotherCamel',
+  0 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'camelCaseMethod',
+  )),
+  1 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'anotherCamel',
+  )),
 )
 ```
 
@@ -2775,10 +3127,8 @@ array (
 
 ```php
 <?php
-/**
- * @return StringsArray
- */
-public function upperFirst();
+
+public function upperFirst(): StringsArray;
 ```
 
 #### Examples
@@ -2801,10 +3151,8 @@ var_export($text->upperFirst()->toString());
 
 ```php
 <?php
-/**
- * @return StringsArray
- */
-public function upperWords();
+
+public function upperWords(): StringsArray;
 ```
 
 #### Examples
@@ -2828,9 +3176,9 @@ var_export($text->upperWords()->toString());
 ```php
 <?php
 /**
- * @return StringsArray
+ * @param string|StringValue $string
  */
-public function padRight(int $length, string $string = ' ');
+public function padRight(int $length, $string = ' '): StringsArray;
 ```
 
 ### StringsArray::padLeft
@@ -2838,9 +3186,9 @@ public function padRight(int $length, string $string = ' ');
 ```php
 <?php
 /**
- * @return StringsArray
+ * @param string|StringValue $string
  */
-public function padLeft(int $length, string $string = ' ');
+public function padLeft(int $length, $string = ' '): StringsArray;
 ```
 
 #### Examples
@@ -2857,9 +3205,18 @@ var_export($text->padLeft(16, '-')->toArray());
 
 ```
 array (
-  0 => '-------------one',
-  1 => '-------------two',
-  2 => '-----------three',
+  0 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => '-------------one',
+  )),
+  1 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => '-------------two',
+  )),
+  2 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => '-----------three',
+  )),
 )
 ```
 
@@ -2868,9 +3225,9 @@ array (
 ```php
 <?php
 /**
- * @return StringsArray
+ * @param string|StringValue $string
  */
-public function padBoth(int $length, string $string = ' ');
+public function padBoth(int $length, $string = ' '): StringsArray;
 ```
 
 #### Examples
@@ -2887,9 +3244,18 @@ var_export($text->padBoth(24, '-')->toArray());
 
 ```
 array (
-  0 => '----------one-----------',
-  1 => '----------two-----------',
-  2 => '---------three----------',
+  0 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => '----------one-----------',
+  )),
+  1 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => '----------two-----------',
+  )),
+  2 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => '---------three----------',
+  )),
 )
 ```
 
@@ -2898,9 +3264,10 @@ array (
 ```php
 <?php
 /**
- * @return StringsArray
+ * @param string|StringValue $search
+ * @param string|StringValue $replace
  */
-public function replace(string $search, string $replace);
+public function replace($search, $replace): StringsArray;
 ```
 
 #### Examples
@@ -2917,9 +3284,99 @@ var_export($text->replace('.', '!!!')->toArray());
 
 ```
 array (
-  0 => 'One!!!',
-  1 => 'Two!!!',
-  2 => 'Three!!!',
+  0 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'One!!!',
+  )),
+  1 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'Two!!!',
+  )),
+  2 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'Three!!!',
+  )),
+)
+```
+
+### StringsArray::replaceAll
+
+```php
+<?php
+/**
+ * @return StringsArray
+ * @param array<int,string>|ArrayValue<string> $search
+ * @param string|StringValue $replace
+ */
+public function replaceAll($search, $replace): StringsArray;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::stringsArray(['One?', 'Two!', 'Three!?']);
+
+var_export($text->replaceAll(['?', '!'], '.')->toArray());
+```
+
+```
+array (
+  0 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'One.',
+  )),
+  1 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'Two.',
+  )),
+  2 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'Three..',
+  )),
+)
+```
+
+### StringsArray::replacePairs
+
+```php
+<?php
+/**
+ * @return StringsArray
+ * @param array<string,string>|AssocValue<string,string> $pairs
+ */
+public function replacePairs($pairs): StringsArray;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$text = Wrap::stringsArray(['One?', 'Two!', 'Three!?']);
+
+var_export($text->replacePairs(['One' => 'Eleven', 'Two' => 'Twelve'])->toArray());
+```
+
+```
+array (
+  0 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'Eleven?',
+  )),
+  1 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'Twelve!',
+  )),
+  2 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'Three!?',
+  )),
 )
 ```
 
@@ -2928,9 +3385,10 @@ array (
 ```php
 <?php
 /**
- * @return StringsArray
+ * @param string|StringValue $pattern
+ * @param string|StringValue $replacement
  */
-public function replacePattern(string $pattern, string $replacement);
+public function replacePattern($pattern, $replacement): StringsArray;
 ```
 
 #### Examples
@@ -2947,10 +3405,22 @@ var_export($text->replacePattern('/[aeiouy]/', '*')->toArray());
 
 ```
 array (
-  0 => 'Pl**s*',
-  1 => 'c*ns*r',
-  2 => '*ll',
-  3 => 'v*w*ls!',
+  0 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'Pl**s*',
+  )),
+  1 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'c*ns*r',
+  )),
+  2 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => '*ll',
+  )),
+  3 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'v*w*ls!',
+  )),
 )
 ```
 
@@ -2959,9 +3429,9 @@ array (
 ```php
 <?php
 /**
- * @return StringsArray
+ * @param string|StringValue $pattern
  */
-public function replacePatternCallback(string $pattern, callable $callback);
+public function replacePatternCallback($pattern, callable $callback): StringsArray;
 ```
 
 #### Examples
@@ -2984,10 +3454,22 @@ var_export($text->replacePatternCallback('/[aeiouy]/', $replacer)->toArray());
 
 ```
 array (
-  0 => 'Pl(e)(a)s(e)',
-  1 => 'c(e)ns(o)r',
-  2 => '(a)ll',
-  3 => 'v(o)w(e)ls!',
+  0 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'Pl(e)(a)s(e)',
+  )),
+  1 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'c(e)ns(o)r',
+  )),
+  2 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => '(a)ll',
+  )),
+  3 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'v(o)w(e)ls!',
+  )),
 )
 ```
 
@@ -2996,9 +3478,9 @@ array (
 ```php
 <?php
 /**
- * @return StringsArray
+ * @param string|StringValue $postfix
  */
-public function truncate(int $length, string $postfix = '...');
+public function truncate(int $length, $postfix = '...'): StringsArray;
 ```
 
 #### Examples
@@ -3015,9 +3497,18 @@ var_export($text->truncate(5, '~~')->toArray());
 
 ```
 array (
-  0 => 'short',
-  1 => 'quite~~',
-  2 => 'very ~~',
+  0 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'short',
+  )),
+  1 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'quite~~',
+  )),
+  2 => 
+  GW\Value\PlainString::__set_state(array(
+     'value' => 'very ~~',
+  )),
 )
 ```
 
@@ -3025,10 +3516,8 @@ array (
 
 ```php
 <?php
-/**
- * @return StringsArray
- */
-public function substring(int $start, ?int $length = null);
+
+public function substring(int $start, ?int $length = null): StringsArray;
 ```
 
 ### StringsArray::postfix
@@ -3036,9 +3525,9 @@ public function substring(int $start, ?int $length = null);
 ```php
 <?php
 /**
- * @return StringsArray
+ * @param string|StringValue $other
  */
-public function postfix(StringValue $other);
+public function postfix($other): StringsArray;
 ```
 
 ### StringsArray::prefix
@@ -3046,9 +3535,9 @@ public function postfix(StringValue $other);
 ```php
 <?php
 /**
- * @return StringsArray
+ * @param string|StringValue $other
  */
-public function prefix(StringValue $other);
+public function prefix($other): StringsArray;
 ```
 
 ### StringsArray::toArrayValue
@@ -3056,7 +3545,7 @@ public function prefix(StringValue $other);
 ```php
 <?php
 /**
- * @return ArrayValue ArrayValue<StringValue>
+ * @return ArrayValue<StringValue>
  */
 public function toArrayValue(): ArrayValue;
 ```
@@ -3126,7 +3615,7 @@ array (
 ```php
 <?php
 /**
- * @return AssocValue AssocValue<string, StringValue>
+ * @return AssocValue<int, StringValue>
  */
 public function toAssocValue(): AssocValue;
 ```
@@ -3146,7 +3635,7 @@ var_export(
         ->map(function (StringValue $person): string {
             return $person->toString();
         })
-        ->mapKeys(function (string $oldKey, string $person): string {
+        ->mapKeys(function (int $oldKey, string $person): string {
             return $person;
         })
         ->toAssocArray()
@@ -3168,9 +3657,9 @@ array (
 ```php
 <?php
 /**
- * @return ArrayValue
+ * @phpstan-return ArrayValue<array<int, StringValue>>
  */
-public function chunk(int $size);
+public function chunk(int $size): ArrayValue;
 ```
 
 ### StringsArray::toStringsArray
@@ -3189,44 +3678,6 @@ public function toStringsArray(): StringsArray;
 public function isEmpty(): bool;
 ```
 
-### StringsArray::hasElement
-
-```php
-<?php
-/**
- * @param mixed $element
- */
-public function hasElement($element): bool;
-```
-
-### StringsArray::any
-
-```php
-<?php
-/**
- * @param callable $filter function(mixed $value): bool
- */
-public function any(callable $filter): bool;
-```
-
-### StringsArray::every
-
-```php
-<?php
-/**
- * @param callable $filter function(mixed $value): bool
- */
-public function every(callable $filter): bool;
-```
-
-### StringsArray::count
-
-```php
-<?php
-
-public function count(): int;
-```
-
 ### StringsArray::getIterator
 
 *(definition not available)*
@@ -3242,16 +3693,20 @@ public function length(): int;
 
 ```php
 <?php
-
-public function position(string $needle): ?int;
+/**
+ * @param string|StringValue $needle
+ */
+public function position($needle): ?int;
 ```
 
 ### StringsArray::positionLast
 
 ```php
 <?php
-
-public function positionLast(string $needle): ?int;
+/**
+ * @param string|StringValue $needle
+ */
+public function positionLast($needle): ?int;
 ```
 
 ### StringsArray::matchAllPatterns
@@ -3259,9 +3714,10 @@ public function positionLast(string $needle): ?int;
 ```php
 <?php
 /**
- * @return ArrayValue
+ * @param string|StringValue $pattern
+ * @return ArrayValue<array<int, string>>
  */
-public function matchAllPatterns(string $pattern);
+public function matchAllPatterns($pattern): ArrayValue;
 ```
 
 ### StringsArray::matchPatterns
@@ -3269,17 +3725,40 @@ public function matchAllPatterns(string $pattern);
 ```php
 <?php
 /**
+ * @param string|StringValue $pattern
  * @return StringsArray
  */
-public function matchPatterns(string $pattern);
+public function matchPatterns($pattern): StringsArray;
 ```
 
 ### StringsArray::isMatching
 
 ```php
 <?php
+/**
+ * @param string|StringValue $pattern
+ */
+public function isMatching($pattern): bool;
+```
 
-public function isMatching(string $pattern): bool;
+### StringsArray::startsWith
+
+```php
+<?php
+/**
+ * @param string|StringValue $pattern
+ */
+public function startsWith($pattern): bool;
+```
+
+### StringsArray::endsWith
+
+```php
+<?php
+/**
+ * @param string|StringValue $pattern
+ */
+public function endsWith($pattern): bool;
 ```
 
 ### StringsArray::splitByPattern
@@ -3288,8 +3767,9 @@ public function isMatching(string $pattern): bool;
 <?php
 /**
  * @return StringsArray
+ * @param string|StringValue $pattern
  */
-public function splitByPattern(string $pattern);
+public function splitByPattern($pattern): StringsArray;
 ```
 
 ### StringsArray::explode
@@ -3298,16 +3778,19 @@ public function splitByPattern(string $pattern);
 <?php
 /**
  * @return StringsArray
+ * @param string|StringValue $delimiter
  */
-public function explode(string $delimiter);
+public function explode($delimiter): StringsArray;
 ```
 
 ### StringsArray::contains
 
 ```php
 <?php
-
-public function contains(string $substring): bool;
+/**
+ * @param string|StringValue $substring
+ */
+public function contains($substring): bool;
 ```
 
 ### StringsArray::toString
@@ -3334,10 +3817,10 @@ public function __toString(): string;
 ```php
 <?php
 /**
- * @param callable $callback function(mixed $value): void
- * @return IterableValue
+ * @phpstan-param callable(TValue):void $callback
+ * @phpstan-return IterableValue<TKey, TValue>
  */
-public function each(callable $callback);
+public function each(callable $callback): IterableValue;
 ```
 
 #### Examples
@@ -3362,10 +3845,10 @@ abc
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool { ... }
- * @return IterableValue
+ * @phpstan-param callable(TValue):bool $filter
+ * @phpstan-return IterableValue<TKey, TValue>
  */
-public function filter(callable $filter);
+public function filter(callable $filter): IterableValue;
 ```
 
 #### Examples
@@ -3375,7 +3858,7 @@ public function filter(callable $filter);
 
 use GW\Value\Wrap;
 
-$range = function (int $start, int $end) {
+$range = static function (int $start, int $end): iterable {
     for ($i = $start; $i <= $end; $i++) {
         yield $i;
     }
@@ -3401,9 +3884,9 @@ array (
 ```php
 <?php
 /**
- * @return IterableValue
+ * @phpstan-return IterableValue<TKey, TValue>
  */
-public function filterEmpty();
+public function filterEmpty(): IterableValue;
 ```
 
 #### Examples
@@ -3432,10 +3915,11 @@ array (
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $value): mixed { ... }
- * @return IterableValue
+ * @template TNewValue
+ * @param callable(TValue,TKey $key=):TNewValue $transformer
+ * @phpstan-return IterableValue<TKey, TNewValue>
  */
-public function map(callable $transformer);
+public function map(callable $transformer): IterableValue;
 ```
 
 #### Examples
@@ -3466,10 +3950,11 @@ array (
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $value): iterable { ... }
- * @return IterableValue
+ * @phpstan-template TNewValue
+ * @phpstan-param callable(TValue):iterable<TNewValue> $transformer
+ * @phpstan-return IterableValue<TKey, TNewValue>
  */
-public function flatMap(callable $transformer);
+public function flatMap(callable $transformer): IterableValue;
 ```
 
 ### IterableValue::join
@@ -3477,9 +3962,10 @@ public function flatMap(callable $transformer);
 ```php
 <?php
 /**
- * @return IterableValue
+ * @phpstan-param iterable<TKey, TValue> $other
+ * @phpstan-return IterableValue<TKey, TValue>
  */
-public function join(iterable $other);
+public function join(iterable $other): IterableValue;
 ```
 
 #### Examples
@@ -3489,7 +3975,7 @@ public function join(iterable $other);
 
 use GW\Value\Wrap;
 
-$range = function (int $start, int $end) {
+$range = function (int $start, int $end): iterable {
     for ($i = $start; $i <= $end; $i++) {
         yield $i;
     }
@@ -3521,9 +4007,9 @@ array (
 ```php
 <?php
 /**
- * @return IterableValue
+ * @phpstan-return IterableValue<TKey, TValue>
  */
-public function slice(int $offset, int $length);
+public function slice(int $offset, ?int $length = null): IterableValue;
 ```
 
 #### Examples
@@ -3533,16 +4019,13 @@ public function slice(int $offset, int $length);
 
 use GW\Value\Wrap;
 
-$range = function (int $start, int $end) {
+$range = function (int $start, int $end): iterable {
     for ($i = $start; $i <= $end; $i++) {
         yield $i;
     }
 };
 
 var_export(Wrap::iterable($range(0, PHP_INT_MAX))->slice(2, 4)->toArray());
-echo PHP_EOL;
-
-var_export(Wrap::iterable($range(0, PHP_INT_MAX))->slice(-1, 1)->toArray());
 echo PHP_EOL;
 
 var_export(Wrap::iterable($range(0, PHP_INT_MAX))->slice(0, 3)->toArray());
@@ -3561,6 +4044,64 @@ array (
 )
 array (
   0 => 0,
+  1 => 1,
+  2 => 2,
+)
+array (
+  0 => 5000,
+  1 => 5001,
+)
+```
+
+### IterableValue::skip
+
+```php
+<?php
+/**
+ * @phpstan-return IterableValue<TKey, TValue>
+ */
+public function skip(int $length): IterableValue;
+```
+
+### IterableValue::take
+
+```php
+<?php
+/**
+ * @phpstan-return IterableValue<TKey, TValue>
+ */
+public function take(int $length): IterableValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$range = function (int $start, int $end): iterable {
+    for ($i = $start; $i <= $end; $i++) {
+        yield $i;
+    }
+};
+
+var_export(Wrap::iterable($range(0, PHP_INT_MAX))->skip(2)->take(4)->toArray());
+echo PHP_EOL;
+
+var_export(Wrap::iterable($range(0, PHP_INT_MAX))->take(3)->toArray());
+echo PHP_EOL;
+
+var_export(Wrap::iterable($range(0, PHP_INT_MAX))->skip(5000)->take(2)->toArray());
+echo PHP_EOL;
+```
+
+```
+array (
+  0 => 2,
+  1 => 3,
+  2 => 4,
+  3 => 5,
 )
 array (
   0 => 0,
@@ -3578,10 +4119,10 @@ array (
 ```php
 <?php
 /**
- * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
- * @return IterableValue
+ * @phpstan-param (callable(TValue,TValue):int) | null $comparator
+ * @phpstan-return IterableValue<TKey, TValue>
  */
-public function unique(?callable $comparator = null);
+public function unique(?callable $comparator = null): IterableValue;
 ```
 
 ### IterableValue::reduce
@@ -3589,9 +4130,10 @@ public function unique(?callable $comparator = null);
 ```php
 <?php
 /**
- * @param callable $transformer function(mixed $reduced, mixed $value): mixed
- * @param mixed $start
- * @return mixed
+ * @template TNewValue
+ * @phpstan-param callable(TNewValue,TValue):TNewValue $transformer
+ * @phpstan-param TNewValue $start
+ * @phpstan-return TNewValue
  */
 public function reduce(callable $transformer, $start);
 ```
@@ -3630,9 +4172,9 @@ Prices:  €10,- €20,- €50,- €120,-
 ```php
 <?php
 /**
- * @return IterableValue
+ * @phpstan-return IterableValue<TKey, TValue>
  */
-public function notEmpty();
+public function notEmpty(): IterableValue;
 ```
 
 ### IterableValue::unshift
@@ -3640,10 +4182,10 @@ public function notEmpty();
 ```php
 <?php
 /**
- * @param mixed $value
- * @return IterableValue
+ * @phpstan-param TValue $value
+ * @phpstan-return IterableValue<TKey, TValue>
  */
-public function unshift($value);
+public function unshift($value): IterableValue;
 ```
 
 ### IterableValue::push
@@ -3651,10 +4193,10 @@ public function unshift($value);
 ```php
 <?php
 /**
- * @param mixed $value
- * @return IterableValue
+ * @phpstan-param TValue $value
+ * @phpstan-return IterableValue<TKey, TValue>
  */
-public function push($value);
+public function push($value): IterableValue;
 ```
 
 ### IterableValue::diff
@@ -3662,10 +4204,11 @@ public function push($value);
 ```php
 <?php
 /**
- * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
- * @return IterableValue
+ * @phpstan-param ArrayValue<TValue> $other
+ * @phpstan-param (callable(TValue,TValue):int) | null $comparator
+ * @phpstan-return IterableValue<TKey, TValue>
  */
-public function diff(ArrayValue $other, ?callable $comparator = null);
+public function diff(ArrayValue $other, ?callable $comparator = null): IterableValue;
 ```
 
 ### IterableValue::intersect
@@ -3673,10 +4216,11 @@ public function diff(ArrayValue $other, ?callable $comparator = null);
 ```php
 <?php
 /**
- * @param callable|null $comparator function(mixed $valueA, mixed $valueB): int{-1, 0, 1}
- * @return IterableValue
+ * @phpstan-param ArrayValue<TValue> $other
+ * @phpstan-param (callable(TValue,TValue):int) | null $comparator
+ * @phpstan-return IterableValue<TKey, TValue>
  */
-public function intersect(ArrayValue $other, ?callable $comparator = null);
+public function intersect(ArrayValue $other, ?callable $comparator = null): IterableValue;
 ```
 
 ### IterableValue::first
@@ -3684,7 +4228,7 @@ public function intersect(ArrayValue $other, ?callable $comparator = null);
 ```php
 <?php
 /**
- * @return mixed
+ * @phpstan-return ?TValue
  */
 public function first();
 ```
@@ -3696,7 +4240,7 @@ public function first();
 
 use GW\Value\Wrap;
 
-$range = function (int $start, int $end) {
+$range = function (int $start, int $end): iterable {
     for ($i = $start; $i <= $end; $i++) {
         yield $i;
     }
@@ -3716,7 +4260,7 @@ first: 1
 ```php
 <?php
 /**
- * @return mixed
+ * @phpstan-return ?TValue
  */
 public function last();
 ```
@@ -3725,8 +4269,30 @@ public function last();
 
 ```php
 <?php
-
+/**
+ * @phpstan-return ArrayValue<TValue>
+ */
 public function toArrayValue(): ArrayValue;
+```
+
+### IterableValue::toAssocArray
+
+```php
+<?php
+/**
+ * @phpstan-return array<int|string, TValue>
+ */
+public function toAssocArray(): array;
+```
+
+### IterableValue::toAssocValue
+
+```php
+<?php
+/**
+ * @phpstan-return AssocValue<int|string, TValue>
+ */
+public function toAssocValue(): AssocValue;
 ```
 
 ### IterableValue::toArray
@@ -3734,17 +4300,9 @@ public function toArrayValue(): ArrayValue;
 ```php
 <?php
 /**
- * @return mixed[]
+ * @phpstan-return TValue[]
  */
 public function toArray(): array;
-```
-
-### IterableValue::use
-
-```php
-<?php
-
-public function use(iterable $iterable): IterableValue;
 ```
 
 ### IterableValue::chunk
@@ -3752,9 +4310,9 @@ public function use(iterable $iterable): IterableValue;
 ```php
 <?php
 /**
- * @return IterableValue
+ * @phpstan-return IterableValue<int, array<int, TValue>>
  */
-public function chunk(int $size);
+public function chunk(int $size): IterableValue;
 ```
 
 #### Examples
@@ -3802,9 +4360,9 @@ array (
 ```php
 <?php
 /**
- * @return IterableValue
+ * @phpstan-return IterableValue<TKey, TValue>
  */
-public function flatten();
+public function flatten(): IterableValue;
 ```
 
 ### IterableValue::any
@@ -3812,7 +4370,7 @@ public function flatten();
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool
+ * @param callable(TValue):bool $filter
  */
 public function any(callable $filter): bool;
 ```
@@ -3822,7 +4380,7 @@ public function any(callable $filter): bool;
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool
+ * @param callable(TValue):bool $filter
  */
 public function every(callable $filter): bool;
 ```
@@ -3832,8 +4390,8 @@ public function every(callable $filter): bool;
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool
- * @return mixed
+ * @param callable(TValue):bool $filter
+ * @phpstan-return ?TValue
  */
 public function find(callable $filter);
 ```
@@ -3843,10 +4401,65 @@ public function find(callable $filter);
 ```php
 <?php
 /**
- * @param callable $filter function(mixed $value): bool
- * @return mixed
+ * @param callable(TValue):bool $filter
+ * @phpstan-return ?TValue
  */
 public function findLast(callable $filter);
+```
+
+### IterableValue::keys
+
+```php
+<?php
+/**
+ * @phpstan-return IterableValue<int, TKey>
+ */
+public function keys(): IterableValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$assoc = Wrap::iterable(['0' => 'zero', '1' => 'one']);
+
+$keys = $assoc
+    ->map(fn(string $val, int $key): string => $val)
+    ->keys()
+    ->toArray();
+
+var_export($keys);
+
+$pairs = [['0', 'zero'], ['1', 'one'], ['1', 'one one']];
+
+$iterator = function () use ($pairs) {
+    foreach ($pairs as [$key, $item]) {
+        yield $key => $item;
+    }
+};
+
+$assoc = Wrap::iterable($iterator());
+
+$keys = $assoc
+    ->map(fn(string $val, string $key): string => $val)
+    ->keys()
+    ->toArray();
+
+var_export($keys);
+```
+
+```
+array (
+  0 => 0,
+  1 => 1,
+)array (
+  0 => '0',
+  1 => '1',
+  2 => '1',
+)
 ```
 
 ### IterableValue::getIterator

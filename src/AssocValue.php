@@ -144,10 +144,27 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess, 
     public function withoutElement($value): AssocValue;
 
     /**
+     * @deprecated use join() or replace() instead
      * @phpstan-param AssocValue<TKey, TValue> $other
      * @phpstan-return AssocValue<TKey, TValue>
      */
     public function merge(AssocValue $other): AssocValue;
+
+    /**
+     * Joins other AssocValue by adding the keys from other not present in self
+     *
+     * @phpstan-param AssocValue<TKey, TValue> $other
+     * @phpstan-return AssocValue<TKey, TValue>
+     */
+    public function join(AssocValue $other): AssocValue;
+
+    /**
+     * Joins other AssocValue by replacing values in self of the same keys from other
+     *
+     * @phpstan-param AssocValue<TKey, TValue> $other
+     * @phpstan-return AssocValue<TKey, TValue>
+     */
+    public function replace(AssocValue $other): AssocValue;
 
     /**
      * @template TNewValue
