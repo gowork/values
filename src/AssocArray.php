@@ -226,11 +226,11 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @phpstan-return IterableValue<TValue, TKey>
+     * @phpstan-return AssocValue<int|string, TKey>
      */
-    public function flip(): IterableValue
+    public function flip(): AssocValue
     {
-        return $this->toIterableValue()->flip();
+        return new self(new Flip($this->items));
     }
 
     /**

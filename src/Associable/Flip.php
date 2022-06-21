@@ -6,9 +6,9 @@ use GW\Value\Associable;
 use function array_flip;
 
 /**
- * @template TKey of int|string
+ * @template TKey
  * @template TValue of int|string
- * @implements Associable<TKey,TValue>
+ * @implements Associable<int|string,TValue>
  */
 final class Flip implements Associable
 {
@@ -23,7 +23,7 @@ final class Flip implements Associable
         $this->associable = $associable;
     }
 
-    /** @return array<TKey,TValue> */
+    /** @return array<int|string,TValue> */
     public function toAssocArray(): array
     {
         return array_flip($this->associable->toAssocArray());

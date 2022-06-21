@@ -145,9 +145,9 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess, 
     public function withoutElement($value): AssocValue;
 
     /**
-     * @phpstan-return IterableValue<TValue, TKey>
+     * @phpstan-return AssocValue<int|string, TKey>
      */
-    public function flip(): IterableValue;
+    public function flip(): AssocValue;
 
     /**
      * @param TKey $keyA
