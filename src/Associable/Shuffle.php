@@ -24,9 +24,16 @@ final class Shuffle implements Associable
     /** @return array<TKey,TValue> */
     public function toAssocArray(): array
     {
-        $items = $this->associable->toAssocArray();
-        shuffle($items);
+        $old = $this->associable->toAssocArray();
+        $new = [];
 
-        return $items;
+        $keys = array_keys($old);
+        shuffle($keys);
+
+        foreach ($keys as $key) {
+            $new[$key] = $old[$key];
+        }
+
+        return $new;
     }
 }
