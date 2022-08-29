@@ -72,13 +72,24 @@ final class AssocArraySpec extends ObjectBehavior
     {
         $shuffled = $this->shuffle();
         $shuffled->shouldNotBe($this);
-        $shuffled->toAssocArray()->shouldNotBeLike(
+        $shuffled->toAssocArray()->shouldNotBeEqualTo(
             [
                 'a' => 'alf',
                 'b' => 'berni',
                 'c' => 'clifford',
             ]
         );
+    }
+
+    function it_should_preserve_array_keys_when_shuffle()
+    {
+        $shuffled = $this->shuffle();
+        $shuffled->shouldNotBe($this);
+
+        $assoc = $shuffled->toAssocArray();
+        $assoc->shouldHaveKeyWithValue('a', 'alf');
+        $assoc->shouldHaveKeyWithValue('b', 'berni');
+        $assoc->shouldHaveKeyWithValue('c', 'clifford');
     }
 
     function it_return_unique_values()
