@@ -14,12 +14,12 @@ final class MapKeys implements Associable
 {
     /** @var Associable<TKey,TValue> */
     private Associable $associable;
-    /** @var callable(TKey $key, TValue $value=):TNewKey */
+    /** @var callable(TKey $key, TValue $value):TNewKey */
     private $transformer;
 
     /**
      * @param Associable<TKey,TValue> $associable
-     * @param callable(TKey $key, TValue $value=):TNewKey $transformer
+     * @param callable(TKey $key, TValue $value):TNewKey $transformer
      */
     public function __construct(Associable $associable, callable $transformer)
     {

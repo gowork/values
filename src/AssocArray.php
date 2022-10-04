@@ -49,7 +49,7 @@ final class AssocArray implements AssocValue
 
     /**
      * @template TNewValue
-     * @phpstan-param callable(TValue $value, TKey $key=):TNewValue $transformer
+     * @phpstan-param callable(TValue $value, TKey $key):TNewValue $transformer
      * @phpstan-return AssocArray<TKey, TNewValue>
      */
     public function map(callable $transformer): AssocArray
@@ -67,7 +67,7 @@ final class AssocArray implements AssocValue
 
     /**
      * @template TNewKey of int|string
-     * @param callable(TKey $key, TValue $value=): TNewKey $transformer
+     * @param callable(TKey $key, TValue $value): TNewKey $transformer
      * @phpstan-return AssocArray<TNewKey, TValue>
      */
     public function mapKeys(callable $transformer): AssocArray
@@ -127,7 +127,7 @@ final class AssocArray implements AssocValue
     }
 
     /**
-     * @phpstan-param callable(TValue $value, TKey $key=):void $callback
+     * @phpstan-param callable(TValue $value, TKey $key):void $callback
      * @phpstan-return AssocArray<TKey, TValue>
      */
     public function each(callable $callback): AssocArray
