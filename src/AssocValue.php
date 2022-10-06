@@ -17,7 +17,7 @@ use ArrayAccess;
 interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess, Associable
 {
     /**
-     * @phpstan-param callable(TValue, TKey $key=):void $callback
+     * @phpstan-param callable(TValue, TKey $key):void $callback
      * @phpstan-return AssocValue<TKey, TValue>
      */
     public function each(callable $callback): AssocValue;
@@ -41,7 +41,7 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess, 
 
     /**
      * @template TNewValue
-     * @param callable(TValue,TKey $key=):TNewValue $transformer
+     * @param callable(TValue,TKey $key):TNewValue $transformer
      * @phpstan-return AssocValue<TKey, TNewValue>
      */
     public function map(callable $transformer): AssocValue;
@@ -107,7 +107,7 @@ interface AssocValue extends Value, Collection, IteratorAggregate, ArrayAccess, 
 
     /**
      * @template TNewKey of int|string
-     * @phpstan-param callable(TKey $key, TValue $value=): TNewKey $transformer
+     * @phpstan-param callable(TKey $key, TValue $value): TNewKey $transformer
      * @phpstan-return AssocValue<TNewKey, TValue>
      */
     public function mapKeys(callable $transformer): AssocValue;

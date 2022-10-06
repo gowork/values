@@ -33,7 +33,7 @@ interface IterableValue extends IteratorAggregate
 
     /**
      * @template TNewValue
-     * @param callable(TValue,TKey $key=):TNewValue $transformer
+     * @param callable(TValue,TKey $key):TNewValue $transformer
      * @phpstan-return IterableValue<TKey, TNewValue>
      */
     public function map(callable $transformer): IterableValue;

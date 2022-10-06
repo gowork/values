@@ -1347,7 +1347,7 @@ foreach ($array as $key => $value) {
 ```php
 <?php
 /**
- * @phpstan-param callable(TValue, TKey $key=):void $callback
+ * @phpstan-param callable(TValue, TKey $key):void $callback
  * @phpstan-return AssocValue<TKey, TValue>
  */
 public function each(callable $callback): AssocValue;
@@ -1391,7 +1391,7 @@ public function filterEmpty(): AssocValue;
 <?php
 /**
  * @template TNewValue
- * @param callable(TValue,TKey $key=):TNewValue $transformer
+ * @param callable(TValue,TKey $key):TNewValue $transformer
  * @phpstan-return AssocValue<TKey, TNewValue>
  */
 public function map(callable $transformer): AssocValue;
@@ -1532,7 +1532,7 @@ public function values(): ArrayValue;
 <?php
 /**
  * @template TNewKey of int|string
- * @phpstan-param callable(TKey $key, TValue $value=): TNewKey $transformer
+ * @phpstan-param callable(TKey $key, TValue $value): TNewKey $transformer
  * @phpstan-return AssocValue<TNewKey, TValue>
  */
 public function mapKeys(callable $transformer): AssocValue;
@@ -3916,7 +3916,7 @@ array (
 <?php
 /**
  * @template TNewValue
- * @param callable(TValue,TKey $key=):TNewValue $transformer
+ * @param callable(TValue,TKey $key):TNewValue $transformer
  * @phpstan-return IterableValue<TKey, TNewValue>
  */
 public function map(callable $transformer): IterableValue;
