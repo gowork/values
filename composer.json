@@ -27,7 +27,7 @@
         "phpbench/phpbench": "@dev",
         "phpunit/phpunit": "^9.0",
         "phpstan/extension-installer": "^1.0",
-        "vimeo/psalm": "^4.0",
+        "vimeo/psalm": "^4.0 || ^5.0",
         "friends-of-phpspec/phpspec-code-coverage": "^6.0",
         "squizlabs/php_codesniffer": "^3.6"
     },
