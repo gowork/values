@@ -4,8 +4,5 @@ namespace GW\Value;
 
 interface Numberable
 {
-    /**
-     * @return int|float
-     */
-    public function toNumber();
+    public function toNumber(): float|int;
 }

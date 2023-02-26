@@ -19,8 +19,7 @@ final class Max implements Numberable
         $this->numbers = new Map($numbers, new ToScalarNumber());
     }
 
-    /** @return int|float */
-    public function toNumber()
+    public function toNumber(): float|int
     {
         $numbers = $this->numbers->toArray();
         if (count($numbers) === 0) {

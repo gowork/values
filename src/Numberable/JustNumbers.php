@@ -15,8 +15,8 @@ final class JustNumbers implements Arrayable
     /** @var Arrayable<Numberable> */
     private Arrayable $numbers;
 
-    /** @param int|float|numeric-string|Numberable ...$numbers */
-    public function __construct(...$numbers)
+    /** @param float|int|numeric-string|Numberable ...$numbers */
+    public function __construct(float|int|string|Numberable ...$numbers)
     {
         $this->numbers = new Map(new JustArray($numbers), new ToNumberable());
     }

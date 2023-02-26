@@ -6,17 +6,13 @@ use GW\Value\Numberable;
 
 final class Add implements Numberable
 {
-    private Numberable $leftTerm;
-    private Numberable $rightTerm;
-
-    public function __construct(Numberable $leftTerm, Numberable $rightTerm)
-    {
-        $this->leftTerm = $leftTerm;
-        $this->rightTerm = $rightTerm;
+    public function __construct(
+        private Numberable $leftTerm,
+        private Numberable $rightTerm,
+    ) {
     }
 
-    /** @return int|float */
-    public function toNumber()
+    public function toNumber(): float|int
     {
         return $this->leftTerm->toNumber() + $this->rightTerm->toNumber();
     }

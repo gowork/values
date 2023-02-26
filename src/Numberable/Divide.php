@@ -7,17 +7,13 @@ use GW\Value\Numberable;
 
 final class Divide implements Numberable
 {
-    private Numberable $dividend;
-    private Numberable $divisor;
-
-    public function __construct(Numberable $dividend, Numberable $divisor)
-    {
-        $this->dividend = $dividend;
-        $this->divisor = $divisor;
+    public function __construct(
+        private Numberable $dividend,
+        private Numberable $divisor,
+    ) {
     }
 
-    /** @return int|float */
-    public function toNumber()
+    public function toNumber(): float|int
     {
         $divisor = $this->divisor->toNumber();
 

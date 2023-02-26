@@ -13,13 +13,10 @@ use Traversable;
 
 final class PlainNumbersArray implements NumbersArray
 {
-    /** @var ArrayValue<NumberValue> */
-    private ArrayValue $numbers;
-
-    /** @param ArrayValue<NumberValue> $numbers */
-    public function __construct(ArrayValue $numbers)
-    {
-        $this->numbers = $numbers;
+    public function __construct(
+        /** @var ArrayValue<NumberValue> */
+        private ArrayValue $numbers,
+    ) {
     }
 
     /** @param Arrayable<NumberValue> $numbers */
@@ -28,8 +25,8 @@ final class PlainNumbersArray implements NumbersArray
         return new self(new PlainArray($numbers));
     }
 
-    /** @param int|float|numeric-string|Numberable ...$numbers */
-    public static function fromNumbers(...$numbers): self
+    /** @param float|int|numeric-string|Numberable ...$numbers */
+    public static function fromNumbers(float|int|string|Numberable ...$numbers): self
     {
         return self::fromArrayable(new NumberValues(...$numbers));
     }
@@ -205,7 +202,7 @@ final class PlainNumbersArray implements NumbersArray
     /**
      * @param int $offset
      */
-    public function offsetGet($offset): NumberValue
+    public function offsetGet($offset): ?NumberValue
     {
         return $this->numbers->offsetGet($offset);
     }
@@ -262,7 +259,7 @@ final class PlainNumbersArray implements NumbersArray
 
     /**
      * @param ArrayValue<NumberValue> $other
-     * @param (callable(NumberValue,NumberValue):int)|null $comparator
+     * @param (callable(NumberValue,NumberValue):int<-1,1>)|null $comparator
      */
     public function diff(ArrayValue $other, ?callable $comparator = null): NumbersArray
     {
@@ -291,9 +288,9 @@ final class PlainNumbersArray implements NumbersArray
 
     /**
      * @param callable(NumberValue $reduced, NumberValue $item):NumberValue $transformer
-     * @param int|float|numeric-string|Numberable $start
+     * @param float|int|Numberable $start
      */
-    public function reduceNumber(callable $transformer, $start): NumberValue
+    public function reduceNumber(callable $transformer, float|int|Numberable $start): NumberValue
     {
         return $this->numbers->reduce($transformer, Wrap::number($start));
     }

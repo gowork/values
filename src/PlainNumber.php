@@ -26,8 +26,8 @@ final class PlainNumber implements NumberValue
         $this->number = $number;
     }
 
-    /** @param int|float|numeric-string|Numberable $number */
-    public static function from($number): self
+    /** @param float|int|numeric-string|Numberable $number */
+    public static function from(float|int|string|Numberable $number): self
     {
         return new self(JustNumber::wrap($number));
     }
@@ -37,44 +37,47 @@ final class PlainNumber implements NumberValue
         return Wrap::string(number_format($this->number->toNumber(), $decimals, $separator, $thousandsSeparator));
     }
 
-    /** @param int|float|numeric-string|Numberable $other */
-    public function compare($other): int
+    /**
+     * @param float|int|numeric-string|Numberable $other
+     * @return int<-1,1>
+     */
+    public function compare(float|int|string|Numberable $other): int
     {
         return $this->toNumber() <=> JustNumber::wrap($other)->toNumber();
     }
 
-    /** @param int|float|numeric-string|Numberable $other */
-    public function equals($other): bool
+    /** @param float|int|numeric-string|Numberable $other */
+    public function equals(float|int|string|Numberable $other): bool
     {
         return $this->compare($other) === 0;
     }
 
-    /** @param int|float|numeric-string|Numberable $other */
-    public function add($other): NumberValue
+    /** @param float|int|numeric-string|Numberable $other */
+    public function add(float|int|string|Numberable $other): NumberValue
     {
         return new self(new Add($this->number, JustNumber::wrap($other)));
     }
 
-    /** @param int|float|numeric-string|Numberable $other */
-    public function subtract($other): NumberValue
+    /** @param float|int|numeric-string|Numberable $other */
+    public function subtract(float|int|string|Numberable $other): NumberValue
     {
         return new self(new Subtract($this->number, JustNumber::wrap($other)));
     }
 
-    /** @param int|float|numeric-string|Numberable $other */
-    public function multiply($other): NumberValue
+    /** @param float|int|numeric-string|Numberable $other */
+    public function multiply(float|int|string|Numberable $other): NumberValue
     {
         return new self(new Multiply($this->number, JustNumber::wrap($other)));
     }
 
-    /** @param int|float|numeric-string|Numberable $other */
-    public function divide($other): NumberValue
+    /** @param float|int|numeric-string|Numberable $other */
+    public function divide(float|int|string|Numberable $other): NumberValue
     {
         return new self(new Divide($this->number, JustNumber::wrap($other)));
     }
 
-    /** @param int|float|numeric-string|Numberable $divider */
-    public function modulo($divider): NumberValue
+    /** @param float|int|numeric-string|Numberable $divider */
+    public function modulo(float|int|string|Numberable $divider): NumberValue
     {
         return new self(new Modulo($this->number, JustNumber::wrap($divider)));
     }
@@ -110,8 +113,7 @@ final class PlainNumber implements NumberValue
         return $this->toFloat() === 0.0;
     }
 
-    /** @return int|float */
-    public function toNumber()
+    public function toNumber(): float|int
     {
         return $this->number->toNumber();
     }

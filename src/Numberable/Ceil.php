@@ -7,11 +7,9 @@ use function ceil;
 
 final class Ceil implements Numberable
 {
-    private Numberable $numberable;
-
-    public function __construct(Numberable $numberable)
-    {
-        $this->numberable = $numberable;
+    public function __construct(
+        private Numberable $numberable,
+    ) {
     }
 
     public function toNumber(): float

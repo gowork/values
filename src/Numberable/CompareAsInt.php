@@ -6,11 +6,9 @@ use GW\Value\Numberable;
 
 final class CompareAsInt
 {
-    private int $direction;
-
-    private function __construct(int $direction)
-    {
-        $this->direction = $direction;
+    private function __construct(
+        private int $direction,
+    ) {
     }
 
     public static function asc(): self

@@ -6,11 +6,7 @@ use GW\Value\Numberable;
 
 final class SumReducer
 {
-    /**
-     * @param int|float $sum
-     * @return int|float
-     */
-    public function __invoke($sum, Numberable $next)
+    public function __invoke(float|int $sum, Numberable $next): float|int
     {
         return $sum + $next->toNumber();
     }

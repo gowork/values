@@ -67,9 +67,9 @@ final class Wrap
     }
 
     /**
-     * @param int|float|numeric-string|Numberable $number
+     * @param float|int|numeric-string|Numberable $number
      */
-    public static function number($number): NumberValue
+    public static function number(float|int|string|Numberable $number): NumberValue
     {
         if ($number instanceof NumberValue) {
             return $number;
@@ -79,9 +79,9 @@ final class Wrap
     }
 
     /**
-     * @param array<int,int|float|numeric-string>|Arrayable<NumberValue>|NumbersArray $numbers
+     * @param array<int,int|float>|Arrayable<NumberValue>|NumbersArray $numbers
      */
-    public static function numbersArray($numbers): NumbersArray
+    public static function numbersArray(array|Arrayable|NumbersArray $numbers): NumbersArray
     {
         if ($numbers instanceof NumbersArray) {
             return $numbers;

@@ -348,6 +348,7 @@ array (
 ```php
 <?php
 /**
+ * @param int<1, max> $size
  * @phpstan-return ArrayValue<array<int, TValue>>
  */
 public function chunk(int $size): ArrayValue;
@@ -650,9 +651,9 @@ public function offsetExists($offset): bool;
 <?php
 /**
  * @param int $offset
- * @phpstan-return TValue
+ * @return ?TValue
  */
-public function offsetGet($offset);
+public function offsetGet($offset): mixed;
 ```
 
 ### ArrayValue::offsetSet
@@ -946,7 +947,7 @@ array (
 <?php
 /**
  * @phpstan-param ArrayValue<TValue> $other
- * @param (callable(TValue,TValue):int)|null $comparator
+ * @param (callable(TValue,TValue):int<-1,1>)|null $comparator
  * @phpstan-return ArrayValue<TValue>
  */
 public function diff(ArrayValue $other, ?callable $comparator = null): ArrayValue;
@@ -1152,6 +1153,14 @@ array (
 <?php
 
 public function toStringsArray(): StringsArray;
+```
+
+### ArrayValue::toNumbersArray
+
+```php
+<?php
+
+public function toNumbersArray(): NumbersArray;
 ```
 
 ### ArrayValue::isEmpty
@@ -1443,10 +1452,10 @@ public function offsetExists($offset): bool;
 ```php
 <?php
 /**
- * @phpstan-param TKey $offset
+ * @param TKey $offset
  * @return ?TValue
  */
-public function offsetGet($offset);
+public function offsetGet($offset): mixed;
 ```
 
 ### AssocValue::offsetSet
@@ -2430,7 +2439,7 @@ public function positionLast($needle): ?int;
 <?php
 /**
  * @param string|StringValue $pattern
- * @return ArrayValue<array<int, string>>
+ * @return ArrayValue<array<int|string, string>>
  */
 public function matchAllPatterns($pattern): ArrayValue;
 ```
@@ -2782,7 +2791,7 @@ public function offsetExists($offset): bool;
 /**
  * @param int $offset
  */
-public function offsetGet($offset): StringValue;
+public function offsetGet($offset): ?StringValue;
 ```
 
 ### StringsArray::offsetSet
@@ -2853,7 +2862,7 @@ public function splice(int $offset, int $length, ?StringsArray $replacement = nu
 ```php
 <?php
 /**
- * @param (callable(StringValue, StringValue):int)|null $comparator
+ * @param (callable(StringValue, StringValue):int<-1,1>)|null $comparator
  */
 public function diff(StringsArray $other, ?callable $comparator = null): StringsArray;
 ```
@@ -3657,6 +3666,7 @@ array (
 ```php
 <?php
 /**
+ * @param int<1, max> $size
  * @phpstan-return ArrayValue<array<int, StringValue>>
  */
 public function chunk(int $size): ArrayValue;
@@ -3715,7 +3725,7 @@ public function positionLast($needle): ?int;
 <?php
 /**
  * @param string|StringValue $pattern
- * @return ArrayValue<array<int, string>>
+ * @return ArrayValue<array<int|string, string>>
  */
 public function matchAllPatterns($pattern): ArrayValue;
 ```
@@ -4463,6 +4473,853 @@ array (
 ```
 
 ### IterableValue::getIterator
+
+*(definition not available)*
+
+## NumberValue
+
+### NumberValue::compare
+
+```php
+<?php
+/**
+ * @param float|int|numeric-string|Numberable $other
+ * @return int<-1,1>
+ */
+public function compare(float|int|string|Numberable $other): int;
+```
+
+### NumberValue::equals
+
+```php
+<?php
+/**
+ * @param float|int|numeric-string|Numberable $other
+ */
+public function equals(float|int|string|Numberable $other): bool;
+```
+
+### NumberValue::add
+
+```php
+<?php
+/**
+ * @param float|int|numeric-string|Numberable $other
+ */
+public function add(float|int|string|Numberable $other): NumberValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Numberable\JustFloat;
+use GW\Value\Numberable\JustNumbers;
+use GW\Value\Numberable\Sum;
+use GW\Value\Wrap;
+
+$number = Wrap::number(100);
+
+echo "100 + 50 = ";
+echo $number->add(50)->toNumber();
+echo "\n";
+
+echo "100 + 11.22 = ";
+echo $number->add(new JustFloat(11.22))->toNumber();
+echo "\n";
+
+echo "100 + (10 + 20 + 30) = ";
+echo $number->add(new Sum(new JustNumbers(10, 20, 30)))->toNumber();
+echo "\n";
+```
+
+```
+100 + 50 = 150
+100 + 11.22 = 111.22
+100 + (10 + 20 + 30) = 160
+```
+
+### NumberValue::subtract
+
+```php
+<?php
+/**
+ * @param float|int|numeric-string|Numberable $other
+ */
+public function subtract(float|int|string|Numberable $other): NumberValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Numberable\JustFloat;
+use GW\Value\Numberable\JustNumbers;
+use GW\Value\Numberable\Sum;
+use GW\Value\Wrap;
+
+$number = Wrap::number(100);
+
+echo "100 - 50 = ";
+echo $number->subtract(50)->toNumber();
+echo "\n";
+
+echo "100 - 11.22 = ";
+echo $number->subtract(new JustFloat(11.11))->toNumber();
+echo "\n";
+
+echo "100 - (10 + 20 + 30) = ";
+echo $number->subtract(new Sum(new JustNumbers(10, 20, 30)))->toNumber();
+echo "\n";
+```
+
+```
+100 - 50 = 50
+100 - 11.22 = 88.89
+100 - (10 + 20 + 30) = 40
+```
+
+### NumberValue::multiply
+
+```php
+<?php
+/**
+ * @param float|int|numeric-string|Numberable $other
+ */
+public function multiply(float|int|string|Numberable $other): NumberValue;
+```
+
+### NumberValue::divide
+
+```php
+<?php
+/**
+ * @param float|int|numeric-string|Numberable $other
+ */
+public function divide(float|int|string|Numberable $other): NumberValue;
+```
+
+### NumberValue::abs
+
+```php
+<?php
+
+public function abs(): NumberValue;
+```
+
+### NumberValue::modulo
+
+```php
+<?php
+/**
+ * @param float|int|numeric-string|Numberable $divider
+ */
+public function modulo(float|int|string|Numberable $divider): NumberValue;
+```
+
+### NumberValue::round
+
+```php
+<?php
+
+public function round(int $precision = 0, ?int $roundMode = null): NumberValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+echo "round(22.55, 1) = ";
+echo Wrap::number(22.55)->round(1)->toNumber();
+echo "\n";
+```
+
+```
+round(22.55, 1) = 22.6
+```
+
+### NumberValue::floor
+
+```php
+<?php
+
+public function floor(): NumberValue;
+```
+
+### NumberValue::ceil
+
+```php
+<?php
+
+public function ceil(): NumberValue;
+```
+
+### NumberValue::calculate
+
+```php
+<?php
+/** @param callable(int|float):(int|float|Numberable) $formula */
+public function calculate(callable $formula): NumberValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Numberable;
+use GW\Value\Numberable\JustInteger;
+use GW\Value\Numberable\JustNumber;
+use GW\Value\Numberable\Multiply;
+use GW\Value\Wrap;
+
+$number = Wrap::number(100);
+
+echo "100 * 12 = ";
+echo $number
+    ->calculate(fn($number): Numberable => new Multiply(new JustNumber($number), new JustInteger(12)))
+    ->toNumber();
+echo "\n";
+
+echo "cos(100) = ";
+echo $number->calculate('cos')->toNumber();
+echo "\n";
+
+echo "√100 = ";
+echo $number->calculate('sqrt')->toNumber();
+echo "\n";
+```
+
+```
+100 * 12 = 1200
+cos(100) = 0.86231887228768
+√100 = 10
+```
+
+### NumberValue::isEmpty
+
+```php
+<?php
+/** @return bool true when 0 or 0.0, false otherwise */
+public function isEmpty(): bool;
+```
+
+### NumberValue::format
+
+```php
+<?php
+
+public function format(int $decimals = 0, string $separator = '.', string $thousandsSeparator = ','): StringValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$number = Wrap::number(1000.111111111);
+
+echo $number->format(2)->toString();
+echo "\n";
+
+echo $number->format(3, '.', ' ')->toString();
+echo "\n";
+```
+
+```
+1,000.11
+1 000.111
+```
+
+### NumberValue::toStringValue
+
+```php
+<?php
+
+public function toStringValue(): StringValue;
+```
+
+### NumberValue::toInteger
+
+```php
+<?php
+
+public function toInteger(): int;
+```
+
+### NumberValue::toFloat
+
+```php
+<?php
+
+public function toFloat(): float;
+```
+
+### NumberValue::__toString
+
+```php
+<?php
+
+public function __toString(): string;
+```
+
+### NumberValue::toNumber
+
+```php
+<?php
+
+public function toNumber(): float|int;
+```
+
+
+## NumbersArray
+
+### NumbersArray::sum
+
+```php
+<?php
+
+public function sum(): NumberValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$numbers = Wrap::numbersArray([1, 2.5, 5, 10]);
+
+echo "1 + 2.5 + 5 + 10 = ";
+echo $numbers->sum()->toNumber();
+echo "\n";
+```
+
+```
+1 + 2.5 + 5 + 10 = 18.5
+```
+
+### NumbersArray::average
+
+```php
+<?php
+
+public function average(): NumberValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$numbers = Wrap::numbersArray([1, 3, 5, 10]);
+
+echo "avg(1, 3, 5, 10) = ";
+echo $numbers->average()->toNumber();
+echo "\n";
+```
+
+```
+avg(1, 3, 5, 10) = 4.75
+```
+
+### NumbersArray::min
+
+```php
+<?php
+
+public function min(): NumberValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$numbers = Wrap::numbersArray([100, 10, 50, 80]);
+
+echo "min(100, 10, 50, 80) = ";
+echo $numbers->min()->toNumber();
+echo "\n";
+```
+
+```
+min(100, 10, 50, 80) = 10
+```
+
+### NumbersArray::max
+
+```php
+<?php
+
+public function max(): NumberValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$numbers = Wrap::numbersArray([100, 10, 50, 80]);
+
+echo "max(100, 10, 50, 80) = ";
+echo $numbers->max()->toNumber();
+echo "\n";
+```
+
+```
+max(100, 10, 50, 80) = 100
+```
+
+### NumbersArray::each
+
+```php
+<?php
+/**
+ * @param callable(NumberValue):void $callback
+ */
+public function each(callable $callback): NumbersArray;
+```
+
+### NumbersArray::unique
+
+```php
+<?php
+/**
+ * @param (callable(NumberValue $valueA, NumberValue $valueB):int)|null $comparator
+ */
+public function unique(?callable $comparator = null): NumbersArray;
+```
+
+### NumbersArray::toArray
+
+```php
+<?php
+/** @return NumberValue[] */
+public function toArray(): array;
+```
+
+### NumbersArray::toNativeNumbers
+
+```php
+<?php
+/** @return array<int|float> */
+public function toNativeNumbers(): array;
+```
+
+### NumbersArray::filter
+
+```php
+<?php
+/**
+ * @param callable(NumberValue):bool $filter
+ */
+public function filter(callable $filter): NumbersArray;
+```
+
+### NumbersArray::filterEmpty
+
+```php
+<?php
+
+public function filterEmpty(): NumbersArray;
+```
+
+### NumbersArray::map
+
+```php
+<?php
+/**
+ * @template TNewValue
+ * @param callable(NumberValue):TNewValue $transformer
+ * @return ArrayValue<TNewValue>
+ */
+public function map(callable $transformer): ArrayValue;
+```
+
+### NumbersArray::flatMap
+
+```php
+<?php
+/**
+ * @template TNewValue
+ * @param callable(NumberValue):iterable<TNewValue> $transformer
+ * @return ArrayValue<TNewValue>
+ */
+public function flatMap(callable $transformer): ArrayValue;
+```
+
+### NumbersArray::groupBy
+
+```php
+<?php
+/**
+ * @template TNewKey of int|string
+ * @param callable(NumberValue):TNewKey $reducer
+ * @return AssocValue<TNewKey, ArrayValue<NumberValue>>
+ */
+public function groupBy(callable $reducer): AssocValue;
+```
+
+### NumbersArray::sort
+
+```php
+<?php
+
+public function sort(callable $comparator): NumbersArray;
+```
+
+### NumbersArray::shuffle
+
+```php
+<?php
+
+public function shuffle(): NumbersArray;
+```
+
+### NumbersArray::reverse
+
+```php
+<?php
+
+public function reverse(): NumbersArray;
+```
+
+### NumbersArray::unshift
+
+```php
+<?php
+/**
+ * @param NumberValue $value
+ */
+public function unshift($value): NumbersArray;
+```
+
+### NumbersArray::shift
+
+```php
+<?php
+/**
+ * @param NumberValue|null $value
+ */
+public function shift(&$value = null): NumbersArray;
+```
+
+### NumbersArray::push
+
+```php
+<?php
+/**
+ * @param NumberValue $value
+ */
+public function push($value): NumbersArray;
+```
+
+### NumbersArray::pop
+
+```php
+<?php
+/**
+ * @param NumberValue|null $value
+ */
+public function pop(&$value = null): NumbersArray;
+```
+
+### NumbersArray::offsetExists
+
+```php
+<?php
+
+public function offsetExists($offset): bool;
+```
+
+### NumbersArray::offsetGet
+
+```php
+<?php
+
+public function offsetGet($offset): ?NumberValue;
+```
+
+### NumbersArray::offsetSet
+
+```php
+<?php
+
+public function offsetSet($offset, $value): void;
+```
+
+### NumbersArray::offsetUnset
+
+```php
+<?php
+
+public function offsetUnset($offset): void;
+```
+
+### NumbersArray::join
+
+```php
+<?php
+/**
+ * @param ArrayValue<NumberValue> $other
+ */
+public function join(ArrayValue $other): NumbersArray;
+```
+
+### NumbersArray::slice
+
+```php
+<?php
+
+public function slice(int $offset, ?int $length = null): NumbersArray;
+```
+
+### NumbersArray::skip
+
+```php
+<?php
+
+public function skip(int $length): NumbersArray;
+```
+
+### NumbersArray::take
+
+```php
+<?php
+
+public function take(int $length): NumbersArray;
+```
+
+### NumbersArray::splice
+
+```php
+<?php
+/**
+ * @param ArrayValue<NumberValue>|null $replacement
+ */
+public function splice(int $offset, int $length, ?ArrayValue $replacement = null): NumbersArray;
+```
+
+### NumbersArray::diff
+
+```php
+<?php
+/**
+ * @param ArrayValue<NumberValue> $other
+ * @param (callable(NumberValue,NumberValue):int)|null $comparator
+ */
+public function diff(ArrayValue $other, ?callable $comparator = null): NumbersArray;
+```
+
+### NumbersArray::intersect
+
+```php
+<?php
+/**
+ * @param ArrayValue<NumberValue> $other
+ * @param (callable(NumberValue,NumberValue):int)|null $comparator
+ */
+public function intersect(ArrayValue $other, ?callable $comparator = null): NumbersArray;
+```
+
+### NumbersArray::reduce
+
+```php
+<?php
+/**
+ * @template TNewValue
+ * @param callable(TNewValue, NumberValue):TNewValue $transformer
+ * @param TNewValue $start
+ * @return TNewValue
+ */
+public function reduce(callable $transformer, $start);
+```
+
+### NumbersArray::reduceNumber
+
+```php
+<?php
+/**
+ * @param callable(NumberValue $reduced, NumberValue $item):NumberValue $transformer
+ */
+public function reduceNumber(callable $transformer, float|int|Numberable $start): NumberValue;
+```
+
+#### Examples
+
+```php
+<?php
+
+use GW\Value\NumberValue;
+use GW\Value\Wrap;
+
+$numbers = Wrap::numbersArray([1, 2, 3, 4, 5]);
+
+echo "5! = ";
+echo $numbers
+    ->reduceNumber(
+        fn(NumberValue $factorial, NumberValue $next): NumberValue => $factorial->multiply($next),
+        1
+    )
+    ->toNumber();
+echo "\n";
+```
+
+```
+5! = 120
+```
+
+### NumbersArray::implode
+
+```php
+<?php
+
+public function implode(string $glue): StringValue;
+```
+
+### NumbersArray::notEmpty
+
+```php
+<?php
+
+public function notEmpty(): NumbersArray;
+```
+
+### NumbersArray::toAssocValue
+
+```php
+<?php
+/**
+ * @return AssocValue<int, NumberValue>
+ */
+public function toAssocValue(): AssocValue;
+```
+
+### NumbersArray::toStringsArray
+
+```php
+<?php
+
+public function toStringsArray(): StringsArray;
+```
+
+### NumbersArray::first
+
+```php
+<?php
+
+public function first(): ?NumberValue;
+```
+
+### NumbersArray::last
+
+```php
+<?php
+
+public function last(): ?NumberValue;
+```
+
+### NumbersArray::find
+
+```php
+<?php
+/**
+ * @param callable(NumberValue):bool $filter
+ */
+public function find(callable $filter): ?NumberValue;
+```
+
+### NumbersArray::findLast
+
+```php
+<?php
+/**
+ * @param callable(NumberValue):bool $filter
+ */
+public function findLast(callable $filter): ?NumberValue;
+```
+
+### NumbersArray::hasElement
+
+```php
+<?php
+/**
+ * @param NumberValue $element
+ */
+public function hasElement($element): bool;
+```
+
+### NumbersArray::any
+
+```php
+<?php
+/**
+ * @param callable(NumberValue):bool $filter
+ */
+public function any(callable $filter): bool;
+```
+
+### NumbersArray::every
+
+```php
+<?php
+/**
+ * @param callable(NumberValue):bool $filter
+ */
+public function every(callable $filter): bool;
+```
+
+### NumbersArray::chunk
+
+```php
+<?php
+/**
+ * @param int<1, max> $size
+ * @phpstan-return ArrayValue<array<int, TValue>>
+ */
+public function chunk(int $size): ArrayValue;
+```
+
+### NumbersArray::toNumbersArray
+
+```php
+<?php
+
+public function toNumbersArray(): NumbersArray;
+```
+
+### NumbersArray::isEmpty
+
+```php
+<?php
+
+public function isEmpty(): bool;
+```
+
+### NumbersArray::count
+
+```php
+<?php
+
+public function count(): int;
+```
+
+### NumbersArray::getIterator
 
 *(definition not available)*
 

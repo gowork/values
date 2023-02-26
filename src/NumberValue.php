@@ -7,44 +7,44 @@ interface NumberValue extends Value, Numberable
     // comparators
 
     /**
-     * @param int|float|numeric-string|Numberable $other
-     * @return int {-1, 0, 1}
+     * @param float|int|numeric-string|Numberable $other
+     * @return int<-1,1>
      */
-    public function compare($other): int;
+    public function compare(float|int|string|Numberable $other): int;
 
     /**
-     * @param int|float|numeric-string|Numberable $other
+     * @param float|int|numeric-string|Numberable $other
      */
-    public function equals($other): bool;
+    public function equals(float|int|string|Numberable $other): bool;
 
     // basic math
 
     /**
-     * @param int|float|numeric-string|Numberable $other
+     * @param float|int|numeric-string|Numberable $other
      */
-    public function add($other): NumberValue;
+    public function add(float|int|string|Numberable $other): NumberValue;
 
     /**
-     * @param int|float|numeric-string|Numberable $other
+     * @param float|int|numeric-string|Numberable $other
      */
-    public function subtract($other): NumberValue;
+    public function subtract(float|int|string|Numberable $other): NumberValue;
 
     /**
-     * @param int|float|numeric-string|Numberable $other
+     * @param float|int|numeric-string|Numberable $other
      */
-    public function multiply($other): NumberValue;
+    public function multiply(float|int|string|Numberable $other): NumberValue;
 
     /**
-     * @param int|float|numeric-string|Numberable $other
+     * @param float|int|numeric-string|Numberable $other
      */
-    public function divide($other): NumberValue;
+    public function divide(float|int|string|Numberable $other): NumberValue;
 
     public function abs(): NumberValue;
 
     /**
-     * @param int|float|numeric-string|Numberable $divider
+     * @param float|int|numeric-string|Numberable $divider
      */
-    public function modulo($divider): NumberValue;
+    public function modulo(float|int|string|Numberable $divider): NumberValue;
 
     // rounding
 

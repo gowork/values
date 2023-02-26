@@ -3,26 +3,30 @@
 namespace GW\Value\Numberable;
 
 use GW\Value\Numberable;
+use function is_string;
 
 final class JustNumber implements Numberable
 {
-    /** @var int|float */
-    private $number;
-
-    /** @param int|float|numeric-string $number */
-    public function __construct($number)
-    {
-        $this->number = $number + 0;
+    public function __construct(
+        private float|int $number,
+    ) {
     }
 
-    /** @param int|float|numeric-string|Numberable $number */
-    public static function wrap($number): Numberable
+    /** @param float|int|numeric-string|Numberable $number */
+    public static function wrap(float|int|string|Numberable $number): Numberable
     {
-        return $number instanceof Numberable ? $number : new self($number);
+        if (is_string($number)) {
+            return new NumericString($number);
+        }
+
+        if ($number instanceof Numberable) {
+            return $number;
+        }
+
+        return new self($number);
     }
 
-    /** @return int|float */
-    public function toNumber()
+    public function toNumber(): float|int
     {
         return $this->number;
     }

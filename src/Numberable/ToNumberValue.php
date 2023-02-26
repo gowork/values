@@ -14,8 +14,7 @@ final class ToNumberValue
         $this->toNumberable = new ToNumberable();
     }
 
-    /** @param mixed $number */
-    public function __invoke($number): NumberValue
+    public function __invoke(mixed $number): NumberValue
     {
         $numberable = ($this->toNumberable)($number);
 

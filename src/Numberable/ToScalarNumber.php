@@ -6,8 +6,7 @@ use GW\Value\Numberable;
 
 final class ToScalarNumber
 {
-    /** @return int|float */
-    public function __invoke(Numberable $value)
+    public function __invoke(Numberable $value): float|int
     {
         return $value->toNumber();
     }

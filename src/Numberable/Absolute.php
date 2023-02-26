@@ -7,15 +7,12 @@ use function abs;
 
 final class Absolute implements Numberable
 {
-    private Numberable $numberable;
-
-    public function __construct(Numberable $numberable)
-    {
-        $this->numberable = $numberable;
+    public function __construct(
+        private Numberable $numberable,
+    ) {
     }
 
-    /** @return int|float */
-    public function toNumber()
+    public function toNumber(): float|int
     {
         return abs($this->numberable->toNumber());
     }

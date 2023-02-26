@@ -8,17 +8,13 @@ use function array_reduce;
 
 final class Sum implements Numberable
 {
-    /** @var Arrayable<Numberable> */
-    private Arrayable $terms;
-
-    /** @param Arrayable<Numberable> $terms */
-    public function __construct(Arrayable $terms)
-    {
-        $this->terms = $terms;
+    public function __construct(
+        /** @var Arrayable<Numberable> */
+        private Arrayable $terms,
+    ) {
     }
 
-    /** @return int|float */
-    public function toNumber()
+    public function toNumber(): float|int
     {
         return array_reduce($this->terms->toArray(), new SumReducer(), 0);
     }

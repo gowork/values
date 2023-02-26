@@ -6,17 +6,13 @@ use GW\Value\Numberable;
 
 final class Multiply implements Numberable
 {
-    private Numberable $right;
-    private Numberable $left;
-
-    public function __construct(Numberable $left, Numberable $right)
-    {
-        $this->left = $left;
-        $this->right = $right;
+    public function __construct(
+        private Numberable $left,
+        private Numberable $right,
+    ) {
     }
 
-    /** @return int|float */
-    public function toNumber()
+    public function toNumber(): float|int
     {
         return $this->left->toNumber() * $this->right->toNumber();
     }

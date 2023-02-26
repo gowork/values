@@ -11,8 +11,7 @@ use function is_string;
 
 final class ToNumberable
 {
-    /** @param mixed $number */
-    public function __invoke($number): Numberable
+    public function __invoke(mixed $number): Numberable
     {
         if ($number instanceof Numberable) {
             return $number;
@@ -27,7 +26,7 @@ final class ToNumberable
         }
 
         if (is_string($number) && is_numeric($number)) {
-            return new JustNumber($number);
+            return new NumericString($number);
         }
 
         throw new LogicException('Cannot cast value to Numberable');

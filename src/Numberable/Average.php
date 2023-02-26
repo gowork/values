@@ -9,17 +9,13 @@ use GW\Value\Numberable;
 
 final class Average implements Numberable
 {
-    /** @var Arrayable<Numberable> */
-    private Arrayable $terms;
-
-    /** @param Arrayable<Numberable> $terms */
-    public function __construct(Arrayable $terms)
-    {
-        $this->terms = $terms;
+    public function __construct(
+        /** @var Arrayable<Numberable> */
+        private Arrayable $terms,
+    ) {
     }
 
-    /** @return int|float */
-    public function toNumber()
+    public function toNumber(): float|int
     {
         $terms = $this->terms->toArray();
         $count = count($terms);

@@ -6,13 +6,10 @@ use GW\Value\Numberable;
 
 final class Modulo implements Numberable
 {
-    private Numberable $dividend;
-    private Numberable $divisor;
-
-    public function __construct(Numberable $dividend, Numberable $divisor)
-    {
-        $this->dividend = $dividend;
-        $this->divisor = $divisor;
+    public function __construct(
+        private Numberable $dividend,
+        private Numberable $divisor,
+    ) {
     }
 
     public function toNumber(): int

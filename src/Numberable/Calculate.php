@@ -6,19 +6,18 @@ use GW\Value\Numberable;
 
 final class Calculate implements Numberable
 {
-    private Numberable $numberable;
     /** @var callable(int|float):(int|float|Numberable) */
     private $formula;
 
     /** @param callable(int|float):(int|float|Numberable) $formula */
-    public function __construct(Numberable $numberable, callable $formula)
-    {
-        $this->numberable = $numberable;
+    public function __construct(
+        private Numberable $numberable,
+        callable $formula,
+    ) {
         $this->formula = $formula;
     }
 
-    /** @return int|float */
-    public function toNumber()
+    public function toNumber(): float|int
     {
         $result = ($this->formula)($this->numberable->toNumber());
 

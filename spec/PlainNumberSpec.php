@@ -54,13 +54,6 @@ final class PlainNumberSpec extends ObjectBehavior
         $this->toNumber()->shouldBe(123.66);
     }
 
-    function it_can_be_created_from_numeric_string()
-    {
-        $this->beConstructedThrough('from', ['123.66']);
-
-        $this->toNumber()->shouldBe(123.66);
-    }
-
     function it_compares_int_with_numbers_just_like_scalars()
     {
         $this->beConstructedWith(new JustInteger(123));

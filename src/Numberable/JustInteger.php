@@ -6,11 +6,9 @@ use GW\Value\Numberable;
 
 final class JustInteger implements Numberable
 {
-    private int $integer;
-
-    public function __construct(int $integer)
-    {
-        $this->integer = $integer;
+    public function __construct(
+        private int $integer,
+    ) {
     }
 
     public function toNumber(): int

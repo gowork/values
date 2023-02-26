@@ -89,7 +89,7 @@ interface NumbersArray extends ArrayValue
 
     public function offsetExists($offset): bool;
 
-    public function offsetGet($offset): NumberValue;
+    public function offsetGet($offset): ?NumberValue;
 
     public function offsetSet($offset, $value): void;
 
@@ -133,9 +133,8 @@ interface NumbersArray extends ArrayValue
 
     /**
      * @param callable(NumberValue $reduced, NumberValue $item):NumberValue $transformer
-     * @param int|float|numeric-string|Numberable $start
      */
-    public function reduceNumber(callable $transformer, $start): NumberValue;
+    public function reduceNumber(callable $transformer, float|int|Numberable $start): NumberValue;
 
     public function implode(string $glue): StringValue;
 
