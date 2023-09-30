@@ -11,7 +11,7 @@ echo "100 - 50 = ";
 echo $number->subtract(50)->toNumber();
 echo "\n";
 
-echo "100 - 11.22 = ";
+echo "100 - 11.11 = ";
 echo $number->subtract(new JustFloat(11.11))->toNumber();
 echo "\n";
 
