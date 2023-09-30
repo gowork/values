@@ -4,7 +4,6 @@ namespace GW\Value;
 
 use Traversable;
 use function count;
-use function var_dump;
 use const PHP_INT_MAX;
 
 /**
