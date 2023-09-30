@@ -209,6 +209,53 @@ $stringsArray = Wrap::iterable($range(0, 10))
     });
 ```
 
+### `NumberValue`
+
+Object wrapping number (float or int).
+
+```php
+<?php
+
+use GW\Value\Wrap;
+
+$number = Wrap::number(100)
+    ->add(20)
+    ->subtract(1)
+    ->multiply(2)
+    ->divide(3)
+    ->modulo(100)
+    ->calculate('sqrt')
+    ->round(2);
+// ...
+
+$formattedNumber = $number->format(2, '.', ',');
+
+```
+
+### `NumbersArray`
+
+Object wrapping array of numbers wrapped in NumberValue.
+
+```php
+<?php
+
+use GW\Value\NumberValue;
+use GW\Value\Wrap;
+
+$numbers = Wrap::numbersArray([1, 2, 3, 4]);
+
+$sum = $numbers->sum()->format(2)->toString();
+$min = $numbers->min()->format(2)->toString();
+$max = $numbers->max()->format(2)->toString();
+$avg = $numbers->average()->format(2)->toString();
+
+$customSum = $numbers->reduceNumber(
+    fn(NumberValue $sum, NumberValue $next): NumberValue => $sum->add($next->round()),
+    0
+);
+
+```
+
 ## Documentation
 
 For full methods reference and more examples see [here](./docs/examples.md).

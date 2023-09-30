@@ -257,6 +257,7 @@ final class PlainString implements StringValue
             throw new RuntimeException("Failed to match regexp: {$pattern}");
         }
 
+        /** @var array<int, array<int|string, string>> $matches */
         return Wrap::array($matches);
     }
 
