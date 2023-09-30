@@ -177,4 +177,14 @@ interface IterableValue extends IteratorAggregate
      * @phpstan-return IterableValue<int, TKey>
      */
     public function keys(): IterableValue;
+
+    /**
+     * @phpstan-return IterableValue<int, TValue>
+     */
+    public function values(): IterableValue;
+
+    /**
+     * @phpstan-return IterableValue<TValue, TKey>
+     */
+    public function flip(): IterableValue;
 }

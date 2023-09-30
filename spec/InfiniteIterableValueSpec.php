@@ -676,6 +676,30 @@ final class InfiniteIterableValueSpec extends ObjectBehavior
             ->keys()->toArray()->shouldBeLike([(object)['foo' => 'bar'], (object)['foo' => 'baz']]);
     }
 
+    function it_can_be_flipped()
+    {
+        $this->beConstructedWith(['foo' => 'zero', 'bar' => 'one']);
+        $this->flip()
+            ->keys()->toArray()->shouldEqual(['zero', 'one']);
+        $this->flip()
+            ->values()->toArray()->shouldEqual(['foo', 'bar']);
+    }
+
+    function it_can_be_flipped_numeric_keys()
+    {
+        $pairs = [['0', 'zero'], ['1', 'one']];
+
+        $iterator = function () use ($pairs) {
+            foreach ($pairs as [$key, $item]) {
+                yield $key => $item;
+            }
+        };
+
+        $this->beConstructedWith($iterator());
+        $this->flip()
+            ->values()->toArray()->shouldEqual(['0', '1']);
+    }
+
     private function entityComparator(): \Closure
     {
         return function (DummyEntity $entityA, DummyEntity $entityB): int {

@@ -2,10 +2,10 @@
 
 namespace GW\Value;
 
-use ArrayIterator;
 use BadMethodCallException;
 use GW\Value\Associable\Cache;
 use GW\Value\Associable\Filter;
+use GW\Value\Associable\Flip;
 use GW\Value\Associable\Join;
 use GW\Value\Associable\JustAssoc;
 use GW\Value\Associable\Keys;
@@ -18,6 +18,7 @@ use GW\Value\Associable\Reverse;
 use GW\Value\Associable\Shuffle;
 use GW\Value\Associable\Sort;
 use GW\Value\Associable\SortKeys;
+use GW\Value\Associable\Swap;
 use GW\Value\Associable\UniqueByComparator;
 use GW\Value\Associable\UniqueByString;
 use GW\Value\Associable\Values;
@@ -214,6 +215,32 @@ final class AssocArray implements AssocValue
     public function withoutElement($value): AssocArray
     {
         return $this->filter(Filters::notEqual($value));
+    }
+
+    /**
+     * @phpstan-return IterableValue<TKey, TValue>
+     */
+    public function toIterableValue(): IterableValue
+    {
+        return new InfiniteIterableValue($this->toAssocArray());
+    }
+
+    /**
+     * @phpstan-return AssocValue<int|string, TKey>
+     */
+    public function flip(): AssocValue
+    {
+        return new self(new Flip($this->items));
+    }
+
+    /**
+     * @param TKey $keyA
+     * @param TKey $keyB
+     * @phpstan-return AssocArray<TKey, TValue>
+     */
+    public function swap($keyA, $keyB): AssocArray
+    {
+        return new self(new Swap($this->items, $keyA, $keyB));
     }
 
     /**

@@ -5,6 +5,7 @@ namespace spec\GW\Value;
 use GW\Value\Filters;
 use GW\Value\Wrap;
 use GW\Value\AssocArray;
+use InvalidArgumentException;
 use PhpSpec\ObjectBehavior;
 use PHPUnit\Framework\Assert;
 
@@ -527,5 +528,53 @@ final class AssocArraySpec extends ObjectBehavior
         $this->beConstructedWith(['0' => 'zero', '1' => 'one']);
         $this->map(fn(string $val, int $key): string => $val)
             ->keys()->toArray()->shouldEqual([0, 1]);
+    }
+
+    function it_can_be_flipped()
+    {
+        $this->beConstructedWith(['foo' => 'zero', 'bar' => 'one']);
+        $this->flip()
+            ->keys()->toArray()->shouldEqual(['zero', 'one']);
+        $this->flip()
+            ->values()->toArray()->shouldEqual(['foo', 'bar']);
+    }
+
+    function it_can_be_flipped_numeric_keys()
+    {
+        $this->beConstructedWith(['0' => 'zero', '1' => 'one']);
+        $this->flip()
+            ->keys()->toArray()->shouldEqual(['zero', 'one']);
+        $this->flip()
+            ->values()->toArray()->shouldEqual([0, 1]);
+    }
+
+    function it_is_possible_to_swap_keys()
+    {
+        $this->beConstructedWith(['foo' => 'zero', 'bar' => 'one']);
+        $this->swap('foo', 'bar')
+            ->toAssocArray()->shouldEqual(['foo' => 'one', 'bar' => 'zero']);
+    }
+
+    function it_is_impossible_to_swap_keys_undefined_a()
+    {
+        $this->beConstructedWith(['foo' => 'zero', 'bar' => 'one']);
+        $swapped = $this->swap('baz', 'bar');
+        $swapped->shouldThrow(InvalidArgumentException::class)
+            ->during('toAssocArray');
+    }
+
+    function it_is_impossible_to_swap_keys_undefined_b()
+    {
+        $this->beConstructedWith(['foo' => 'zero', 'bar' => 'one']);
+        $swapped = $this->swap('bar', 'baz');
+        $swapped->shouldThrow(InvalidArgumentException::class)
+            ->during('toAssocArray');
+    }
+
+    function it_is_possible_to_swap_keys_numeric_arrays()
+    {
+        $this->beConstructedWith(['0' => 'zero', '1' => 'one']);
+        $this->swap(0, 1)
+            ->toAssocArray()->shouldEqual([0 => 'one', 1 => 'zero']);
     }
 }
