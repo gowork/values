@@ -23,7 +23,7 @@
     },
     "require-dev": {
         "phpspec/phpspec": "^7.0",
-        "phpstan/phpstan": "^1.0",
+        "phpstan/phpstan": "^1.0 || ^2.0",
         "phpbench/phpbench": "@dev",
         "phpunit/phpunit": "^9.0",
         "phpstan/extension-installer": "^1.0",
